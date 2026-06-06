@@ -13,8 +13,8 @@ export default function proxy(request: NextRequest) {
   // Protect all other /admin routes
   if (pathname.startsWith("/admin")) {
     const sessionCookie =
-      request.cookies.get("next-auth.session-token")?.value ||
-      request.cookies.get("__Secure-next-auth.session-token")?.value;
+      request.cookies.get("authjs.session-token")?.value ||
+      request.cookies.get("__Secure-authjs.session-token")?.value;
 
     if (!sessionCookie) {
       const loginUrl = new URL("/admin/login", request.url);
