@@ -1,0 +1,29 @@
+"use client";
+
+import { useLocale } from "@/components/LocaleProvider";
+
+export default function ProcessSection() {
+  const { dict } = useLocale();
+  const t = dict.process;
+
+  return (
+    <section id="process" className="section" aria-labelledby="process-title">
+      <div className="container">
+        <div className="text-center mb-14">
+          <span className="section-label">{t.label}</span>
+          <h2 className="section-title" id="process-title" dangerouslySetInnerHTML={{ __html: t.title }} />
+          <p className="section-sub mx-auto">{t.subtitle}</p>
+        </div>
+        <div className="process-grid">
+          {t.steps.map((step, i) => (
+            <div key={i} className="process-step">
+              <div className="process-num">{i + 1}</div>
+              <h3 className="process-step-title">{step.title}</h3>
+              <p className="process-step-desc">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
