@@ -300,17 +300,15 @@ section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
   border-color: var(--clr-primary-light);
 }
 .service-icon {
-  width: 64px; height: 64px; border-radius: 18px;
-  background: linear-gradient(135deg, rgba(20,20,22,0.08), rgba(232,89,12,0.12));
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 24px;
-  transition: all 0.3s;
+  width: 48px; height: 48px;
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg);
+  color: var(--clr-accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
 }
-.service-card:hover .service-icon {
-  background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent));
-}
-.service-icon svg { width: 32px; height: 32px; transition: all 0.3s; }
-.service-card:hover .service-icon svg :is(path, circle, rect) { stroke: #fff; }
+.service-icon svg { width: 24px; height: 24px; }
+.service-card:hover .service-icon { border-color: var(--clr-accent); }
 .service-title {
   font-family: var(--font-display);
   font-size: 1.2rem; font-weight: 700; margin-bottom: 12px;
@@ -735,3 +733,29 @@ footer { background: var(--clr-navy); color: rgba(255,255,255,0.8); padding: 60p
 .domain-band--ink .domain-card-desc { color: #B9B9C0; }
 @media (max-width: 980px) { .domain-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .domain-grid { grid-template-columns: 1fr; } }
+
+
+/* ===== ICON STYLING (lucide) ===== */
+.domain-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.domain-card-top .domain-tag { margin-bottom: 0; }
+.domain-card-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border: 1px solid var(--clr-border);
+  color: var(--clr-accent);
+  background: var(--clr-bg);
+  flex: none;
+}
+.domain-card-icon svg { width: 22px; height: 22px; }
+.domain-band--ink .domain-card-icon { border-color: #2C2C30; background: #1F1F23; }
+
+
+.about-feature-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg2);
+  color: var(--clr-accent);
+  font-size: 0;
+  flex: none;
+}

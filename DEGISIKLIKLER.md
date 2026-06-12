@@ -112,3 +112,6 @@ Diğer admin sayfalarında (Danışanlar, Randevular, Seanslar) kaydet/ekle buto
 ## Eski siteden taşınan içerikler (TR + EN)
 Akademik Destek: Sınav Koçluğu (YKS/LGS), Öğrenci Koçluğu, Okul ve Akademik Danışmanlık, Kariyer Danışmanlığı, Özel Ders.
 Danışmanlık & Terapi: Bireysel Danışma, Sınav Kaygısı Yönetimi, Bilişsel Davranışçı Yaklaşım, Oyun Terapisi, Aile Danışmanlığı, Çift Danışmanlığı, Online Danışmanlık.
+
+## 14. İkon seti yenilendi (Lucide)
+El yapımı basit SVG'ler ve emoji ikonlar (🎯📚) yerine profesyonel Lucide ikon seti kullanıldı. Tüm bölümlerde tutarlı ince çizgili ikonlar, çerçeveli kutu içinde safran renkte. Hizmet kartlarına da (12 hizmet) konuya uygun ikonlar eklendi.

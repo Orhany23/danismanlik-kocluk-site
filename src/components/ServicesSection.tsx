@@ -1,6 +1,29 @@
 "use client";
 
 import { useLocale } from "@/components/LocaleProvider";
+import {
+  Target, CalendarCheck, School, Compass, BookOpen,
+  UserRound, Wind, Brain, Puzzle, Home, HeartHandshake, Video,
+} from "lucide-react";
+
+const groupIcons: Record<string, React.ReactNode[]> = {
+  academic: [
+    <Target key="a0" strokeWidth={1.6} />,
+    <CalendarCheck key="a1" strokeWidth={1.6} />,
+    <School key="a2" strokeWidth={1.6} />,
+    <Compass key="a3" strokeWidth={1.6} />,
+    <BookOpen key="a4" strokeWidth={1.6} />,
+  ],
+  counseling: [
+    <UserRound key="c0" strokeWidth={1.6} />,
+    <Wind key="c1" strokeWidth={1.6} />,
+    <Brain key="c2" strokeWidth={1.6} />,
+    <Puzzle key="c3" strokeWidth={1.6} />,
+    <Home key="c4" strokeWidth={1.6} />,
+    <HeartHandshake key="c5" strokeWidth={1.6} />,
+    <Video key="c6" strokeWidth={1.6} />,
+  ],
+};
 
 export default function ServicesSection() {
   const { dict } = useLocale();
@@ -39,7 +62,10 @@ export default function ServicesSection() {
               <div className="domain-grid">
                 {group.items.map((item, i) => (
                   <article key={i} className="domain-card">
-                    {item.tag && <span className="domain-tag">{item.tag}</span>}
+                    <div className="domain-card-top">
+                      <span className="domain-card-icon">{groupIcons[group.key]?.[i]}</span>
+                      {item.tag && <span className="domain-tag">{item.tag}</span>}
+                    </div>
                     <h4 className="domain-card-title">{item.title}</h4>
                     <p className="domain-card-desc">{item.desc}</p>
                   </article>

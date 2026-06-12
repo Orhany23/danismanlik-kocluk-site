@@ -1,11 +1,19 @@
 "use client";
 
 import { useLocale } from "@/components/LocaleProvider";
+import { Target, BookOpen, MessagesSquare, Laptop, Puzzle, Brain } from "lucide-react";
 
 export default function AboutSection() {
   const { dict } = useLocale();
   const t = dict.about;
-  const featureIcons = ["🎯", "📚", "💬", "💻", "🎮", "🧠"];
+  const featureIcons = [
+  <Target key="0" size={18} strokeWidth={1.8} />,
+  <BookOpen key="1" size={18} strokeWidth={1.8} />,
+  <MessagesSquare key="2" size={18} strokeWidth={1.8} />,
+  <Laptop key="3" size={18} strokeWidth={1.8} />,
+  <Puzzle key="4" size={18} strokeWidth={1.8} />,
+  <Brain key="5" size={18} strokeWidth={1.8} />,
+];
   const gIcon = (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <defs><linearGradient id="accG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#fff"/><stop offset="100%" stopColor="#fff"/></linearGradient></defs>
