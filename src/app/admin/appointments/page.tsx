@@ -13,22 +13,24 @@ type Appointment = {
   client?: { id: string; name: string; email: string; phone: string };
 };
 
+async function fetchAppointments(): Promise<Appointment[]> {
+  const res = await fetch("/api/appointments");
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}
+
 export default function AdminAppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ clientName: "", clientEmail: "", clientPhone: "", title: "", date: "", duration: "45", notes: "" });
 
-  const fetchAppointments = async () => {
-    try {
-      const res = await fetch("/api/appointments");
-      if (res.ok) setAppointments(await res.json());
-    } catch {} finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchAppointments(); }, []);
+  useEffect(() => {
+    fetchAppointments()
+      .then(setAppointments)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

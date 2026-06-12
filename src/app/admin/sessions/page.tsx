@@ -13,6 +13,19 @@ type CoachingSession = {
   client?: { id: string; name: string };
 };
 
+async function fetchSessionsData(): Promise<CoachingSession[]> {
+  const res = await fetch("/api/sessions");
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}
+
+async function fetchClientsList(): Promise<{ id: string; name: string }[]> {
+  const res = await fetch("/api/clients");
+  if (!res.ok) throw new Error("Failed to fetch");
+  const data: { id: string; name: string }[] = await res.json();
+  return data;
+}
+
 export default function AdminSessionsPage() {
   const [sessions, setSessions] = useState<CoachingSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,28 +33,11 @@ export default function AdminSessionsPage() {
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [form, setForm] = useState({ clientId: "", title: "", date: "", duration: "45", notes: "" });
 
-  const fetchSessions = async () => {
-    try {
-      const res = await fetch("/api/sessions");
-      if (res.ok) setSessions(await res.json());
-    } catch {} finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchClients = async () => {
-    try {
-      const res = await fetch("/api/clients");
-      if (res.ok) {
-        const data = await res.json();
-        setClients(data.map((c: any) => ({ id: c.id, name: c.name })));
-      }
-    } catch {}
-  };
-
   useEffect(() => {
-    fetchSessions();
-    fetchClients();
+    Promise.all([
+      fetchSessionsData().then(setSessions).catch(() => {}),
+      fetchClientsList().then(setClients).catch(() => {}),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +50,7 @@ export default function AdminSessionsPage() {
     if (res.ok) {
       setShowForm(false);
       setForm({ clientId: "", title: "", date: "", duration: "45", notes: "" });
-      fetchSessions();
+      fetchSessionsData().then(setSessions);
     }
   };
 
@@ -64,13 +60,13 @@ export default function AdminSessionsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchSessions();
+    fetchSessionsData().then(setSessions);
   };
 
   const deleteSession = async (id: string) => {
     if (!confirm("Bu seansı silmek istediğinize emin misiniz?")) return;
     await fetch(`/api/sessions/${id}`, { method: "DELETE" });
-    fetchSessions();
+    fetchSessionsData().then(setSessions);
   };
 
   if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;

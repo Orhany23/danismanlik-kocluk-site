@@ -18,12 +18,6 @@ export type Dictionary = {
     title: string;
     subtitle: string;
     cta: { free: string; whatsapp: string };
-    stats: {
-      experience: { num: string; label: string };
-      clients: { num: string; label: string };
-      specialties: { num: string; label: string };
-      satisfaction: { num: string; label: string };
-    };
     scroll: string;
   };
   about: {
@@ -151,12 +145,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Sınava hazırlanan zihin,<br><em>iyi hisseden zihindir.</em>",
       subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
       cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
-      stats: {
-        experience: { num: "3+", label: "Yıl Deneyim" },
-        clients: { num: "200+", label: "Danışan" },
-        specialties: { num: "8", label: "Uzmanlık Alanı" },
-        satisfaction: { num: "%98", label: "Memnuniyet" },
-      },
       scroll: "Keşfet",
     },
     about: {
@@ -457,12 +445,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "A mind preparing for exams<br>is a mind that <em>feels well.</em>",
       subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
       cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
-      stats: {
-        experience: { num: "3+", label: "Years Experience" },
-        clients: { num: "200+", label: "Clients" },
-        specialties: { num: "8", label: "Specialties" },
-        satisfaction: { num: "98%", label: "Satisfaction" },
-      },
       scroll: "Explore",
     },
     about: {

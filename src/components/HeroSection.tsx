@@ -41,15 +41,6 @@ export default function HeroSection() {
               </a>
             </div>
           </div>
-
-          <div className="hero-stats" role="list">
-            {(["experience", "clients", "specialties", "satisfaction"] as const).map((key) => (
-              <div key={key} className="hero-stat" role="listitem">
-                <span className="hero-stat-num">{t.stats[key].num}</span>
-                <span className="hero-stat-label">{t.stats[key].label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

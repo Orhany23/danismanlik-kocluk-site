@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 
 export default function CookieBanner() {
   const { dict } = useLocale();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const accepted = localStorage.getItem("cookies-accepted");
-    if (!accepted) setVisible(true);
-  }, []);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("cookies-accepted");
+    }
+    return false;
+  });
 
   const accept = () => {
     localStorage.setItem("cookies-accepted", "true");
