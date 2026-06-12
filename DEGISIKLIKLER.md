@@ -115,3 +115,7 @@ Danışmanlık & Terapi: Bireysel Danışma, Sınav Kaygısı Yönetimi, Bilişs
 
 ## 14. İkon seti yenilendi (Lucide)
 El yapımı basit SVG'ler ve emoji ikonlar (🎯📚) yerine profesyonel Lucide ikon seti kullanıldı. Tüm bölümlerde tutarlı ince çizgili ikonlar, çerçeveli kutu içinde safran renkte. Hizmet kartlarına da (12 hizmet) konuya uygun ikonlar eklendi.
+
+## 15. Logo Ψ (Psi) olarak yenilendi + "Kimler?" linki düzeltildi
+- **Logo:** Psikolojinin evrensel sembolü olan Yunan harfi Ψ (Psi), safran kare içinde beyaz olarak yeni logo yapıldı. Navbar, favicon, uygulama ikonları ve sosyal paylaşım görseli (OG) aynı işaretle yenilendi — paylaşım görseli yeni editorial tasarımla (kâğıt zemin, mürekkep tipografi) uyumlu hale getirildi.
+- **"Kimler?" menü linki:** Silinmedi, düzeltildi — link hedefi yanlış kimliğe işaret ettiği için çalışmıyordu (whoFor ≠ who-for). Artık "Kimler İçin Uygun?" bölümüne kaydırıyor.
