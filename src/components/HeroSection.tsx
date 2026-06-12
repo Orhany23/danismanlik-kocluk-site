@@ -114,14 +114,6 @@ export default function HeroSection() {
               {t.cta.whatsapp}
             </a>
           </div>
-          <div className="hero-stats">
-            {(["experience","clients","specialties","satisfaction"] as const).map((key) => (
-              <div key={key} className="hero-stat">
-                <div className="hero-stat-num">{t.stats[key].num}</div>
-                <div className="hero-stat-label">{t.stats[key].label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
