@@ -20,17 +20,44 @@ export default function AdminSettingsPage() {
 
   const handleSave = async (key: string, value: string) => {
     setSaving(true);
-    const res = await fetch("/api/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key, value }),
-    });
-    setSaving(false);
-    if (res.ok) {
-      setSettings((prev) => ({ ...prev, [key]: value }));
-      setMessage("Kaydedildi!");
-      setTimeout(() => setMessage(""), 2000);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, value }),
+      });
+      if (res.ok) {
+        setSettings((prev) => ({ ...prev, [key]: value }));
+        setMessage("Kaydedildi!");
+      } else {
+        setMessage("HATA: Kaydedilemedi, tekrar deneyin.");
+      }
+    } catch {
+      setMessage("HATA: Bağlantı sorunu, kaydedilemedi.");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMessage(""), 3000);
     }
+  };
+
+  const handleSaveAll = async () => {
+    setSaving(true);
+    let failed = 0;
+    for (const [key, value] of Object.entries(settings)) {
+      try {
+        const res = await fetch("/api/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key, value }),
+        });
+        if (!res.ok) failed++;
+      } catch {
+        failed++;
+      }
+    }
+    setSaving(false);
+    setMessage(failed === 0 ? "Tüm değişiklikler kaydedildi!" : `HATA: ${failed} alan kaydedilemedi, tekrar deneyin.`);
+    setTimeout(() => setMessage(""), 4000);
   };
 
   const updateField = (key: string, value: string) => {
@@ -47,8 +74,12 @@ export default function AdminSettingsPage() {
       </div>
 
       {message && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 text-emerald-700 text-sm border border-emerald-100">
-          <span>✓</span> {message}
+        <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm border ${
+          message.startsWith("HATA")
+            ? "bg-red-50 text-red-700 border-red-100"
+            : "bg-emerald-50 text-emerald-700 border-emerald-100"
+        }`}>
+          <span>{message.startsWith("HATA") ? "!" : "✓"}</span> {message}
         </div>
       )}
 
@@ -129,6 +160,18 @@ export default function AdminSettingsPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleSaveAll}
+          disabled={saving}
+          style={{ backgroundColor: "#1e3a8a", color: "#ffffff" }}
+          className="px-6 py-3 rounded-xl text-sm font-semibold shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+        >
+          {saving ? "Kaydediliyor..." : "Tüm Değişiklikleri Kaydet"}
+        </button>
+        <span className="text-xs text-gray-400">Alanlardan çıkınca otomatik kaydedilir; emin olmak için bu butonu kullanabilirsiniz.</span>
       </div>
 
       <PasswordChangeCard />

@@ -90,3 +90,9 @@ Yeni kartlar için iki ikon eklendi.
 - `opengraph-image.png` / `twitter-image.png`: Site WhatsApp, Instagram, X vb. yerlerde paylaşıldığında artık markalı bir kart görseli çıkar (lacivert zemin, logo, başlık, konum rozetleri).
 - `icon.png`, `apple-icon.png`, `favicon.ico`: Varsayılan Next.js faviconu yerine marka renkleriyle logo ikonu.
 - `public/` içindeki kullanılmayan Next.js varsayılan SVG'leri silindi.
+
+## 13. Ayarlar sayfasına "Tüm Değişiklikleri Kaydet" butonu
+Ayarlar alanları yalnızca alandan çıkınca otomatik kaydediliyordu ve kaydetme başarısız olduğunda hiçbir uyarı gösterilmiyordu. Eklenenler:
+- Tüm alanları tek seferde kaydeden belirgin "Tüm Değişiklikleri Kaydet" butonu
+- Başarısız kayıtlar için kırmızı hata bildirimi (önceden sessizce yutuluyordu)
+Diğer admin sayfalarında (Danışanlar, Randevular, Seanslar) kaydet/ekle butonları zaten mevcuttu.
