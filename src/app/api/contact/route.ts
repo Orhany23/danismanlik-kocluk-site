@@ -50,17 +50,27 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 2) Telegram bildirimi (best-effort)
+    // 2) Telegram bildirimi (best-effort; serverless'ta istek tamamlanmadan
+    // fonksiyon dondurulmasın diye beklenir, hata olsa bile form başarılı sayılır)
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
     if (BOT_TOKEN && CHAT_ID) {
       const text = `Yeni İletişim Formu Mesajı\n\nAd: ${name}\nE-posta: ${email ?? "-"}\nTelefon: ${phone ?? "-"}\nKonu: ${subject ?? "-"}\nMesaj: ${message}`;
       // parse_mode kullanılmıyor: kullanıcı girdisi Markdown injection yapamasın
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: CHAT_ID, text }),
-      }).catch(() => {});
+      try {
+        const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: CHAT_ID, text }),
+        });
+        if (!tgRes.ok) {
+          console.error("Telegram error:", tgRes.status, await tgRes.text());
+        }
+      } catch (e) {
+        console.error("Telegram fetch failed:", e);
+      }
+    } else {
+      console.warn("Telegram not configured: TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID missing");
     }
 
     return NextResponse.json({ ok: true }, { status: 201 });
