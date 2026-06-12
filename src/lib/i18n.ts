@@ -41,7 +41,13 @@ export type Dictionary = {
     label: string;
     title: string;
     subtitle: string;
-    cards: Array<{ title: string; desc: string; tag: string }>;
+    groups: Array<{
+      key: string;
+      eyebrow: string;
+      heading: string;
+      blurb: string;
+      items: Array<{ title: string; desc: string; tag?: string }>;
+    }>;
   };
   process: {
     label: string;
@@ -142,7 +148,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Çanakkale ve Türkiye geneli online koçluk ve danışmanlık",
-      title: '"Potansiyelinize ulaşmak için<br><em>doğru rehberlik.</em>"',
+      title: "Sınava hazırlanan zihin,<br><em>iyi hisseden zihindir.</em>",
       subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
       cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
       stats: {
@@ -173,38 +179,77 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Hizmetler",
-      title: "Koçluk ve Danışmanlık<br>Hizmetlerim",
-      subtitle: "Rehberlik ve Psikolojik Danışmanlık altyapısıyla, sınav koçluğundan psikolojik danışmanlığa kadar kapsamlı destek sunuyorum.",
-      cards: [
+      title: "İki alan,<br>tek amaç: <em>iyi olmak.</em>",
+      subtitle: "Akademik destek ve psikolojik danışmanlık birbirinden ayrı yürütülen ama birbirini besleyen iki alandır. Hangi kapıdan girerseniz girin, bütüncül bir yaklaşımla karşılanırsınız.",
+      groups: [
         {
-          title: "Sınav Koçluğu (YKS/LGS)",
-          desc: "Hedef belirleme, kişiye özel çalışma programı, deneme analizleri ve motivasyon desteğiyle YKS/LGS'ye hazırlık. Psikolojik altyapıyla desteklenmiş koçluk. (Not: Koçluk özel ders değildir; ders anlatmak yerine nasıl çalışılacağını planlar, sınav kaygısı yönetimi ve motivasyon desteği sağlar.)",
-          tag: "Öne Çıkan",
+          key: "academic",
+          eyebrow: "Alan 01 — Akademik Destek",
+          heading: "Sınava ve okula dair her şey",
+          blurb: "Hedefi olan öğrenci için: plan, yöntem, takip ve motivasyon. Koçluk özel ders değildir; ders anlatmaz, nasıl çalışılacağını öğretir ve süreci yönetir.",
+          items: [
+            {
+              title: "Sınav Koçluğu (YKS/LGS)",
+              desc: "Hedef belirleme, kişiye özel çalışma programı, deneme analizleri ve motivasyon desteğiyle sınava hazırlık. Psikolojik altyapıyla desteklenmiş koçluk.",
+              tag: "Öne Çıkan",
+            },
+            {
+              title: "Öğrenci Koçluğu",
+              desc: "Ders çalışma alışkanlıkları, zaman yönetimi, verimli öğrenme teknikleri ve motivasyon. Akademik başarıyı sürdürülebilir kılmak için birebir koçluk.",
+            },
+            {
+              title: "Okul ve Akademik Danışmanlık",
+              desc: "Öğrencilerin akademik, sosyal ve duygusal ihtiyaçlarını birlikte ele alan danışmanlık. Okul başarısını artırmayı ve genel yaşam kalitesini iyileştirmeyi hedefler.",
+            },
+            {
+              title: "Kariyer Danışmanlığı",
+              desc: "Bölüm ve meslek seçimi, ilgi-yetenek değerlendirmesi ve hedef planlaması. Sınav sonrası kararlar için yapılandırılmış destek.",
+            },
+            {
+              title: "Özel Ders",
+              desc: "İlkokuldan lise kademesine kadar, Çanakkale'de yüz yüze ve Türkiye genelinde online özel ders. Koçluktan ayrı, doğrudan ders anlatımı içeren hizmettir.",
+              tag: "Yüz yüze + Online",
+            },
+          ],
         },
         {
-          title: "Öğrenci Koçluğu",
-          desc: "Ders çalışma alışkanlıkları, zaman yönetimi, verimli öğrenme teknikleri ve motivasyon. Akademik başarıyı sürdürülebilir kılmak için birebir koçluk.",
-          tag: "Birebir Koçluk",
-        },
-        {
-          title: "Sınav Kaygısı Yönetimi",
-          desc: "RPD altyapısıyla sınav kaygısına yönelik bilişsel teknikler, nefes egzersizleri ve psikolojik destek. Sadece koçluk değil, psikolojik müdahale.",
-          tag: "RPD Destekli",
-        },
-        {
-          title: "Bireysel Psikolojik Danışmanlık",
-          desc: "Anksiyete, depresyon, özgüven sorunları, ilişki güçlükleri ve yaşam dönüm noktalarında profesyonel psikolojik destek. Her seans size özel planlanır.",
-          tag: "Yüz yüze ve Online",
-        },
-        {
-          title: "Online Koçluk ve Danışmanlık",
-          desc: "Türkiye'nin her noktasından erişilebilir, güvenli video görüşme altyapısıyla online koçluk seansları ve psikolojik danışmanlık. Esnek randevu saatleri.",
-          tag: "Türkiye Geneli",
-        },
-        {
-          title: "Oyun Terapisi (Çocuklar)",
-          desc: "Oyunun iyileştirici gücünü kullanarak çocukların duygularını ifade etmelerine, travmalarla başa çıkmalarına ve sosyal becerilerini geliştirmelerine yardımcı olur.",
-          tag: "Çocuklar ve Ergenler",
+          key: "counseling",
+          eyebrow: "Alan 02 — Psikolojik Danışmanlık & Terapi",
+          heading: "Zihne ve ilişkilere dair her şey",
+          blurb: "RPD altyapısıyla yürütülen danışmanlık ve terapi çalışmaları. İlk görüşmede ihtiyaç birlikte değerlendirilir, size uygun yöntem ve plan birlikte belirlenir.",
+          items: [
+            {
+              title: "Bireysel Danışma",
+              desc: "Kaygı, stres yönetimi, özgüven ve yaşam dönüm noktaları üzerine birebir çalışma. Her seans, ihtiyaçlarınıza göre kişiselleştirilir.",
+            },
+            {
+              title: "Sınav Kaygısı Yönetimi",
+              desc: "Sınav kaygısına yönelik bilişsel teknikler, nefes egzersizleri ve psikolojik destek. Akademik koçlukla birlikte de yürütülebilir.",
+              tag: "İki alanın kesişimi",
+            },
+            {
+              title: "Bilişsel Davranışçı Yaklaşım (BDT)",
+              desc: "Düşünce, duygu ve davranış arasındaki döngüleri fark edip değiştirmeye odaklanan, bilimsel olarak en çok araştırılmış yaklaşımlardan biri.",
+            },
+            {
+              title: "Oyun Terapisi",
+              desc: "Çocukların kendilerini en doğal yolla — oyunla — ifade etmesine dayanan çalışma. Duygusal ve davranışsal güçlüklerde çocuğa uygun bir destek yolu.",
+              tag: "Çocuklar için",
+            },
+            {
+              title: "Aile Danışmanlığı",
+              desc: "Aile içi iletişim, ebeveynlik tutumları ve birlikte yaşanan güçlükler üzerine yapılandırılmış görüşmeler.",
+            },
+            {
+              title: "Çift Danışmanlığı",
+              desc: "İletişim örüntüleri, çatışma çözümü ve ilişkiyi güçlendirme odaklı ortak çalışma.",
+            },
+            {
+              title: "Online Danışmanlık",
+              desc: "Güvenli görüntülü görüşmeyle Türkiye'nin her yerinden erişim. Zaman, mekân veya ulaşım kısıtı olanlar için araştırmalarla desteklenen, esnek bir seçenek.",
+              tag: "Türkiye geneli",
+            },
+          ],
         },
       ],
     },
@@ -409,7 +454,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Online coaching & counseling across Turkey",
-      title: '"The right guidance<br><em>to reach your potential.</em>"',
+      title: "A mind preparing for exams<br>is a mind that <em>feels well.</em>",
       subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
       cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
       stats: {
@@ -440,38 +485,77 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Services",
-      title: "My Coaching &<br>Counseling Services",
-      subtitle: "With a Guidance & Psychological Counseling background, I offer comprehensive support from exam coaching to psychological counseling.",
-      cards: [
+      title: "Two domains,<br>one goal: <em>wellbeing.</em>",
+      subtitle: "Academic support and psychological counseling are two distinct but mutually reinforcing domains. Whichever door you enter through, you are met with a holistic approach.",
+      groups: [
         {
-          title: "Exam Coaching (YKS/LGS)",
-          desc: "Preparation for YKS/LGS with goal setting, personalized study plans, mock exam analysis, and motivational support. Coaching backed by psychological expertise. (Note: Coaching is not tutoring; it plans how to study, provides exam anxiety management and motivational support.)",
-          tag: "Featured",
+          key: "academic",
+          eyebrow: "Domain 01 — Academic Support",
+          heading: "Everything about exams and school",
+          blurb: "For students with a goal: planning, method, follow-up and motivation. Coaching is not tutoring; it does not teach the subject — it teaches how to study and manages the process.",
+          items: [
+            {
+              title: "Exam Coaching (YKS/LGS)",
+              desc: "Exam preparation through goal setting, personalized study plans, mock exam analysis, and motivational support. Coaching backed by psychological expertise.",
+              tag: "Featured",
+            },
+            {
+              title: "Student Coaching",
+              desc: "Study habits, time management, effective learning techniques, and motivation. One-on-one coaching for sustainable academic success.",
+            },
+            {
+              title: "School & Academic Counseling",
+              desc: "Counseling that addresses students' academic, social and emotional needs together, aiming to improve school success and overall quality of life.",
+            },
+            {
+              title: "Career Counseling",
+              desc: "Field and career choice, interest-aptitude assessment and goal planning. Structured support for post-exam decisions.",
+            },
+            {
+              title: "Private Tutoring",
+              desc: "From primary to high school level — in person in Çanakkale, online across Turkey. A separate service from coaching, involving direct subject teaching.",
+              tag: "In person + Online",
+            },
+          ],
         },
         {
-          title: "Student Coaching",
-          desc: "Study habits, time management, effective learning techniques, and motivation. One-on-one coaching for sustainable academic success.",
-          tag: "One-on-One",
-        },
-        {
-          title: "Exam Anxiety Management",
-          desc: "Cognitive techniques, breathing exercises and psychological support for exam anxiety with PGR background. Not just coaching, but psychological intervention.",
-          tag: "PGR Supported",
-        },
-        {
-          title: "Individual Counseling",
-          desc: "Professional psychological support for anxiety, depression, self-confidence issues, relationship difficulties, and life transitions. Each session is personalized for you.",
-          tag: "In-person & Online",
-        },
-        {
-          title: "Online Coaching & Counseling",
-          desc: "Accessible from anywhere in Turkey with secure video conferencing. Flexible appointment hours for online coaching and psychological counseling sessions.",
-          tag: "Turkey-Wide",
-        },
-        {
-          title: "Play Therapy (Children)",
-          desc: "Using the healing power of play to help children express their emotions, cope with trauma, and develop social skills.",
-          tag: "Children & Teens",
+          key: "counseling",
+          eyebrow: "Domain 02 — Counseling & Therapy",
+          heading: "Everything about the mind and relationships",
+          blurb: "Counseling and therapeutic work grounded in a Guidance & Psychological Counseling background. In the first session we assess your needs together and agree on the right approach and plan.",
+          items: [
+            {
+              title: "Individual Counseling",
+              desc: "One-on-one work on anxiety, stress management, self-confidence and life transitions. Every session is personalized to your needs.",
+            },
+            {
+              title: "Exam Anxiety Management",
+              desc: "Cognitive techniques, breathing exercises and psychological support for exam anxiety. Can run alongside academic coaching.",
+              tag: "Where both domains meet",
+            },
+            {
+              title: "Cognitive Behavioral Approach (CBT)",
+              desc: "Focuses on noticing and changing the loops between thoughts, feelings and behavior — one of the most extensively researched approaches.",
+            },
+            {
+              title: "Play Therapy",
+              desc: "Built on children's most natural form of expression — play. A child-appropriate path of support for emotional and behavioral difficulties.",
+              tag: "For children",
+            },
+            {
+              title: "Family Counseling",
+              desc: "Structured sessions on family communication, parenting attitudes and shared difficulties.",
+            },
+            {
+              title: "Couples Counseling",
+              desc: "Joint work focused on communication patterns, conflict resolution and strengthening the relationship.",
+            },
+            {
+              title: "Online Counseling",
+              desc: "Accessible from anywhere in Turkey via secure video sessions. A flexible, research-supported option for those with time, location or mobility constraints.",
+              tag: "Across Turkey",
+            },
+          ],
         },
       ],
     },

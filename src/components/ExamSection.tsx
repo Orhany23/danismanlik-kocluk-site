@@ -3,25 +3,25 @@
 import { useLocale } from "@/components/LocaleProvider";
 
 const examIcons = [
-  <svg key="0" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="0" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/><path d="M8 7l8 4"/>
   </svg>,
-  <svg key="1" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="1" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M8 2v28M24 2v28M2 8h28M2 16h28M2 24h28"/><path d="M14 2l-2 7M18 2l2 7"/>
   </svg>,
-  <svg key="2" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="2" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M4 8h24v18H4z"/><path d="M16 4l6 4H10l6-4z"/><path d="M10 14l4 4 8-8"/>
   </svg>,
-  <svg key="3" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="3" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <rect x="4" y="6" width="24" height="20" rx="2"/><path d="M16 14v4M16 22h0"/><path d="M11 6V4M21 6V4"/>
   </svg>,
-  <svg key="4" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="4" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="16" cy="16" r="13"/><path d="M16 9v7l4 4"/>
   </svg>,
-  <svg key="5" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="5" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 4a9 9 0 0 1 9 9c0 3.5-2 5.5-3.5 7-1 1-1.5 2-1.5 3.5h-8c0-1.5-.5-2.5-1.5-3.5C9 18.5 7 16.5 7 13a9 9 0 0 1 9-9z"/><path d="M12 27h8M13.5 30h5"/><path d="M13 13l2.5 2.5L20 11"/>
   </svg>,
-  <svg key="6" viewBox="0 0 32 32" fill="none" stroke="#1a56db" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg key="6" viewBox="0 0 32 32" fill="none" stroke="#E8590C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <rect x="4" y="5" width="24" height="22" rx="2"/><path d="M9 12h6M9 17h10M9 22h7"/><path d="M21 20l2 2 4-4"/>
   </svg>,
 ];

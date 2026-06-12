@@ -96,3 +96,19 @@ Ayarlar alanları yalnızca alandan çıkınca otomatik kaydediliyordu ve kaydet
 - Tüm alanları tek seferde kaydeden belirgin "Tüm Değişiklikleri Kaydet" butonu
 - Başarısız kayıtlar için kırmızı hata bildirimi (önceden sessizce yutuluyordu)
 Diğer admin sayfalarında (Danışanlar, Randevular, Seanslar) kaydet/ekle butonları zaten mevcuttu.
+
+---
+
+# Yeniden Tasarım (redesign branch) — 12 Haziran 2026
+
+## Modern Editorial tasarım
+- **Palet:** Kâğıt beyazı zemin (#FAFAF7), mürekkep siyahı metin (#141416), tek vurgu rengi safran (#E8590C), sıcak ince çizgiler.
+- **Tipografi:** Başlıklar Archivo (800/900, sıkı aralık, dev boyut), gövde Inter, etiketler IBM Plex Mono (büyük harf, geniş aralık).
+- **Hero:** Partikül animasyonu kaldırıldı; dev tipografik manifesto ("Sınava hazırlanan zihin, iyi hisseden zihindir."), altında çizgiyle ayrılmış alt metin + CTA, ızgara-çerçeveli istatistik şeridi.
+- **İmza öğesi — iki alan ayrımı:** Hizmetler iki zıt banda bölündü: "Alan 01 — Akademik Destek" beyaz bantta, "Alan 02 — Psikolojik Danışmanlık & Terapi" siyah (ters) bantta. Kullanıcının istediği net ayrım, tasarımın kendisi haline getirildi.
+- Butonlar: mürekkep dolgulu birincil (hover'da safran), çerçeveli ghost ikincil.
+- Kartlar: gölge yerine ince çizgi ızgarası; hover'da zemin tonu.
+
+## Eski siteden taşınan içerikler (TR + EN)
+Akademik Destek: Sınav Koçluğu (YKS/LGS), Öğrenci Koçluğu, Okul ve Akademik Danışmanlık, Kariyer Danışmanlığı, Özel Ders.
+Danışmanlık & Terapi: Bireysel Danışma, Sınav Kaygısı Yönetimi, Bilişsel Davranışçı Yaklaşım, Oyun Terapisi, Aile Danışmanlığı, Çift Danışmanlığı, Online Danışmanlık.
