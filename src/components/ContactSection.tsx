@@ -6,7 +6,7 @@ import { useLocale } from "@/components/LocaleProvider";
 export default function ContactSection() {
   const { dict, locale } = useLocale();
   const t = dict.contact;
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -18,15 +18,14 @@ export default function ContactSection() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const messageBody = `*${locale === "tr" ? "Yeni İletişim Formu Mesajı" : "New Contact Form Message"}*\n\n*Ad:* ${formData.name}\n*E-posta:* ${formData.email}\n*Telefon:* ${formData.phone}\n*Konu:* ${formData.subject}\n*Mesaj:* ${formData.message}`;
-      const res = await fetch("/api/telegram", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: messageBody }),
+        body: JSON.stringify(formData),
       });
       if (res.ok) {
         setSuccess(true);
-        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
         setTimeout(() => setSuccess(false), 5000);
       }
     } catch {
@@ -96,6 +95,16 @@ export default function ContactSection() {
             </div>
           </div>
           <form className="contact-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={formData.website}
+              onChange={handleChange}
+              style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0 }}
+              aria-hidden="true"
+            />
             <div className="form-row">
               {fields.map((f) => (
                 <div key={f.name} className={f.col === "half" ? "form-group" : "form-group col-span-2"}>
