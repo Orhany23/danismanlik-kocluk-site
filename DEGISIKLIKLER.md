@@ -119,3 +119,8 @@ El yapımı basit SVG'ler ve emoji ikonlar (🎯📚) yerine profesyonel Lucide 
 ## 15. Logo Ψ (Psi) olarak yenilendi + "Kimler?" linki düzeltildi
 - **Logo:** Psikolojinin evrensel sembolü olan Yunan harfi Ψ (Psi), safran kare içinde beyaz olarak yeni logo yapıldı. Navbar, favicon, uygulama ikonları ve sosyal paylaşım görseli (OG) aynı işaretle yenilendi — paylaşım görseli yeni editorial tasarımla (kâğıt zemin, mürekkep tipografi) uyumlu hale getirildi.
 - **"Kimler?" menü linki:** Silinmedi, düzeltildi — link hedefi yanlış kimliğe işaret ettiği için çalışmıyordu (whoFor ≠ who-for). Artık "Kimler İçin Uygun?" bölümüne kaydırıyor.
+
+## 16. Sınavlar bölümü akordeona çevrildi + okunabilirlik ayarları
+- **Progressive disclosure:** 7 sınav/teknik kartı artık kapalı başlıklar halinde listeleniyor; tıklayınca açılıyor. Sayfa yükü görsel olarak hafifledi, kullanıcı sadece ilgilendiğini açıyor (NN/g F-deseni tarama davranışına uygun).
+- **Satır uzunluğu:** Açılan içerikler 70 karakter genişlikle sınırlandı (optimal okuma aralığı 50-75 karakter), kart açıklamaları da benzer şekilde sınırlandı.
+- **Vurgu hiyerarşisi:** Başlıklar koyu mürekkep, gövde yumuşak gri, hover/açık durumda safran tonlu zemin — dikkat tek noktaya yönlendiriliyor.
