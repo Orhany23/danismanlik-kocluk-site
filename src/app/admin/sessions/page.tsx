@@ -50,7 +50,7 @@ export default function AdminSessionsPage() {
     if (res.ok) {
       setShowForm(false);
       setForm({ clientId: "", title: "", date: "", duration: "45", notes: "" });
-      fetchSessions();
+      fetchSessionsData().then(setSessions);
     }
   };
 
@@ -60,13 +60,13 @@ export default function AdminSessionsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchSessions();
+    fetchSessionsData().then(setSessions);
   };
 
   const deleteSession = async (id: string) => {
     if (!confirm("Bu seansı silmek istediğinize emin misiniz?")) return;
     await fetch(`/api/sessions/${id}`, { method: "DELETE" });
-    fetchSessions();
+    fetchSessionsData().then(setSessions);
   };
 
   if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
