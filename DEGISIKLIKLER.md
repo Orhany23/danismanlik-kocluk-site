@@ -66,3 +66,6 @@ Admin panelinde şifre değiştirme ekranı yoktu. Eklenenler:
 
 ## 8. Site menüsünün admin paneline binmesi düzeltildi
 Site navbar'ı, footer ve WhatsApp butonu root layout'ta her sayfada render ediliyordu; admin panel başlığının üstüne biniyordu. Yeni `SiteChrome.tsx` bileşeni `/admin` altında bunları gizler.
+
+## 9. Navbar şeffaflık sorunu düzeltildi
+Navbar'da çalışmayan bir `scrolled:` varyantı vardı; arka plan hiç devreye girmediği için sayfa içeriği menünün altından geçerken yazılar üst üste biniyordu. Navbar'a kalıcı yarı saydam + blur arka plan ve gölge verildi.

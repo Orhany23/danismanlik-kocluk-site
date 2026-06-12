@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav id="navbar" className="fixed top-0 left-0 right-0 z-50 h-[var(--navbar-h)] flex items-center scrolled:bg-[var(--clr-bg2)] scrolled:shadow-[0_2px_20px_var(--clr-shadow)] transition-all duration-300">
+    <nav id="navbar" className="fixed top-0 left-0 right-0 z-50 h-[var(--navbar-h)] flex items-center bg-[var(--clr-bg2)]/90 backdrop-blur-md shadow-[0_2px_20px_var(--clr-shadow)] transition-all duration-300">
       <div className="container flex items-center justify-between">
         <button onClick={() => scrollTo("hero")} className="nav-logo flex items-center gap-2.5">
           <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-[var(--clr-primary)] to-[var(--clr-accent)] flex items-center justify-center">
