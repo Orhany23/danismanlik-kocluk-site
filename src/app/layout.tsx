@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { LocaleProvider } from "@/components/LocaleProvider";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
-import LegalModals from "@/components/LegalModals";
+import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -60,11 +57,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <LocaleProvider>
-          <Navbar />
+          <SiteHeader />
           <main className="flex-1">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-          <LegalModals />
+          <SiteFooter />
         </LocaleProvider>
       </body>
     </html>

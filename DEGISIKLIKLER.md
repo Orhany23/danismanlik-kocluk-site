@@ -54,3 +54,15 @@ Kullanım: `GET /api/seed?secret=SEED_SECRET_DEGERI`
 
 - Rate limit in-memory çalışır; Vercel'de her serverless instance kendi sayacını tutar. İlk savunma için yeterli, ileride Upstash Redis ile kalıcı hale getirilebilir.
 - Honeypot alanının adı `website` — gerçek kullanıcılar görmez, dolduran istekler sessizce yutulur.
+
+---
+
+# Ek Değişiklikler — 12 Haziran 2026 (2. tur)
+
+## 7. Şifre değiştirme özelliği eklendi
+Admin panelinde şifre değiştirme ekranı yoktu. Eklenenler:
+- `api/auth/change-password` — mevcut şifre doğrulaması + bcrypt ile yeni şifre (min. 8 karakter)
+- Ayarlar sayfasının altına "Şifre Değiştir" kartı (mevcut şifre, yeni şifre, tekrar)
+
+## 8. Site menüsünün admin paneline binmesi düzeltildi
+Site navbar'ı, footer ve WhatsApp butonu root layout'ta her sayfada render ediliyordu; admin panel başlığının üstüne biniyordu. Yeni `SiteChrome.tsx` bileşeni `/admin` altında bunları gizler.

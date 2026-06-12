@@ -131,7 +131,86 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
+      <PasswordChangeCard />
+
       {saving && <div className="text-center text-sm text-gray-400">Kaydediliyor...</div>}
+    </div>
+  );
+}
+
+function PasswordChangeCard() {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [status, setStatus] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const handleChangePassword = async () => {
+    setStatus(null);
+    if (newPassword.length < 8) {
+      setStatus({ type: "err", text: "Yeni şifre en az 8 karakter olmalı." });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setStatus({ type: "err", text: "Yeni şifreler eşleşmiyor." });
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus({ type: "ok", text: "Şifre başarıyla değiştirildi." });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        setStatus({ type: "err", text: data.error || "Şifre değiştirilemedi." });
+      }
+    } catch {
+      setStatus({ type: "err", text: "Bir hata oluştu, tekrar deneyin." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <h3 className="text-base font-semibold text-gray-700 mb-4">Şifre Değiştir</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mevcut Şifre</label>
+          <input type="password" value={currentPassword} autoComplete="current-password"
+            onChange={(e) => setCurrentPassword(e.target.value)} className="form-control" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Yeni Şifre</label>
+          <input type="password" value={newPassword} autoComplete="new-password"
+            onChange={(e) => setNewPassword(e.target.value)} className="form-control" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Yeni Şifre (Tekrar)</label>
+          <input type="password" value={confirmPassword} autoComplete="new-password"
+            onChange={(e) => setConfirmPassword(e.target.value)} className="form-control" />
+        </div>
+      </div>
+      {status && (
+        <div className={`mt-4 px-4 py-3 rounded-xl text-sm border ${
+          status.type === "ok"
+            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+            : "bg-red-50 text-red-700 border-red-100"
+        }`}>
+          {status.text}
+        </div>
+      )}
+      <button onClick={handleChangePassword} disabled={busy || !currentPassword || !newPassword}
+        className="mt-4 px-5 py-2.5 rounded-xl bg-[var(--clr-navy,#1e3a8a)] text-white text-sm font-medium disabled:opacity-50">
+        {busy ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
+      </button>
     </div>
   );
 }
