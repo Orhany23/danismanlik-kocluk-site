@@ -85,3 +85,8 @@ Navbar'da çalışmayan bir `scrolled:` varyantı vardı; arka plan hiç devreye
 - **Bilimsel Kanıtlı Çalışma Teknikleri:** Aktif Hatırlama (retrieval practice) ve Aralıklı Tekrar (spaced repetition) — eğitim bilimlerinde en güçlü kanıta sahip iki teknik, pratik kullanım örnekleriyle.
 - **Verimli Çalışma Düzeni:** Önce hatırlama → odaklı bloklar (Pomodoro) → ders karıştırma (interleaving) → anlatarak öğrenme (Feynman), artı uykunun öğrenmedeki rolü.
 Yeni kartlar için iki ikon eklendi.
+
+## 12. OG görseli, favicon ve uygulama ikonları
+- `opengraph-image.png` / `twitter-image.png`: Site WhatsApp, Instagram, X vb. yerlerde paylaşıldığında artık markalı bir kart görseli çıkar (lacivert zemin, logo, başlık, konum rozetleri).
+- `icon.png`, `apple-icon.png`, `favicon.ico`: Varsayılan Next.js faviconu yerine marka renkleriyle logo ikonu.
+- `public/` içindeki kullanılmayan Next.js varsayılan SVG'leri silindi.
