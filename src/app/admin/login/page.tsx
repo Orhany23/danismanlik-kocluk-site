@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -78,9 +79,9 @@ export default function AdminLoginPage() {
           </button>
         </form>
         <div className="mt-6 text-center">
-          <a href="/" className="text-white/40 hover:text-white/60 text-sm transition-colors">
+          <Link href="/" className="text-white/40 hover:text-white/60 text-sm transition-colors">
             ← Ana sayfaya dön
-          </a>
+          </Link>
         </div>
       </div>
     </div>

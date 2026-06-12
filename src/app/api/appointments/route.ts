@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       },
     });
     return NextResponse.json(appointment, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to create appointment" }, { status: 500 });
   }
 }

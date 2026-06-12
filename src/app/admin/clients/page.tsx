@@ -11,6 +11,12 @@ type Client = {
   createdAt: string;
 };
 
+async function fetchClients(): Promise<Client[]> {
+  const res = await fetch("/api/clients");
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}
+
 export default function AdminClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,16 +24,12 @@ export default function AdminClientsPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", notes: "" });
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const fetchClients = async () => {
-    try {
-      const res = await fetch("/api/clients");
-      if (res.ok) setClients(await res.json());
-    } catch {} finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchClients(); }, []);
+  useEffect(() => {
+    fetchClients()
+      .then(setClients)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

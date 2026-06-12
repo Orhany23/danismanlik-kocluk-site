@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 
 export default function Navbar() {
-  const { dict, locale, toggleLocale } = useLocale();
+  const { dict, toggleLocale } = useLocale();
   const t = dict.nav;
   const [menuOpen, setMenuOpen] = useState(false);
 

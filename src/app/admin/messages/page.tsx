@@ -12,21 +12,23 @@ type Message = {
   createdAt: string;
 };
 
+async function fetchMessages(): Promise<Message[]> {
+  const res = await fetch("/api/messages");
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}
+
 export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Message | null>(null);
 
-  const fetchMessages = async () => {
-    try {
-      const res = await fetch("/api/messages");
-      if (res.ok) setMessages(await res.json());
-    } catch {} finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchMessages(); }, []);
+  useEffect(() => {
+    fetchMessages()
+      .then(setMessages)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const markAsRead = async (id: string) => {
     await fetch("/api/messages", {
