@@ -69,3 +69,13 @@ Site navbar'ı, footer ve WhatsApp butonu root layout'ta her sayfada render edil
 
 ## 9. Navbar şeffaflık sorunu düzeltildi
 Navbar'da çalışmayan bir `scrolled:` varyantı vardı; arka plan hiç devreye girmediği için sayfa içeriği menünün altından geçerken yazılar üst üste biniyordu. Navbar'a kalıcı yarı saydam + blur arka plan ve gölge verildi.
+
+## 10. Görsel iyileştirmeler (çeki düzen turu)
+- **Hero arka planı:** Hero'nun kendi arka planı yoktu; yarı saydam karartma açık mavi sayfa zemini üzerine bindiği için soluk görünüyordu. Artık koyu lacivert degrade zemin var — beyaz yazılar net, partikül animasyonu belirgin.
+- **Renk uyumu:** Başlıktaki turuncu vurgu, mavi paletle çakışıyordu → gök mavisi degradeye çevrildi.
+- **Butonlar:** Abartılı gölge ve büyüme efekti sadeleştirildi.
+- **Kartlar:** Dinlenme halinde hafif gölge eklendi (derinlik hissi).
+- **Bölüm aralıkları:** Masaüstünde 96px, mobilde 64px; menüden tıklayınca bölüm başlığı artık sabit menünün altında kalmıyor (scroll-margin düzeltmesi).
+- **Tipografi:** Büyük başlıklarda harf aralığı sıkılaştırıldı, daha derli toplu görünüm.
+- **Mobil menü eklendi:** Telefonda menü linkleri tamamen kayboluyordu — hamburger menü ve açılır panel eklendi.
+- **Erişilebilirlik:** "Hareketi azalt" tercihi olan kullanıcılar için animasyonlar kapatılıyor.

@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 
 export default function Navbar() {
   const { dict, locale, toggleLocale } = useLocale();
   const t = dict.nav;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollTo = (id: string) => {
+    setMenuOpen(false);
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
@@ -46,11 +49,35 @@ export default function Navbar() {
           >
             {t.lang}
           </button>
-          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem]">
+          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] hidden sm:inline-flex">
             {t.appointment}
+          </button>
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={menuOpen}
+            className="lg:hidden p-2 rounded-lg text-[var(--clr-text)] hover:bg-[rgba(26,86,219,0.08)]"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {menuOpen
+                ? <path d="M6 6l12 12M18 6L6 18" />
+                : <path d="M4 7h16M4 12h16M4 17h16" />}
+            </svg>
           </button>
         </div>
       </div>
+      {menuOpen && (
+        <div className="mobile-menu-panel lg:hidden">
+          {(["about","services","process","whoFor","exams","faq","contact"] as const).map((key) => (
+            <button key={key} onClick={() => scrollTo(key)} className="mobile-menu-link">
+              {t[key]}
+            </button>
+          ))}
+          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-3 mt-2 justify-center">
+            {t.appointment}
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
