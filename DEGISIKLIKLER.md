@@ -79,3 +79,9 @@ Navbar'da çalışmayan bir `scrolled:` varyantı vardı; arka plan hiç devreye
 - **Tipografi:** Büyük başlıklarda harf aralığı sıkılaştırıldı, daha derli toplu görünüm.
 - **Mobil menü eklendi:** Telefonda menü linkleri tamamen kayboluyordu — hamburger menü ve açılır panel eklendi.
 - **Erişilebilirlik:** "Hareketi azalt" tercihi olan kullanıcılar için animasyonlar kapatılıyor.
+
+## 11. Sınavlar bölümüne bilimsel çalışma teknikleri kartları eklendi
+İki yeni kart (TR + EN):
+- **Bilimsel Kanıtlı Çalışma Teknikleri:** Aktif Hatırlama (retrieval practice) ve Aralıklı Tekrar (spaced repetition) — eğitim bilimlerinde en güçlü kanıta sahip iki teknik, pratik kullanım örnekleriyle.
+- **Verimli Çalışma Düzeni:** Önce hatırlama → odaklı bloklar (Pomodoro) → ders karıştırma (interleaving) → anlatarak öğrenme (Feynman), artı uykunun öğrenmedeki rolü.
+Yeni kartlar için iki ikon eklendi.

@@ -283,6 +283,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
           title: "ALES / DGS 2026",
           content: `<p><strong>ALES/1:</strong> 5 Nisan 2026</p><p><strong>ALES/2:</strong> 6 Eylül 2026</p><p><strong>ALES/3:</strong> 15 Kasım 2026</p><p><strong>DGS:</strong> 28 Haziran 2026</p><p style="margin-top:8px;">ALES lisansüstü başvuruları, DGS ise ön lisanstan lisansa geçiş için gereklidir.</p>`,
         },
+        {
+          title: "Bilimsel Kanıtlı Çalışma Teknikleri",
+          content: `<p>Eğitim bilimlerinde yüzlerce araştırmayla etkisi kanıtlanmış iki teknik:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>Aktif Hatırlama (Retrieval Practice):</strong> Konuyu tekrar tekrar okumak yerine kitabı kapatıp kendinize sorular sorun, hatırlamaya çalışın. Test çözmek de bu yüzden en güçlü öğrenme araçlarından biridir — sadece ölçmez, öğretir.</li><li><strong>Aralıklı Tekrar (Spaced Repetition):</strong> Bir konuyu tek seferde 3 saat çalışmak yerine 1+1+1 saat olarak günlere yayın. Unutmaya başladığınız anda yapılan tekrar, bilgiyi kalıcı hafızaya taşır.</li></ul><p style="margin-top:8px;">Bu ikisini birleştirin: konuyu çalışın → ertesi gün test çözün → 3 gün sonra tekrar test → 1 hafta sonra son tekrar.</p>`,
+        },
+        {
+          title: "Verimli Çalışma Düzeni Nasıl Kurulur?",
+          content: `<p>Araştırmaların önerdiği çalışma sırası:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>1. Önce hatırla:</strong> Yeni konuya başlamadan önce dünkü konuyu 5 dakika defter kapalı hatırlamaya çalışın.</li><li><strong>2. Odaklı bloklar:</strong> 25-40 dakika kesintisiz çalışma + 5-10 dakika mola (Pomodoro). Telefon başka odada — görüş alanında olması bile dikkati böler.</li><li><strong>3. Karıştırarak çalışın (Interleaving):</strong> 3 saat boyunca tek ders yerine matematik → fen → matematik gibi dönüşümlü çalışmak, sınavda soru tipini tanıma becerisini güçlendirir.</li><li><strong>4. Anlat ve öğren (Feynman Tekniği):</strong> Konuyu bir arkadaşınıza ya da kendinize basit cümlelerle anlatın. Anlatamadığınız yer, tam olarak çalışmanız gereken yerdir.</li></ul><p style="margin-top:8px;"><strong>Unutmayın:</strong> 7-9 saat uyku öğrenmenin parçasıdır — beyin, bilgiyi uykuda kalıcı hale getirir. Sınav öncesi gece sabahlamak net kaybettirir.</p>`,
+        },
       ],
     },
     faq: {
@@ -541,6 +549,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
         {
           title: "ALES / DGS 2026",
           content: `<p><strong>ALES/1:</strong> April 5, 2026</p><p><strong>ALES/2:</strong> September 6, 2026</p><p><strong>ALES/3:</strong> November 15, 2026</p><p><strong>DGS:</strong> June 28, 2026</p>`,
+        },
+        {
+          title: "Evidence-Based Study Techniques",
+          content: `<p>Two techniques proven by hundreds of studies in learning science:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>Active Recall (Retrieval Practice):</strong> Instead of re-reading, close the book and quiz yourself. Practice tests don't just measure learning — they create it.</li><li><strong>Spaced Repetition:</strong> Spread 3 hours of study across several days instead of one sitting. Reviewing just as you start to forget moves knowledge into long-term memory.</li></ul><p style="margin-top:8px;">Combine them: study → quiz yourself next day → again after 3 days → final review after a week.</p>`,
+        },
+        {
+          title: "How to Structure an Effective Study Session",
+          content: `<p>The order research recommends:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>1. Recall first:</strong> Before new material, spend 5 minutes recalling yesterday's topic with the notebook closed.</li><li><strong>2. Focused blocks:</strong> 25-40 minutes of uninterrupted work + a 5-10 minute break (Pomodoro). Phone in another room — even seeing it splits attention.</li><li><strong>3. Interleave subjects:</strong> Alternating math → science → math beats 3 hours of a single subject and builds problem-type recognition.</li><li><strong>4. Teach it (Feynman Technique):</strong> Explain the topic in simple words. Wherever you get stuck is exactly what to study next.</li></ul><p style="margin-top:8px;"><strong>Remember:</strong> 7-9 hours of sleep is part of learning — the brain consolidates knowledge during sleep. All-nighters before exams cost points.</p>`,
         },
       ],
     },
