@@ -415,10 +415,39 @@ export const dictionaries: Record<Locale, Dictionary> = {
     legal: {
       privacyTitle: "Gizlilik Politikası",
       privacyContent:
-        "Bu gizlilik politikası, Orhan Yaşlı Koçluk ve Danışmanlık olarak kişisel verilerinizin işlenmesi ve korunmasına ilişkin esasları belirlemektedir. Kişisel verileriniz, iletişim formu aracılığıyla tarafımıza iletilen ad, soyad, e-posta adresi, telefon numarası ve mesaj içeriğinden oluşmaktadır. Bu veriler yalnızca size hizmet verebilmek, randevu oluşturmak ve danışmanlık sürecini yürütebilmek amacıyla işlenmektedir. Verileriniz üçüncü kişilerle paylaşılmamakta, yalnızca yasal yükümlülükler gerektiğinde yetkili mercilere aktarılabilmektedir. Verileriniz, hizmet ilişkimiz devam ettiği sürece ve yasal saklama süreleri boyunca muhafaza edilmektedir. KVKK kapsamında verilerinize erişme, düzeltme, silme ve işleme amaçlarına ilişkin bilgi talep etme hakkına sahipsiniz. Talepleriniz için Pskdanorhanyasli@proton.me adresinden bize ulaşabilirsiniz.",
+        `<p><em>Son güncelleme: 13 Haziran 2026</em></p>
+<h4>1. Veri Sorumlusu</h4>
+<p>Bu web sitesi (psdorhanyasli.com.tr) kapsamında kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu sıfatıyla Orhan Yaşlı tarafından işlenmektedir.</p>
+<h4>2. İşlenen Veriler ve Amaçları</h4>
+<p><strong>İletişim formu:</strong> Ad-soyad, e-posta, telefon ve mesaj içeriği; talebinize dönüş yapmak, randevu oluşturmak ve danışmanlık sürecini yürütmek amacıyla işlenir.</p>
+<p><strong>Teknik veriler:</strong> Site altyapısının çalışması için zorunlu teknik kayıtlar (ör. sunucu günlükleri) tutulabilir.</p>
+<h4>3. Aktarım</h4>
+<p>Verileriniz pazarlama amacıyla üçüncü kişilerle paylaşılmaz. Form bildirimleri, hizmet sağlayıcı altyapılar (barındırma ve mesaj iletim servisleri) üzerinden tarafımıza ulaşır; yasal yükümlülük hâlinde yetkili mercilere aktarım yapılabilir.</p>
+<h4>4. Saklama Süresi</h4>
+<p>Veriler, işleme amacının gerektirdiği süre ve ilgili mevzuattaki zamanaşımı/saklama süreleri boyunca muhafaza edilir; sonrasında silinir veya anonim hâle getirilir.</p>
+<h4>5. Danışmanlık Gizliliği</h4>
+<p>Danışmanlık görüşmelerinde paylaşılan bilgiler mesleki gizlilik ilkeleri çerçevesinde korunur. Kendisine veya başkasına zarar verme riski ile yasal bildirim yükümlülüğü doğuran hâller bu gizliliğin istisnasıdır.</p>
+<h4>6. Haklarınız (KVKK m.11)</h4>
+<p>Verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini veya silinmesini isteme, işlemeye itiraz etme haklarına sahipsiniz. Başvurularınız için: <strong>Pskdanorhanyasli@proton.me</strong></p>
+<h4>7. Reşit Olmayanlar</h4>
+<p>18 yaş altı ziyaretçilerin iletişim formu üzerinden veri paylaşımının veli/vasi bilgisi dâhilinde yapılması beklenir. Hizmet süreçlerinde reşit olmayan danışanlar için veli onayı alınır.</p>`,
       termsTitle: "Kullanım Koşulları",
       termsContent:
-        "Bu web sitesini kullanarak aşağıdaki kullanım koşullarını kabul etmiş sayılırsınız. Bu sitede yer alan tüm içerik bilgilendirme amaçlıdır ve kesin bir taahhüt niteliği taşımaz. Hizmetlerimizle ilgili en güncel bilgi için doğrudan iletişime geçilmesi önerilir. Web sitesi içeriğinde yer alan bilgilerin doğruluğu konusunda azami özen gösterilmekle birlikte, herhangi bir hata veya eksiklikten sorumlu tutulamaz. Sitede yer alan bağlantılar yalnızca kullanıcı kolaylığı için sağlanmıştır; bağlantı verilen sitelerin içeriğinden sorumlu değiliz. Hizmet bedelleri ve paket içerikleri önceden haber verilmeksizin değiştirilebilir.",
+        `<p><em>Son güncelleme: 13 Haziran 2026</em></p>
+<h4>1. Kapsam</h4>
+<p>Bu siteyi (psdorhanyasli.com.tr) kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız. Koşullar gerektiğinde güncellenebilir; güncel sürüm bu sayfada yayımlanır.</p>
+<h4>2. Bilgilendirme Amacı — Acil Durumlar</h4>
+<p>Sitedeki içerikler genel bilgilendirme amaçlıdır; tıbbi tanı, tedavi veya acil müdahale yerine geçmez. <strong>Kendinize veya bir başkasına zarar verme düşünceniz varsa lütfen 112'yi arayın veya en yakın acil servise başvurun.</strong></p>
+<h4>3. Hizmet İlişkisi</h4>
+<p>Siteyi ziyaret etmek veya iletişim formunu doldurmak, tek başına bir danışmanlık ilişkisi kurmaz. Hizmet ilişkisi, karşılıklı onaylanan randevu ve ön görüşme ile başlar.</p>
+<h4>4. Randevu ve İptal</h4>
+<p>Randevu değişikliği ve iptallerinin makul süre öncesinde bildirilmesi rica edilir. Güncel ücret, paket ve iptal koşulları için doğrudan iletişime geçiniz; bu bilgiler önceden duyurulmaksızın güncellenebilir.</p>
+<h4>5. Fikri Mülkiyet</h4>
+<p>Sitedeki metin, görsel ve tasarımlar izinsiz kopyalanamaz ve ticari amaçla kullanılamaz; kaynak gösterilerek kişisel kullanım için alıntı yapılabilir.</p>
+<h4>6. Dış Bağlantılar ve Sorumluluk</h4>
+<p>Site içinde yer verilen dış bağlantılar kullanıcı kolaylığı içindir; bağlantı verilen sitelerin içeriğinden sorumluluk kabul edilmez. İçeriğin doğruluğu için azami özen gösterilir; ancak olası hata ve eksikliklerden doğan dolaylı zararlardan sorumluluk kabul edilmez.</p>
+<h4>7. İletişim</h4>
+<p>Koşullarla ilgili sorularınız için: <strong>Pskdanorhanyasli@proton.me</strong></p>`,
       cookieTitle: "Çerez Politikası",
       cookieContent:
         "Bu web sitesi, kullanıcı deneyimini iyileştirmek ve site trafiğini analiz etmek amacıyla çerezler kullanmaktadır. Çerezler, tarayıcınız tarafından cihazınızda depolanan küçük metin dosyalarıdır. Site yalnızca zorunlu teknik çerezler ve analitik çerezler kullanmaktadır. Kişisel veri toplayan reklam veya izleme çerezleri kullanılmamaktadır. Tarayıcı ayarlarınızdan çerezleri devre dışı bırakabilir veya silebilirsiniz; ancak bu durumda site işlevselliğinde kısmi azalma olabilir.",
