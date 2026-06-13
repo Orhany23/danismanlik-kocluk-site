@@ -59,6 +59,13 @@ export default function Navbar() {
           >
             Öğrenci Girişi
           </a>
+          <a
+            href="/ogrenci/kayit"
+            className="text-[0.82rem] font-semibold px-3 py-1.5 hidden sm:inline-flex items-center border transition-colors hover:text-[var(--clr-accent)]"
+            style={{ color: "var(--clr-text)", borderColor: "var(--clr-text)" }}
+          >
+            Kayıt Ol
+          </a>
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] hidden sm:inline-flex">
             {t.appointment}
           </button>
@@ -84,6 +91,7 @@ export default function Navbar() {
             </button>
           ))}
           <a href="/ogrenci/giris" className="mobile-menu-link">Öğrenci Girişi</a>
+          <a href="/ogrenci/kayit" className="mobile-menu-link">Kayıt Ol</a>
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-3 mt-2 justify-center">
             {t.appointment}
           </button>

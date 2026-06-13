@@ -71,6 +71,9 @@ export default function Footer() {
             <button onClick={() => document.getElementById("modal-terms")?.classList.add("show")} className="hover:underline">
               {t.terms}
             </button>
+            <a href="/admin/login" className="hover:underline opacity-60">
+              Yönetici
+            </a>
           </div>
         </div>
       </div>

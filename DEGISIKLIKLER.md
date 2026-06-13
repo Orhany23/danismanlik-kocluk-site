@@ -141,3 +141,7 @@ El yapımı basit SVG'ler ve emoji ikonlar (🎯📚) yerine profesyonel Lucide 
 
 ## Sonraki aşama (henüz yapılmadı)
 Kaynak kütüphanesi: admin panelinden içerik/link/dosya ekleme, görünürlük (herkese açık / üyelere / belirli öğrenciye), öğrenci panelinde listeleme. Dosya yükleme için Vercel Blob kurulumu gerekecek.
+
+## Öğrenci Portalı — küçük eklemeler
+- Navbar'a (masaüstü + mobil) "Kayıt Ol" butonu eklendi, "Öğrenci Girişi" linkinin yanına.
+- Footer'a düşük vurgulu "Yönetici" linki eklendi (/admin/login) — ziyaretçinin gözüne batmadan yöneticinin panele erişimi için.
