@@ -809,3 +809,106 @@ footer { background: var(--clr-navy); color: rgba(255,255,255,0.8); padding: 60p
 .exam-content strong { color: var(--clr-text); font-weight: 600; }
 .section-sub { max-width: 62ch; }
 .domain-card-desc, .service-desc { max-width: 58ch; }
+
+/* ===== STUDENT AUTH PAGES ===== */
+.auth-wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--clr-bg); padding: 40px 20px;
+}
+.auth-card {
+  width: 100%; max-width: 440px;
+  background: var(--clr-bg2);
+  border: 1px solid var(--clr-border);
+  padding: 40px 34px;
+}
+.auth-mark {
+  width: 60px; height: 60px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--clr-border); background: var(--clr-bg);
+  margin-bottom: 22px;
+}
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--clr-text); margin-bottom: 6px;
+}
+.auth-sub { color: var(--clr-text2); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.6; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-label {
+  display: flex; flex-direction: column; gap: 7px;
+  font-size: 0.85rem; font-weight: 600; color: var(--clr-text);
+}
+.auth-hint { font-weight: 400; color: var(--clr-text3); font-size: 0.78rem; }
+.auth-input {
+  font-family: inherit; font-size: 0.95rem; font-weight: 400;
+  padding: 11px 14px;
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  width: 100%;
+  transition: border-color 0.2s var(--transition);
+}
+.auth-input:focus { outline: none; border-color: var(--clr-accent); }
+.auth-consent {
+  display: flex; gap: 11px; align-items: flex-start;
+  font-size: 0.82rem; color: var(--clr-text2); line-height: 1.55;
+  margin-top: 4px;
+}
+.auth-consent input { margin-top: 3px; flex: none; width: 16px; height: 16px; accent-color: var(--clr-accent); }
+.auth-link { color: var(--clr-accent); text-decoration: underline; }
+.auth-error {
+  background: #FEF2F2; color: #B91C1C;
+  border: 1px solid #FECACA;
+  padding: 10px 14px; font-size: 0.85rem;
+}
+.auth-btn {
+  margin-top: 6px;
+  background: var(--clr-ink); color: #fff;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  padding: 13px; border: none; cursor: pointer;
+  transition: background 0.2s var(--transition);
+}
+.auth-btn:hover { background: var(--clr-accent); }
+.auth-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.auth-foot { margin-top: 24px; text-align: center; font-size: 0.88rem; color: var(--clr-text2); }
+
+/* ===== STUDENT DASHBOARD ===== */
+.student-shell { min-height: 100vh; background: var(--clr-bg); }
+.student-top { background: var(--clr-bg2); border-bottom: 1px solid var(--clr-border); }
+.student-top-inner {
+  max-width: 1000px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.student-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.01em;
+  color: var(--clr-text);
+}
+.student-logout {
+  font-size: 0.85rem; font-weight: 600; color: var(--clr-text2);
+  background: none; border: 1px solid var(--clr-border); padding: 8px 16px;
+  cursor: pointer; transition: all 0.2s var(--transition);
+}
+.student-logout:hover { border-color: var(--clr-accent); color: var(--clr-accent); }
+.student-main { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+.student-hello {
+  font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 800; letter-spacing: -0.02em; color: var(--clr-text); margin-bottom: 10px;
+}
+.student-lead { color: var(--clr-text2); font-size: 1.02rem; line-height: 1.6; margin-bottom: 40px; max-width: 60ch; }
+.student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+@media (max-width: 640px) { .student-grid { grid-template-columns: 1fr; } }
+.student-card {
+  background: var(--clr-bg2); border: 1px solid var(--clr-border); padding: 26px 24px;
+}
+.student-card h3 {
+  font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
+  color: var(--clr-text); margin: 12px 0 8px;
+}
+.student-card p { color: var(--clr-text2); font-size: 0.92rem; line-height: 1.65; }
+.student-card-tag {
+  font-family: var(--font-mono-label); font-size: 0.62rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--clr-accent);
+  border: 1px solid currentColor; padding: 3px 8px;
+}

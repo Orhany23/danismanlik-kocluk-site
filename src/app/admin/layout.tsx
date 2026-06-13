@@ -10,6 +10,7 @@ const sidebarLinks = [
   { href: "/admin/clients", label: "Danışanlar", icon: "👥" },
   { href: "/admin/sessions", label: "Seanslar", icon: "📋" },
   { href: "/admin/messages", label: "Mesajlar", icon: "✉" },
+  { href: "/admin/students", label: "Öğrenciler", icon: "🎓" },
   { href: "/admin/settings", label: "Ayarlar", icon: "⚙" },
 ];
 

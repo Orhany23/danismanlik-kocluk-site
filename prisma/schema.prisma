@@ -79,6 +79,19 @@ model Setting {
   value String
 }
 
+model Student {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  password        String
+  gradeLevel      String?  // örn. "LGS", "YKS-Sayısal", "Mezun"
+  guardianConsent Boolean  @default(false)
+  consentAt       DateTime?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String

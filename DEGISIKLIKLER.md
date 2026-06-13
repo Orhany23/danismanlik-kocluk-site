@@ -124,3 +124,20 @@ El yapımı basit SVG'ler ve emoji ikonlar (🎯📚) yerine profesyonel Lucide 
 - **Progressive disclosure:** 7 sınav/teknik kartı artık kapalı başlıklar halinde listeleniyor; tıklayınca açılıyor. Sayfa yükü görsel olarak hafifledi, kullanıcı sadece ilgilendiğini açıyor (NN/g F-deseni tarama davranışına uygun).
 - **Satır uzunluğu:** Açılan içerikler 70 karakter genişlikle sınırlandı (optimal okuma aralığı 50-75 karakter), kart açıklamaları da benzer şekilde sınırlandı.
 - **Vurgu hiyerarşisi:** Başlıklar koyu mürekkep, gövde yumuşak gri, hover/açık durumda safran tonlu zemin — dikkat tek noktaya yönlendiriliyor.
+
+---
+
+# Öğrenci Portalı — Aşama 1 (student-portal branch) — 12 Haziran 2026
+
+## Kayıt / Giriş altyapısı
+- **Veritabanı:** Yeni `Student` modeli (ad, e-posta, hash'li şifre, sınıf/hedef, veli onayı + onay tarihi, aktiflik). Admin (`User`) verisinden tamamen ayrı tutuldu.
+- **Auth:** NextAuth'a ikinci bir kimlik akışı ("student" provider) eklendi; admin ve öğrenci girişleri birbirinden bağımsız.
+- **Sayfalar:** `/ogrenci/kayit` (kayıt), `/ogrenci/giris` (giriş), `/ogrenci` (giriş yapınca açılan panel — kaynaklar için "çok yakında" yer tutucu). Panel role=STUDENT değilse girişe yönlendirir.
+- **Güvenlik:** Şifre bcrypt ile hash'lenir, kayıtta rate limit + honeypot + e-posta/şifre doğrulaması, min. 8 karakter şifre.
+- **KVKK:** Kayıt formunda zorunlu onay kutusu (veli bilgisi + gizlilik/koşullar linkleri). Not: metinlerin hukuki yeterliliği site sahibinin sorumluluğunda.
+- **Admin tarafı:** Sol menüye "Öğrenciler" eklendi; kayıtlı öğrencileri listeleyen sayfa (ad, e-posta, hedef, kayıt tarihi). Yalnızca ADMIN erişebilir.
+- **Navbar:** "Öğrenci Girişi" linki (masaüstü + mobil menü).
+- **Deploy:** build komutuna `prisma db push` eklendi — Student tablosu ilk deploy'da canlı veritabanında otomatik oluşur.
+
+## Sonraki aşama (henüz yapılmadı)
+Kaynak kütüphanesi: admin panelinden içerik/link/dosya ekleme, görünürlük (herkese açık / üyelere / belirli öğrenciye), öğrenci panelinde listeleme. Dosya yükleme için Vercel Blob kurulumu gerekecek.

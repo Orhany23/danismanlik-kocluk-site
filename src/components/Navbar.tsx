@@ -52,6 +52,13 @@ export default function Navbar() {
           >
             {t.lang}
           </button>
+          <a
+            href="/ogrenci/giris"
+            className="text-[0.82rem] font-semibold px-2.5 py-1 hidden sm:inline-flex items-center hover:text-[var(--clr-accent)] transition-colors"
+            style={{ color: "var(--clr-text)" }}
+          >
+            Öğrenci Girişi
+          </a>
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] hidden sm:inline-flex">
             {t.appointment}
           </button>
@@ -76,6 +83,7 @@ export default function Navbar() {
               {t[key]}
             </button>
           ))}
+          <a href="/ogrenci/giris" className="mobile-menu-link">Öğrenci Girişi</a>
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-3 mt-2 justify-center">
             {t.appointment}
           </button>
