@@ -13,6 +13,11 @@ export default function Navbar() {
   const scrollTo = (key: string) => {
     const id = sectionIds[key] ?? key;
     setMenuOpen(false);
+    // Alt sayfadaysak (ör. /ogrenci) ana sayfadaki bölüme yönlendir
+    if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      window.location.href = `/#${id}`;
+      return;
+    }
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
