@@ -142,7 +142,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Çanakkale ve Türkiye geneli online koçluk ve danışmanlık",
-      title: "Sınava hazırlanan zihin,<br><em>iyi hisseden zihindir.</em>",
+      title: "Zihninizi değiştirdiğinizde, dünyanız değişir.<br><em>– Norman Vincent Peale</em>",
       subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
       cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
       scroll: "Keşfet",
@@ -471,7 +471,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Online coaching & counseling across Turkey",
-      title: "A mind preparing for exams<br>is a mind that <em>feels well.</em>",
+      title: "Change your thoughts and you change your world.<br><em>– Norman Vincent Peale</em>",
       subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
       cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
       scroll: "Explore",
