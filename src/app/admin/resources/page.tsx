@@ -44,6 +44,7 @@ export default function AdminResourcesPage() {
   const [form, setForm] = useState({ ...empty });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -61,6 +62,7 @@ export default function AdminResourcesPage() {
 
   const submit = async () => {
     setError("");
+    setSuccess("");
     setSaving(true);
     try {
       const res = await fetch("/api/admin/resources", {
@@ -72,8 +74,10 @@ export default function AdminResourcesPage() {
       if (!res.ok) {
         setError(json.error || "Bir hata oluştu.");
       } else {
+        setSuccess("Kaynak başarıyla eklendi!");
         setForm({ ...empty });
         await load();
+        setTimeout(() => setSuccess(""), 3000);
       }
     } finally {
       setSaving(false);
@@ -168,10 +172,12 @@ export default function AdminResourcesPage() {
           </label>
         </div>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
+        {success && <p className="mt-3 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">✓ {success}</p>}
 
         <button onClick={submit} disabled={saving}
-          className="mt-5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[var(--clr-primary)] hover:opacity-90 disabled:opacity-50">
+          style={{ backgroundColor: "#B26644" }}
+          className="mt-5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
           {saving ? "Ekleniyor..." : "Kaynağı ekle"}
         </button>
       </div>

@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
+  const valuesRef = useRef<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"ok" | "err">("ok");
 
   useEffect(() => {
     fetch("/api/settings")
       .then((r) => r.json())
       .then((data) => {
         setSettings(data);
+        valuesRef.current = { ...data };
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -28,39 +31,54 @@ export default function AdminSettingsPage() {
       });
       if (res.ok) {
         setSettings((prev) => ({ ...prev, [key]: value }));
+        valuesRef.current[key] = value;
+        setMessageType("ok");
         setMessage("Kaydedildi!");
       } else {
+        setMessageType("err");
         setMessage("HATA: Kaydedilemedi, tekrar deneyin.");
       }
     } catch {
+      setMessageType("err");
       setMessage("HATA: Bağlantı sorunu, kaydedilemedi.");
     } finally {
       setSaving(false);
-      setTimeout(() => setMessage(""), 3000);
+      setTimeout(() => setMessage(""), 4000);
     }
   };
 
   const handleSaveAll = async () => {
     setSaving(true);
     let failed = 0;
-    for (const [key, value] of Object.entries(settings)) {
+    for (const [key, value] of Object.entries(valuesRef.current)) {
       try {
         const res = await fetch("/api/settings", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ key, value }),
         });
-        if (!res.ok) failed++;
+        if (res.ok) {
+          setSettings((prev) => ({ ...prev, [key]: value }));
+        } else {
+          failed++;
+        }
       } catch {
         failed++;
       }
     }
     setSaving(false);
-    setMessage(failed === 0 ? "Tüm değişiklikler kaydedildi!" : `HATA: ${failed} alan kaydedilemedi, tekrar deneyin.`);
-    setTimeout(() => setMessage(""), 4000);
+    if (failed === 0) {
+      setMessageType("ok");
+      setMessage("Tüm değişiklikler kaydedildi!");
+    } else {
+      setMessageType("err");
+      setMessage(`HATA: ${failed} alan kaydedilemedi, tekrar deneyin.`);
+    }
+    setTimeout(() => setMessage(""), 5000);
   };
 
   const updateField = (key: string, value: string) => {
+    valuesRef.current[key] = value;
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -74,12 +92,12 @@ export default function AdminSettingsPage() {
       </div>
 
       {message && (
-        <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm border ${
-          message.startsWith("HATA")
+        <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border ${
+          messageType === "err"
             ? "bg-red-50 text-red-700 border-red-100"
             : "bg-emerald-50 text-emerald-700 border-emerald-100"
         }`}>
-          <span>{message.startsWith("HATA") ? "!" : "✓"}</span> {message}
+          <span className="text-lg">{messageType === "err" ? "✕" : "✓"}</span> {message}
         </div>
       )}
 
