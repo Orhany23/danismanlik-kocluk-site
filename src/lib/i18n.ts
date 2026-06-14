@@ -167,7 +167,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Hizmetler",
-      title: "İki alan,<br>tek amaç: <em>iyi olmak.</em>",
+      title: "Geleceği tahmin etmenin en iyi yolu,<br>onu kendi ellerinle <em>yaratmaktır.</em>",
       subtitle: "Akademik destek ve psikolojik danışmanlık birbirinden ayrı yürütülen ama birbirini besleyen iki alandır. Hangi kapıdan girerseniz girin, bütüncül bir yaklaşımla karşılanırsınız.",
       groups: [
         {
@@ -496,7 +496,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Services",
-      title: "Two domains,<br>one goal: <em>wellbeing.</em>",
+      title: "The best way to predict the future,<br>is to <em>create it.</em>",
       subtitle: "Academic support and psychological counseling are two distinct but mutually reinforcing domains. Whichever door you enter through, you are met with a holistic approach.",
       groups: [
         {
