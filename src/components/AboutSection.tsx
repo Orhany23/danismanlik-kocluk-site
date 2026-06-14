@@ -28,6 +28,15 @@ export default function AboutSection() {
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
               />
             </div>
+            <div className="about-portrait-tag">
+              <span className="about-portrait-tag-mark">
+                <GraduationCap size={19} strokeWidth={1.8} />
+              </span>
+              <span>
+                <strong>Orhan Yaşlı</strong>
+                <span>RPD Mezunu · Rehber Öğretmen</span>
+              </span>
+            </div>
           </div>
 
           <div className="about-content">

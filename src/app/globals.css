@@ -564,3 +564,50 @@ footer { background: var(--clr-ink); color: rgba(242,234,220,0.78); padding: 70p
   .hero-copy > *, .hero-portrait { animation: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* ===== PORTRAIT FRAME — tasarlanmış "fotoğrafsız" hali ===== */
+.hero-portrait-frame,
+.about-portrait-frame {
+  background:
+    repeating-radial-gradient(circle at 50% 118%, rgba(178,102,68,0.055) 0 1.5px, transparent 1.5px 30px),
+    radial-gradient(100% 72% at 50% 122%, rgba(201,128,94,0.34) 0%, transparent 62%),
+    radial-gradient(72% 56% at 50% 26%, rgba(110,125,94,0.20) 0%, transparent 66%),
+    linear-gradient(168deg, var(--clr-sage-tint) 0%, #ECE7D5 50%, var(--clr-accent-tint) 100%);
+}
+.hero-portrait-frame::before,
+.about-portrait-frame::before {
+  content: "OY";
+  position: absolute; inset: 0; z-index: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding-bottom: 6%;
+  font-family: var(--font-display); font-style: italic; font-weight: 500;
+  font-size: clamp(3.6rem, 8vw, 6rem); letter-spacing: 0.01em;
+  color: var(--clr-primary); opacity: 0.95;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+}
+.hero-portrait-frame img,
+.about-portrait-frame img { position: relative; z-index: 1; font-size: 0; color: transparent; }
+.hero-portrait-frame::after { z-index: 2; }
+.dark .hero-portrait-frame,
+.dark .about-portrait-frame {
+  background:
+    repeating-radial-gradient(circle at 50% 118%, rgba(201,128,94,0.06) 0 1.5px, transparent 1.5px 30px),
+    radial-gradient(100% 72% at 50% 122%, rgba(201,128,94,0.22) 0%, transparent 62%),
+    radial-gradient(72% 56% at 50% 26%, rgba(110,125,94,0.16) 0%, transparent 66%),
+    linear-gradient(168deg, #2A3022 0%, #2D261A 55%, #3A2A1D 100%);
+}
+.about-portrait-tag {
+  position: absolute; right: -16px; bottom: 26px; z-index: 3;
+  background: var(--clr-card); border: 1px solid var(--clr-border); border-radius: 14px;
+  box-shadow: 0 16px 40px -16px var(--clr-shadow-lg);
+  padding: 12px 16px; display: flex; align-items: center; gap: 11px; max-width: 230px;
+}
+.about-portrait-tag-mark {
+  width: 36px; height: 36px; border-radius: 10px; flex: none;
+  background: var(--clr-accent-tint); color: var(--clr-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.about-portrait-tag-mark svg { width: 19px; height: 19px; }
+.about-portrait-tag strong { display: block; font-size: 0.86rem; font-weight: 600; color: var(--clr-text); }
+.about-portrait-tag span { font-size: 0.74rem; color: var(--clr-text3); }
+@media (max-width: 860px) { .about-portrait-tag { right: 10px; } }
