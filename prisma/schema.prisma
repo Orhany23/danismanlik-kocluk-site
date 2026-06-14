@@ -90,6 +90,7 @@ model Student {
   active          Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  resources       Resource[]
 }
 
 model Account {
@@ -116,4 +117,24 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   @default("LINK")  // LINK | VIDEO | FILE | NOTE
+  url         String?                      // LINK / VIDEO / FILE için bağlantı
+  body        String?                      // NOTE türü için metin
+  category    String?                      // örn. "Çalışma Teknikleri", "Deneme Analizi"
+  gradeLevel  String?                      // boş = tüm seviyeler; örn. "LGS", "YKS-Sayısal"
+  studentId   String?                      // boş = herkese açık kütüphane; dolu = o öğrenciye özel
+  student     Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  published   Boolean  @default(true)
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([gradeLevel])
 }

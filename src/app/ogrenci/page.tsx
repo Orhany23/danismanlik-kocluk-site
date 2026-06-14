@@ -1,18 +1,78 @@
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
+import prisma from "@/lib/db";
 
 export const metadata = {
   title: "Öğrenci Paneli | Orhan Yaşlı",
   robots: { index: false, follow: false },
 };
 
+type Resource = {
+  id: string;
+  title: string;
+  description: string | null;
+  type: string;
+  url: string | null;
+  body: string | null;
+  category: string | null;
+  pinned: boolean;
+};
+
+const TYPE_ICON: Record<string, string> = { LINK: "🔗", VIDEO: "▶", FILE: "📄", NOTE: "📝" };
+const TYPE_OPEN: Record<string, string> = { LINK: "Bağlantıyı aç", VIDEO: "Videoyu izle", FILE: "Dosyayı aç" };
+
+function ResourceItem({ r }: { r: Resource }) {
+  return (
+    <div className="resource-item">
+      <span className="resource-icon" aria-hidden="true">{TYPE_ICON[r.type] || "🔗"}</span>
+      <div className="resource-main">
+        {r.category && <span className="resource-cat">{r.category}</span>}
+        <h4 className="resource-title">{r.title}</h4>
+        {r.description && <p className="resource-desc">{r.description}</p>}
+        {r.type === "NOTE" && r.body && (
+          <details className="resource-note">
+            <summary>Notu oku</summary>
+            <p>{r.body}</p>
+          </details>
+        )}
+        {r.type !== "NOTE" && r.url && (
+          <a className="resource-open" href={r.url} target="_blank" rel="noopener noreferrer">
+            {TYPE_OPEN[r.type] || "Aç"} →
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default async function StudentDashboard() {
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
+  const studentId = (session?.user as { id?: string } | undefined)?.id;
 
-  if (!session || role !== "STUDENT") {
+  if (!session || role !== "STUDENT" || !studentId) {
     redirect("/ogrenci/giris");
   }
+
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: { gradeLevel: true },
+  });
+
+  const [personal, library] = await Promise.all([
+    prisma.resource.findMany({
+      where: { studentId, published: true },
+      orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
+    }),
+    prisma.resource.findMany({
+      where: {
+        studentId: null,
+        published: true,
+        OR: [{ gradeLevel: null }, { gradeLevel: student?.gradeLevel ?? "__none__" }],
+      },
+      orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
+    }),
+  ]);
 
   return (
     <div className="student-shell">
@@ -20,7 +80,7 @@ export default async function StudentDashboard() {
         <div className="student-top-inner">
           <div className="student-brand">
             <svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true">
-              <g fill="none" stroke="#E8590C" strokeWidth="3.4" strokeLinecap="round">
+              <g fill="none" stroke="var(--clr-primary)" strokeWidth="3.4" strokeLinecap="round">
                 <path d="M24 10v28" />
                 <path d="M12 12v7c0 7 5 11 12 11s12-4 12-11v-7" />
               </g>
@@ -41,21 +101,42 @@ export default async function StudentDashboard() {
       <main className="student-main">
         <h1 className="student-hello">Merhaba, {session.user?.name?.split(" ")[0]} 👋</h1>
         <p className="student-lead">
-          Hesabın hazır. Sana özel kaynaklar ve çalışma içerikleri çok yakında burada olacak.
+          Sana özel içerikler ve kaynak kütüphanen burada. Yeni içerik eklendikçe bu sayfada görünür.
         </p>
 
-        <div className="student-grid">
-          <div className="student-card student-card--soon">
-            <span className="student-card-tag">Çok Yakında</span>
-            <h3>Kaynak Kütüphanesi</h3>
-            <p>Ders çalışma teknikleri, deneme analizleri ve önerilen kaynaklar burada toplanacak.</p>
+        {/* Sana Özel İçerikler */}
+        <section className="student-section">
+          <div className="student-section-head">
+            <h2>Sana Özel İçerikler</h2>
+            <span className="student-section-count">{personal.length}</span>
           </div>
-          <div className="student-card student-card--soon">
-            <span className="student-card-tag">Çok Yakında</span>
-            <h3>Sana Özel İçerikler</h3>
-            <p>Orhan Yaşlı&apos;nın senin için özel olarak paylaştığı içerikler bu alanda görünecek.</p>
+          {personal.length === 0 ? (
+            <div className="student-empty">
+              Henüz sana özel bir içerik eklenmedi. Orhan Yaşlı senin için içerik paylaştığında burada görünecek.
+            </div>
+          ) : (
+            <div className="resource-list">
+              {personal.map((r) => <ResourceItem key={r.id} r={r as Resource} />)}
+            </div>
+          )}
+        </section>
+
+        {/* Kaynak Kütüphanesi */}
+        <section className="student-section">
+          <div className="student-section-head">
+            <h2>Kaynak Kütüphanesi</h2>
+            <span className="student-section-count">{library.length}</span>
           </div>
-        </div>
+          {library.length === 0 ? (
+            <div className="student-empty">
+              Kütüphane çok yakında doluyor. Ders çalışma teknikleri, deneme analizleri ve önerilen kaynaklar burada toplanacak.
+            </div>
+          ) : (
+            <div className="resource-list">
+              {library.map((r) => <ResourceItem key={r.id} r={r as Resource} />)}
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );
