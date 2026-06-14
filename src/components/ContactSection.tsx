@@ -62,26 +62,23 @@ export default function ContactSection() {
               </div>
             </div>
             <div className="contact-info-item">
-              <div className="contact-info-icon">📞</div>
+              <div className="contact-info-icon">💬</div>
               <div>
-                <div className="contact-info-label">Telefon</div>
+                <div className="contact-info-label">WhatsApp</div>
                 <div className="contact-info-value">
-                  <a href={`tel:${t.phone.replace(/\s/g, "")}`} className="hover:text-[var(--clr-primary)]">{t.phone}</a>
+                  <a href="https://wa.me/905432500417?text=Merhaba,%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" className="hover:text-[var(--clr-primary)]">
+                    {locale === "tr" ? "Mesaj gönderin" : "Send a message"}
+                  </a>
                 </div>
               </div>
             </div>
             <div className="contact-info-item">
-              <div className="contact-info-icon">📍</div>
+              <div className="contact-info-icon">✈</div>
               <div>
-                <div className="contact-info-label">{locale === "tr" ? "Konum" : "Location"}</div>
-                <div className="contact-info-value">{t.location}</div>
-              </div>
-            </div>
-            <div className="contact-info-item">
-              <div className="contact-info-icon">🕐</div>
-              <div>
-                <div className="contact-info-label">{t.hours}</div>
-                <div className="contact-info-value">{t.hoursValue}</div>
+                <div className="contact-info-label">Telegram</div>
+                <div className="contact-info-value">
+                  <a href="https://t.me/YasliOrhan" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--clr-primary)]">@YasliOrhan</a>
+                </div>
               </div>
             </div>
             <div className="contact-social">

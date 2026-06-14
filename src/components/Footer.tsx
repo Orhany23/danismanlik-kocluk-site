@@ -16,9 +16,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <span className="font-serif text-[1.3rem] font-bold bg-gradient-to-r from-[#c084fc] to-[var(--clr-accent)] bg-clip-text text-transparent">
-              {t.brand}
-            </span>
+            <span className="footer-brand-name">{t.brand}</span>
             <p>{t.desc}</p>
           </div>
           <div className="footer-col">
@@ -53,9 +51,9 @@ export default function Footer() {
           <div className="footer-col">
             <h4>{t.contact}</h4>
             {t.contactLinks.map((link, i) => {
-              const hrefs = ["mailto:Pskdanorhanyasli@proton.me", "tel:+905432500417", "https://wa.me/905432500417", "https://t.me/YasliOrhan"];
+              const hrefs = ["mailto:Pskdanorhanyasli@proton.me", "https://wa.me/905432500417", "https://t.me/YasliOrhan"];
               return (
-                <a key={i} href={hrefs[i]} target={i >= 2 ? "_blank" : undefined} rel={i >= 2 ? "noopener noreferrer" : undefined}>
+                <a key={i} href={hrefs[i]} target={i >= 1 ? "_blank" : undefined} rel={i >= 1 ? "noopener noreferrer" : undefined}>
                   {link}
                 </a>
               );

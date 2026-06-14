@@ -78,7 +78,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={menuOpen}
-            className="lg:hidden p-2 rounded-lg text-[var(--clr-text)] hover:bg-[rgba(26,86,219,0.08)]"
+            className="lg:hidden p-2 rounded-lg text-[var(--clr-text)] hover:bg-[var(--clr-accent-tint)]"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               {menuOpen
