@@ -162,3 +162,4 @@ Kaynak kütüphanesi: admin panelinden içerik/link/dosya ekleme, görünürlük
 
 ### Kalite
 - ESLint hataları giderildi (Link kullanımı, effect içi setState, kullanılmayan değişken).
+- **Build script:** `prisma db push` build'den çıkarıldı (Vercel'de veritabanına bağlanamayınca tüm deploy düşüyordu). Şema değişikliği gerektiğinde `npm run db:push` elle çalıştırılmalı.
