@@ -68,7 +68,12 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ ok: true }, { status: 201 });
-  } catch {
+  } catch (err) {
+    // Yarış durumu: findUnique ile create arasında aynı e-posta kaydedilmiş olabilir
+    if (err && typeof err === "object" && "code" in err && (err as { code?: string }).code === "P2002") {
+      return NextResponse.json({ error: "Bu e-posta ile zaten bir kayıt var." }, { status: 409 });
+    }
+    console.error("Student register error:", err);
     return NextResponse.json({ error: "Kayıt sırasında bir hata oluştu." }, { status: 500 });
   }
 }

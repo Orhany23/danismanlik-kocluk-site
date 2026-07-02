@@ -82,3 +82,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
 });
+
+// Admin rol kontrolü: yalnızca role === "ADMIN" olan oturumlar geçer.
+// Öğrenci oturumlarının yönetim API'lerine erişmesini engeller.
+export async function requireAdmin() {
+  const session = await auth();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  if (!session?.user || role !== "ADMIN") return null;
+  return session;
+}

@@ -34,7 +34,7 @@ export default function StudentLoginPage() {
       <div className="auth-card">
         <div className="auth-mark" aria-hidden="true">
           <svg viewBox="0 0 48 48" width="36" height="36">
-            <g fill="none" stroke="#E8590C" strokeWidth="3.4" strokeLinecap="round">
+            <g fill="none" stroke="var(--clr-primary)" strokeWidth="3.4" strokeLinecap="round">
               <path d="M24 10v28" />
               <path d="M12 12v7c0 7 5 11 12 11s12-4 12-11v-7" />
             </g>

@@ -145,3 +145,20 @@ Kaynak kütüphanesi: admin panelinden içerik/link/dosya ekleme, görünürlük
 ## Öğrenci Portalı — küçük eklemeler
 - Navbar'a (masaüstü + mobil) "Kayıt Ol" butonu eklendi, "Öğrenci Girişi" linkinin yanına.
 - Footer'a düşük vurgulu "Yönetici" linki eklendi (/admin/login) — ziyaretçinin gözüne batmadan yöneticinin panele erişimi için.
+
+## 2026-07-02 — Bug düzeltmeleri, güvenlik ve tasarım yenileme
+
+### Kritik düzeltmeler
+- **Öğrenci kaydı "hata oluştu" sorunu (kök neden):** `src/lib/db.ts` production'da Prisma client'ı global önbelleğe almıyordu; Vercel'de her istek yeni bağlantı havuzu açıp veritabanı bağlantı limitini tüketiyordu. Artık her ortamda önbellekleniyor ve havuz `PG_POOL_MAX` (varsayılan 5) ile sınırlı.
+- **Settings kaydı:** `Setting.id` varsayılanı "main" olduğundan yalnızca ilk ayar kaydedilebiliyordu; upsert artık `id = key` ile çalışıyor.
+- **Güvenlik:** Öğrenci oturumları admin API'lerine (clients, messages, appointments, sessions, settings, change-password) erişebiliyordu. Tüm yönetim rotalarına `requireAdmin` rol kontrolü eklendi.
+- Kayıt rotasında P2002 (unique) yarış durumu artık 409 dönüyor; gerçek hatalar sunucu loguna yazılıyor.
+
+### Yeni özellik
+- Öğrenci paneline "Şifremi Değiştir" bölümü ve `/api/student/change-password` ucu eklendi.
+
+### Tasarım
+- Krem/serif tema yerine marka ailesine uygun yeni kimlik: gece laciverti mürekkep, menekşe (#4F46B8) birincil, turkuaz (#0EA5A4) vurgu; Montserrat başlık fontu. Açık/koyu tema güncellendi, eski renk kalıntıları temizlendi.
+
+### Kalite
+- ESLint hataları giderildi (Link kullanımı, effect içi setState, kullanılmayan değişken).

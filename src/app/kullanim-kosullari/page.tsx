@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Kullanım Koşulları | Orhan Yaşlı",
   description: "Platformun kullanım koşulları, seans kuralları ve yasal bilgiler.",
@@ -98,18 +100,18 @@ export default function KullanimKosullariPage() {
           </div>
 
           <div className="bg-gray-50 rounded-xl p-5 mt-8 flex flex-col sm:flex-row gap-4">
-            <a
+            <Link
               href="/gizlilik"
-              className="flex-1 text-center bg-[#E8590C] text-white font-semibold py-3 px-4 rounded-xl hover:bg-[#C2410C] transition-colors text-sm"
+              className="flex-1 text-center bg-[var(--clr-primary)] text-white font-semibold py-3 px-4 rounded-xl hover:bg-[var(--clr-primary-dark)] transition-colors text-sm"
             >
               🔒 Gizlilik Politikası
-            </a>
-            <a
+            </Link>
+            <Link
               href="/"
               className="flex-1 text-center bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl hover:bg-gray-300 transition-colors text-sm"
             >
               ← Ana Sayfaya Dön
-            </a>
+            </Link>
           </div>
         </div>
       </div>

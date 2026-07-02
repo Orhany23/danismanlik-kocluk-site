@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ ok: true, message: "Admin user created" });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ ok: false, error: "Seed failed" }, { status: 500 });
   }
 }

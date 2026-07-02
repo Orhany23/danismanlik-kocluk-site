@@ -48,7 +48,6 @@ export default function AdminResourcesPage() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setLoading(true);
     const [r, s] = await Promise.all([
       fetch("/api/admin/resources").then((x) => x.json()).catch(() => ({ resources: [] })),
       fetch("/api/admin/students").then((x) => x.json()).catch(() => ({ students: [] })),
@@ -58,7 +57,8 @@ export default function AdminResourcesPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- load async; state güncellemesi fetch sonrası
+  useEffect(() => { void load(); }, [load]);
 
   const submit = async () => {
     setError("");
@@ -176,7 +176,7 @@ export default function AdminResourcesPage() {
         {success && <p className="mt-3 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">✓ {success}</p>}
 
         <button onClick={submit} disabled={saving}
-          style={{ backgroundColor: "#B26644" }}
+          style={{ backgroundColor: "var(--clr-primary)" }}
           className="mt-5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
           {saving ? "Ekleniyor..." : "Kaynağı ekle"}
         </button>

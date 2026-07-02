@@ -9,7 +9,7 @@ export default function GizlilikPage() {
     <div className="min-h-screen bg-gray-50 py-16 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12">
-          <span className="inline-block bg-[#FFF0E6] text-[#E8590C] text-sm font-semibold px-3 py-1 rounded-full mb-4">
+          <span className="inline-block bg-[#FFF0E6] text-[var(--clr-primary)] text-sm font-semibold px-3 py-1 rounded-full mb-4">
             🔒 Gizlilik Politikası
           </span>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -73,7 +73,7 @@ export default function GizlilikPage() {
 
           <div className="mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">4. Üçüncü Taraflarla Paylaşım</h2>
-            <div className="bg-[#FFF0E6] border-l-4 border-[#E8590C] p-4 rounded-r-lg mb-3 text-[#7c2d12] text-sm">
+            <div className="bg-[#FFF0E6] border-l-4 border-[var(--clr-primary)] p-4 rounded-r-lg mb-3 text-[#7c2d12] text-sm">
               Kişisel verileriniz hiçbir koşulda üçüncü taraflara satılmaz. Yalnızca yasal zorunluluk
               halinde yetkili kurumlarla paylaşılabilir.
             </div>
@@ -97,7 +97,7 @@ export default function GizlilikPage() {
               <strong>Veri Sorumlusu:</strong> Orhan Yaşlı
               <br />
               <strong>Web:</strong>{" "}
-              <a href="https://psdorhanyasli.com.tr" className="text-[#E8590C] hover:underline">
+              <a href="https://psdorhanyasli.com.tr" className="text-[var(--clr-primary)] hover:underline">
                 psdorhanyasli.com.tr
               </a>
               <br />
