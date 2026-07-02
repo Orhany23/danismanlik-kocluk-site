@@ -522,7 +522,9 @@ footer { background: var(--clr-ink); color: rgba(242,234,220,0.78); padding: 70p
 .dark .auth-btn { background: var(--clr-primary); color: #FFFFFF; }
 .auth-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .auth-foot { margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--clr-text2); }
-.student-shell { min-height: 100vh; background: var(--clr-bg); }
+.student-shell { min-height: 100vh; background: var(--clr-bg); padding-top: var(--navbar-h); }
+/* Panel üst çubuğu sabit menünün hemen altına yapışsın */
+.student-top { position: sticky; top: var(--navbar-h); z-index: 40; }
 .student-top { background: var(--clr-bg2); border-bottom: 1px solid var(--clr-border); }
 .student-top-inner { max-width: 1000px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
 .student-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; color: var(--clr-text); }
