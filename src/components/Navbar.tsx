@@ -59,19 +59,17 @@ export default function Navbar() {
           </button>
           <a
             href="/ogrenci/giris"
-            className="text-[0.82rem] font-semibold px-2.5 py-1 hidden sm:inline-flex items-center hover:text-[var(--clr-accent)] transition-colors"
-            style={{ color: "var(--clr-text)" }}
+            className="nav-link text-[0.82rem] !font-semibold hidden sm:inline-flex items-center"
           >
-            Öğrenci Girişi
+            Giriş Yap
           </a>
           <a
             href="/ogrenci/kayit"
-            className="text-[0.82rem] font-semibold px-3 py-1.5 hidden sm:inline-flex items-center border transition-colors hover:text-[var(--clr-accent)]"
-            style={{ color: "var(--clr-text)", borderColor: "var(--clr-text)" }}
+            className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
           >
             Kayıt Ol
           </a>
-          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] hidden sm:inline-flex">
+          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex">
             {t.appointment}
           </button>
           <button
@@ -95,8 +93,10 @@ export default function Navbar() {
               {t[key]}
             </button>
           ))}
-          <a href="/ogrenci/giris" className="mobile-menu-link">Öğrenci Girişi</a>
-          <a href="/ogrenci/kayit" className="mobile-menu-link">Kayıt Ol</a>
+          <div className="flex gap-2 mt-3">
+            <a href="/ogrenci/giris" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Giriş Yap</a>
+            <a href="/ogrenci/kayit" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Kayıt Ol</a>
+          </div>
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-3 mt-2 justify-center">
             {t.appointment}
           </button>
