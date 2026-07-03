@@ -40,7 +40,7 @@ export default function Navbar() {
         </button>
 
         <ul className="hidden lg:flex items-center gap-1.5">
-          {(["about","services","process","whoFor","exams","faq","contact"] as const).map((key) => (
+          {(["about","services","exams","contact"] as const).map((key) => (
             <li key={key}>
               <button onClick={() => scrollTo(key)} className="nav-link">
                 {t[key]}
@@ -90,7 +90,7 @@ export default function Navbar() {
       </div>
       {menuOpen && (
         <div className="mobile-menu-panel lg:hidden">
-          {(["about","services","process","whoFor","exams","faq","contact"] as const).map((key) => (
+          {(["about","services","exams","contact"] as const).map((key) => (
             <button key={key} onClick={() => scrollTo(key)} className="mobile-menu-link">
               {t[key]}
             </button>
