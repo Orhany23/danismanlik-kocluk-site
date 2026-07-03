@@ -162,7 +162,7 @@ export default function AdminResourcesPage() {
 
           <label className="text-sm font-medium text-gray-700">
             Seviye (opsiyonel)
-            <span className="block text-xs font-normal text-gray-500">Boş bırakılırsa kaynak tüm öğrencilere görünür; seviye seçilirse yalnızca o hedefi seçen öğrenciler görür.</span>
+            <span className="block text-xs font-normal text-gray-500">Seviye yalnızca etiket/filtreleme içindir; kaynağın kimlere görüneceğini etkilemez. Görünürlüğü "Kime?" alanı belirler.</span>
             <select className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" value={form.gradeLevel}
               onChange={(e) => setForm({ ...form, gradeLevel: e.target.value })}>
               <option value="">Tüm sınıflar (herkes görür)</option>

@@ -66,11 +66,9 @@ export default async function StudentDashboard() {
       orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
     }),
     prisma.resource.findMany({
-      where: {
-        studentId: null,
-        published: true,
-        OR: [{ gradeLevel: null }, { gradeLevel: student?.gradeLevel ?? "__none__" }],
-      },
+      // Seviye (gradeLevel) yalnızca etiket/filtreleme amaçlıdır;
+      // görünürlüğü ETKİLEMEZ. Herkese açık kaynak tüm öğrencilere görünür.
+      where: { studentId: null, published: true },
       orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
     }),
   ]);
