@@ -50,14 +50,11 @@ export default function Footer() {
           </div>
           <div className="footer-col">
             <h4>{t.contact}</h4>
-            {t.contactLinks.map((link, i) => {
-              const hrefs = ["mailto:Pskdanorhanyasli@proton.me", "https://wa.me/905432500417", "https://t.me/YasliOrhan"];
-              return (
-                <a key={i} href={hrefs[i]} target={i >= 1 ? "_blank" : undefined} rel={i >= 1 ? "noopener noreferrer" : undefined}>
-                  {link}
-                </a>
-              );
-            })}
+            {t.contactLinks.map((link, i) => (
+              <a key={i} href="https://wa.me/905432500417" target="_blank" rel="noopener noreferrer">
+                {link}
+              </a>
+            ))}
           </div>
         </div>
         <div className="footer-bottom">

@@ -248,7 +248,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       steps: [
         {
           title: "İlk İletişim",
-          desc: "Formu doldurun ya da WhatsApp/Telegram'dan ulaşın. 24 saat içinde size dönüş yapılır.",
+          desc: "Formu doldurun ya da WhatsApp'tan ulaşın. 24 saat içinde size dönüş yapılır.",
         },
         {
           title: "Ücretsiz Tanışma",
@@ -399,7 +399,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       about: "Kurumsal",
       aboutLinks: ["Hakkımda", "S.S.S.", "Gizlilik Politikası"],
       contact: "İletişim",
-      contactLinks: ["E-posta", "WhatsApp", "Telegram"],
+      contactLinks: ["WhatsApp"],
       copyright: "© 2026 Orhan Yaşlı. Tüm hakları saklıdır.",
       privacy: "Gizlilik Politikası",
       terms: "Kullanım Koşulları",
@@ -577,7 +577,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       steps: [
         {
           title: "First Contact",
-          desc: "Fill out the form or reach out via WhatsApp/Telegram. We'll get back to you within 24 hours.",
+          desc: "Fill out the form or reach out via WhatsApp. We'll get back to you within 24 hours.",
         },
         {
           title: "Free Meeting",
@@ -728,7 +728,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       about: "Company",
       aboutLinks: ["About Me", "FAQ", "Privacy Policy"],
       contact: "Contact",
-      contactLinks: ["Email", "WhatsApp", "Telegram"],
+      contactLinks: ["WhatsApp"],
       copyright: "© 2026 Orhan Yaşlı. All rights reserved.",
       privacy: "Privacy Policy",
       terms: "Terms of Use",

@@ -53,15 +53,6 @@ export default function ContactSection() {
         <div className="contact-grid max-w-[1000px] mx-auto">
           <div className="contact-info">
             <div className="contact-info-item">
-              <div className="contact-info-icon">✉</div>
-              <div>
-                <div className="contact-info-label">E-posta</div>
-                <div className="contact-info-value">
-                  <a href={`mailto:${t.email}`} className="hover:text-[var(--clr-primary)]">{t.email}</a>
-                </div>
-              </div>
-            </div>
-            <div className="contact-info-item">
               <div className="contact-info-icon">💬</div>
               <div>
                 <div className="contact-info-label">WhatsApp</div>
@@ -72,23 +63,8 @@ export default function ContactSection() {
                 </div>
               </div>
             </div>
-            <div className="contact-info-item">
-              <div className="contact-info-icon">✈</div>
-              <div>
-                <div className="contact-info-label">Telegram</div>
-                <div className="contact-info-value">
-                  <a href="https://t.me/YasliOrhan" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--clr-primary)]">@YasliOrhan</a>
-                </div>
-              </div>
-            </div>
             <div className="contact-social">
-              {[
-                { icon: "📧", href: `mailto:${t.email}` },
-                { icon: "💬", href: "https://wa.me/905432500417" },
-                { icon: "✈", href: "https://t.me/YasliOrhan" },
-              ].map((s, i) => (
-                <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="social-btn">{s.icon}</a>
-              ))}
+              <a href="https://wa.me/905432500417" target="_blank" rel="noopener noreferrer" className="social-btn">💬</a>
             </div>
           </div>
           <form className="contact-form" onSubmit={handleSubmit}>
