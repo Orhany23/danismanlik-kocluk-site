@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 
 export default function Navbar() {
   const { dict, toggleLocale } = useLocale();
   const t = dict.nav;
   const [menuOpen, setMenuOpen] = useState(false);
+  // Oturum varsa Giriş Yap / Kayıt Ol yerine "Panelim" gösterilir
+  const [panelHref, setPanelHref] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((d) => {
+        const role = d?.user?.role;
+        if (role === "STUDENT") setPanelHref("/ogrenci");
+        else if (role === "ADMIN") setPanelHref("/admin");
+        else setPanelHref(null);
+      })
+      .catch(() => setPanelHref(null));
+  }, []);
 
   const sectionIds: Record<string, string> = { whoFor: "who-for" };
 
@@ -57,18 +70,29 @@ export default function Navbar() {
           >
             {t.lang}
           </button>
-          <a
-            href="/ogrenci/giris"
-            className="nav-link text-[0.82rem] !font-semibold hidden sm:inline-flex items-center"
-          >
-            Giriş Yap
-          </a>
-          <a
-            href="/ogrenci/kayit"
-            className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
-          >
-            Kayıt Ol
-          </a>
+          {panelHref ? (
+            <a
+              href={panelHref}
+              className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
+            >
+              Panelim
+            </a>
+          ) : (
+            <>
+              <a
+                href="/ogrenci/giris"
+                className="nav-link text-[0.82rem] !font-semibold hidden sm:inline-flex items-center"
+              >
+                Giriş Yap
+              </a>
+              <a
+                href="/ogrenci/kayit"
+                className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
+              >
+                Kayıt Ol
+              </a>
+            </>
+          )}
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex">
             {t.appointment}
           </button>
@@ -93,10 +117,14 @@ export default function Navbar() {
               {t[key]}
             </button>
           ))}
-          <div className="flex gap-2 mt-3">
-            <a href="/ogrenci/giris" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Giriş Yap</a>
-            <a href="/ogrenci/kayit" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Kayıt Ol</a>
-          </div>
+          {panelHref ? (
+            <a href={panelHref} className="btn btn-ghost !py-3 mt-3 justify-center !text-[0.9rem]">Panelim</a>
+          ) : (
+            <div className="flex gap-2 mt-3">
+              <a href="/ogrenci/giris" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Giriş Yap</a>
+              <a href="/ogrenci/kayit" className="btn btn-ghost !py-3 flex-1 justify-center !text-[0.9rem]">Kayıt Ol</a>
+            </div>
+          )}
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-3 mt-2 justify-center">
             {t.appointment}
           </button>
