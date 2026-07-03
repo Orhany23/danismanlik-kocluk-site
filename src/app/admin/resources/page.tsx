@@ -162,8 +162,18 @@ export default function AdminResourcesPage() {
 
           <label className="text-sm font-medium text-gray-700">
             Seviye (opsiyonel)
-            <input className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" value={form.gradeLevel}
-              onChange={(e) => setForm({ ...form, gradeLevel: e.target.value })} placeholder="örn. LGS / YKS-Sayısal" />
+            <span className="block text-xs font-normal text-gray-500">Boş bırakılırsa kaynak tüm öğrencilere görünür; seviye seçilirse yalnızca o hedefi seçen öğrenciler görür.</span>
+            <select className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" value={form.gradeLevel}
+              onChange={(e) => setForm({ ...form, gradeLevel: e.target.value })}>
+              <option value="">Tüm sınıflar (herkes görür)</option>
+              <option value="LGS">LGS</option>
+              <option value="YKS-Sayısal">YKS — Sayısal</option>
+              <option value="YKS-EA">YKS — Eşit Ağırlık</option>
+              <option value="YKS-Sözel">YKS — Sözel</option>
+              <option value="YKS-Dil">YKS — Dil</option>
+              <option value="Mezun">Mezun</option>
+              <option value="Diğer">Diğer</option>
+            </select>
           </label>
 
           <label className="col-span-2 flex items-center gap-2 text-sm text-gray-600">
