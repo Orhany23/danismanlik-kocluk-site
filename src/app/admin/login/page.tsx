@@ -78,9 +78,12 @@ export default function AdminLoginPage() {
             {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
           </button>
         </form>
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-white/40 hover:text-white/60 text-sm transition-colors">
-            ← Ana sayfaya dön
+        <div className="mt-6">
+          <Link
+            href="/"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/25 text-white/85 font-medium text-sm hover:bg-white/10 hover:text-white transition-all"
+          >
+            ← Siteye Dön
           </Link>
         </div>
       </div>
