@@ -63,9 +63,6 @@ export default function ContactSection() {
                 </div>
               </div>
             </div>
-            <div className="contact-social">
-              <a href="https://wa.me/905432500417" target="_blank" rel="noopener noreferrer" className="social-btn">💬</a>
-            </div>
           </div>
           <form className="contact-form" onSubmit={handleSubmit}>
             <input
