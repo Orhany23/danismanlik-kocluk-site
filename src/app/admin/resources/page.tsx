@@ -211,6 +211,11 @@ export default function AdminResourcesPage() {
                     <span className={`text-xs px-2 py-0.5 rounded-full ${r.student ? "bg-orange-50 text-orange-600" : "bg-emerald-50 text-emerald-600"}`}>
                       {r.student ? `Özel: ${r.student.name}` : "Herkese açık"}
                     </span>
+                    {!r.student && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.gradeLevel ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-500"}`}>
+                        {r.gradeLevel ? `Seviye: ${r.gradeLevel}` : "Tüm sınıflar"}
+                      </span>
+                    )}
                   </div>
                   <p className="font-medium text-gray-800 mt-1 truncate">{r.title}</p>
                   {r.category && <p className="text-xs text-gray-400">{r.category}</p>}
