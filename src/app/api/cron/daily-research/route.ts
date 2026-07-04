@@ -52,7 +52,10 @@ export async function GET(req: NextRequest) {
           data: { title, body, type: "NOTE", category: CATEGORY, published: true, pinned: true },
         });
 
-    return NextResponse.json({ ok: true, index: idx, title: resource.title });
+    return NextResponse.json(
+      { ok: true, index: idx, title: resource.title },
+      { headers: { "Content-Type": "application/json; charset=utf-8" } }
+    );
   } catch (err) {
     console.error("daily-research cron error:", err);
     return NextResponse.json({ error: "Günün araştırması güncellenemedi." }, { status: 500 });
