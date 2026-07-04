@@ -163,3 +163,8 @@ Kaynak kütüphanesi: admin panelinden içerik/link/dosya ekleme, görünürlük
 ### Kalite
 - ESLint hataları giderildi (Link kullanımı, effect içi setState, kullanılmayan değişken).
 - **Build script:** `prisma db push` build'den çıkarıldı (Vercel'de veritabanına bağlanamayınca tüm deploy düşüyordu). Şema değişikliği gerektiğinde `npm run db:push` elle çalıştırılmalı.
+
+## Günün Araştırması otomasyonu
+- 55 klasik psikoloji araştırmasından oluşan derlenmiş havuz eklendi (`src/data/gunun-arastirmasi.json`).
+- `/api/cron/daily-research` rotası: her gün havuzdan günün kaydını seçip öğrenci kütüphanesindeki tek "Günün Araştırması" kartını günceller (kopya oluşturmaz, sabitlenmiş/pinned).
+- `vercel.json` ile Vercel Cron tanımı: her gün 06:00 UTC (09:00 TR). Çalışması için Vercel ortam değişkenlerine `CRON_SECRET` eklenmelidir.
