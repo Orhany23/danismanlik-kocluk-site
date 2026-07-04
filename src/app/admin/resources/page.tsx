@@ -93,6 +93,22 @@ export default function AdminResourcesPage() {
     load();
   };
 
+  // Mevcut kaynağın görünürlüğünü (studentId) veya seviyesini günceller
+  const updateResource = async (id: string, patch: { studentId?: string | null; gradeLevel?: string | null }) => {
+    const res = await fetch(`/api/admin/resources/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error || "Güncelleme başarısız.");
+    } else {
+      setError("");
+    }
+    load();
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Bu kaynağı silmek istediğine emin misin?")) return;
     await fetch(`/api/admin/resources/${id}`, { method: "DELETE" });
@@ -230,6 +246,39 @@ export default function AdminResourcesPage() {
                     className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50">
                     Sil
                   </button>
+                </div>
+                {/* Mevcut kaynağın görünürlüğünü ve seviyesini değiştirme */}
+                <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
+                  <label className="text-xs text-gray-500 flex items-center gap-1.5">
+                    Kime?
+                    <select
+                      className="px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white"
+                      value={r.studentId ?? ""}
+                      onChange={(e) => updateResource(r.id, { studentId: e.target.value || null })}
+                    >
+                      <option value="">Herkese açık</option>
+                      {students.map((s) => (
+                        <option key={s.id} value={s.id}>{s.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="text-xs text-gray-500 flex items-center gap-1.5">
+                    Seviye
+                    <select
+                      className="px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white"
+                      value={r.gradeLevel ?? ""}
+                      onChange={(e) => updateResource(r.id, { gradeLevel: e.target.value || null })}
+                    >
+                      <option value="">Tüm sınıflar</option>
+                      <option value="LGS">LGS</option>
+                      <option value="YKS-Sayısal">YKS — Sayısal</option>
+                      <option value="YKS-EA">YKS — Eşit Ağırlık</option>
+                      <option value="YKS-Sözel">YKS — Sözel</option>
+                      <option value="YKS-Dil">YKS — Dil</option>
+                      <option value="Mezun">Mezun</option>
+                      <option value="Diğer">Diğer</option>
+                    </select>
+                  </label>
                 </div>
               </div>
             ))}

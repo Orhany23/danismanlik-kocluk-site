@@ -22,7 +22,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (typeof data.description === "string") allowed.description = data.description.trim() || null;
   if (typeof data.category === "string") allowed.category = data.category.trim() || null;
 
-  const resource = await prisma.resource.update({ where: { id }, data: allowed });
+  // Görünürlük değişikliği: null => herkese açık, id => yalnızca o öğrenci
+  if ("studentId" in data) {
+    if (data.studentId === null || data.studentId === "") {
+      allowed.studentId = null;
+    } else if (typeof data.studentId === "string") {
+      const student = await prisma.student.findUnique({ where: { id: data.studentId } });
+      if (!student) {
+        return NextResponse.json({ error: "Öğrenci bulunamadı." }, { status: 400 });
+      }
+      allowed.studentId = data.studentId;
+    }
+  }
+
+  // Seviye etiketi (görünürlüğü etkilemez)
+  if ("gradeLevel" in data) {
+    allowed.gradeLevel =
+      typeof data.gradeLevel === "string" && data.gradeLevel.trim() ? data.gradeLevel.trim() : null;
+  }
+
+  const resource = await prisma.resource.update({
+    where: { id },
+    data: allowed,
+    include: { student: { select: { id: true, name: true, email: true } } },
+  });
   return NextResponse.json({ resource });
 }
 
