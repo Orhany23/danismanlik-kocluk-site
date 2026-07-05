@@ -1,0 +1,52 @@
+Tarih: 2026-07-05
+Yapılanlar: Tam geri alma (kök düzeyde silme) talebi doğrultusunda öncelikle bugün yapılan değişikliklerin kaydını tutmak için bu metin belgesini oluşturdum.
+
+Özet — tespit edilen önemli olaylar (bugün)
+- Repo: Orhany23/danismanlik-kocluk-site (default branch: master)
+
+1) Master üzerinde tespit edilen commitler (bugün)
+   - 48b408e1579142ae95ba920e3c302cd6ed5bdc65 — "Admin giriş ekranı e-posta placeholder'ını kaldır" (2026-07-05T07:05:19Z)
+     Değişen dosya: src/app/admin/login/page.tsx (placeholder satırı boş yapıldı)
+   - 4fcc819ed1a946a30014a8cccba6b7e50fb76d52 — "Siteye Dön butonu kontrastını artir" (2026-07-05T07:07:46Z)
+     Değişen dosya: src/app/admin/login/page.tsx (buton stil sınıfları değiştirildi)
+
+2) Benim yaptığım işlem
+   - Yukarıdaki iki UI değişikliğini geri aldım (revert) ve dosyayı önceki hâline getirdim.
+   - Oluşturulan revert commit: b1a3555115117c8f26a3fda84a0e46c1a636c7bd
+     Commit mesajı: "Revert admin login UI tweaks: restore email placeholder and button styling (revert of commits 48b408e and 4fcc819)"
+   - Etkilenen dosya: src/app/admin/login/page.tsx (eski placeholder ve button styling geri konuldu)
+
+3) Preview/Deploy hataları ve muhtemel gerçek sebep
+   - Vercel preview ekranında (screenshot incelendi) student-portal, redesign ve main branch'lerinin preview'lerinde "Error" durumları görülüyor; master branch için bir preview başarılı gözüküyor.
+   - Deploy log'unda açık hata: "PrismaConfigEnvError: Cannot resolve environment variable: DATABASE_URL"
+     - Bu hata package.json içindeki "postinstall": "prisma generate" çalıştırılırken DATABASE_URL ortam değişkeni bulunamadığı için oluşuyor.
+     - Bu nedenle build süreci `npm install` aşamasında 1 ile sonlanıyor ve preview deploy'ları başarısız oluyor.
+
+4) Ödeme altyapısı eklenmesi
+   - Repo içinde doğrudan package.json içinde yeni bir ödeme kütüphanesi (ör. stripe) görünmüyor.
+   - Ancak öğrenci portalı (student-portal) gibi branch'lerde veya deploy ayarlarında değişiklik yapılmış olabilir; preview hataları ödeme entegrasyonu ya da eksik env değişkenleri nedeniyle tetiklenmiş olabilir.
+
+5) Şu ana kadar geri alınmayan/korunmuş olanlar
+   - Sadece master üzerindeki iki UI commit'i geri aldım. Başka branch'lerde (ör. student-portal) veya deploy ortamında yapılan değişiklikleri henüz geri almadım.
+   - Deploy ortamı (Vercel) ayarları veya environment variable'lar üzerinde herhangi bir değişiklik yapmadım.
+
+Önerilen sonraki adımlar (güvenli sıra)
+1) Eğer amacınız tüm "bugün yapılan her şeyi" geri almaksa, hangi kapsamda istediğinizi onaylayın:
+   A) Sadece master üzerindeki bugün yapılan commitleri geri al (sadece bunları ben zaten geri aldım).
+   B) Tüm dallarda (branches) bugün yapılmış commitleri tespit edip her birini geri alacak revert commitleri oluşturalım (güvenli, tarihçeyi bozmaz).
+   C) Git geçmişini eski bir duruma resetleyip force-push ile uzak depoyu tamamen önceki duruma döndürelim (RISKLI — eğer repo paylaşılıyorsa önerilmez).
+2) Ayrıca, preview deploy hatalarını çözmek için Vercel projenize DATABASE_URL ve gerekiyorsa NEXTAUTH_* env değişkenlerini ekleyin veya repo'ya postinstall için koşullu script ekleyip preview'ler için prisma generate'ı atlayın.
+
+Benim teklifim
+- Hemen yapabileceğim güvenli adımlar:
+  1) Bu metin belgesini repo'ya kaydettim (bu dosya), böylece bugün olanlar kaydedilmiş oldu.
+  2) Eğer onay verirseniz, tüm branch'lerde 2026-07-05 tarihinde yapılmış commitleri listeleyip her biri için revert commit'leri oluştururum (her branch üzerinde ayrı revert commit). Bu işlem tarihçeyi korur ve deploy'lar yeniden denenebilir.
+  3) Daha radikal bir silme (force reset) isterseniz önce tam onay ve iletişim gerekir — bunu yapmadan önce tüm katkıda bulunanların bilgilendirilmesi gerekir.
+
+Notlar
+- Bu dosya: ROLLBACK-2026-07-05.txt olarak depoya eklendi — içinde yukarıdaki bilgiler ve sonraki adımlar yer alıyor.
+- Geri alma (revert) dışında hiçbir dosya içeriğini kalıcı olarak silmedim.
+
+Eğer tam olarak onay verirseniz (ör. tüm branch'lerde bugün yapılan değişiklikleri revert etmemi onaylıyorsanız), şimdi devam edebilirim.
+
+İmzalı: Copilot (repo üzerinde değişiklik yapma yetkisi ile)
