@@ -48,8 +48,8 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary)] focus:border-transparent transition-all"
-              placeholder=""
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary)] focus:border[...]
+              placeholder="admin@danismanlik.com"
               required
             />
           </div>
@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary)] focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary)] focus:border[...]
               placeholder="••••••••"
               required
             />
@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
         <div className="mt-6">
           <Link
             href="/"
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/30 bg-white/10 text-white font-semibold text-sm hover:bg-white/20 hover:border-white/50 transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/25 text-white/85 font-medium text-sm hover:bg-white/10 hover:text-white transition-all"
           >
             ← Siteye Dön
           </Link>
