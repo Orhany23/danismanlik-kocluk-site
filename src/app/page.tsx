@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-// Senin yeni oluşturduğumuz modern komponentlerin
-import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import Process from "@/components/Process";
-
-// Sitende zaten var olan diğer bölümler (Bunları koruyoruz)
+import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
+import ServicesSection from "@/components/ServicesSection";
+import ProcessSection from "@/components/ProcessSection";
 import WhoForSection from "@/components/WhoForSection";
 import ExamSection from "@/components/ExamSection";
 import FAQSection from "@/components/FAQSection";
@@ -20,26 +17,17 @@ export default function HomePage() {
       const id = window.location.hash.slice(1);
       // küçük gecikme: bölümler render olduktan sonra kaydır
       setTimeout(() => {
-        document.getElementById(id)?.scrollIntoView();
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }, []);
 
   return (
     <>
-      {/* Yeni Modern Kahraman Alanı */}
-      <Hero />
-      
-      {/* Eski Hakkımda Kısmı */}
+      <HeroSection />
       <AboutSection />
-      
-      {/* Yeni Modern Hizmetler Alanı */}
-      <Services />
-      
-      {/* Yeni Modern Süreç Alanı */}
-      <Process />
-      
-      {/* Sitenin Geri Kalan Diğer Bölümleri */}
+      <ServicesSection />
+      <ProcessSection />
       <WhoForSection />
       <ExamSection />
       <FAQSection />
