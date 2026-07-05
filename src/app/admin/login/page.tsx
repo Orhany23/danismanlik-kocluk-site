@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
         <div className="mt-6">
           <Link
             href="/"
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/25 text-white/85 font-medium text-sm hover:bg-white/10 hover:text-white transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/30 bg-white/10 text-white font-semibold text-sm hover:bg-white/20 hover:border-white/50 transition-all"
           >
             ← Siteye Dön
           </Link>
