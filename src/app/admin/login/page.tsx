@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary)] focus:border-transparent transition-all"
-              placeholder="admin@danismanlik.com"
+              placeholder=""
               required
             />
           </div>
