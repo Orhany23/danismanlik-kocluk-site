@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import studies from "@/data/gunun-arastirmasi.json";
+import { getDailyStudy, getStudyByIndex } from "@/lib/dailyResearch";
 
 const CATEGORY = "Günün Araştırması";
 
@@ -25,18 +25,15 @@ export async function GET(req: NextRequest) {
 
   try {
     // Gün-of-year'a göre deterministik seçim (test için ?index= ile ezilebilir)
-    const now = new Date();
-    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now.getTime() - start) / 86400000);
     const override = req.nextUrl.searchParams.get("index");
-    const idx =
+    const { study: s, index: idx } =
       override !== null && !Number.isNaN(Number(override))
-        ? ((Number(override) % studies.length) + studies.length) % studies.length
-        : dayOfYear % studies.length;
+        ? getStudyByIndex(Number(override))
+        : getDailyStudy();
 
-    const s = studies[idx] as { t: string; r: string; y: string; s: string; u: string };
     const title = `Günün Araştırması: ${s.t}`;
-    const body = `${s.r} (${s.y})\n\n${s.s}\n\nKaynak: ${s.u}`;
+    const description = `${s.r} · ${s.y}`;
+    const body = `${s.s}\n\nAraştırmanın Amacı\n${s.a}\n\nYöntem ve Denekler\n${s.m}\n\nBulgular ve Sonuç\n${s.f}\n\nPsikolojik Yorum\n${s.p}\n\nKaynak: ${s.u}`;
 
     // Kütüphanede tek kart tutulur: varsa güncelle, yoksa oluştur
     const existing = await prisma.resource.findFirst({
@@ -46,10 +43,10 @@ export async function GET(req: NextRequest) {
     const resource = existing
       ? await prisma.resource.update({
           where: { id: existing.id },
-          data: { title, body, type: "NOTE", url: null, published: true, pinned: true, gradeLevel: null },
+          data: { title, description, body, type: "NOTE", url: null, published: true, pinned: true, gradeLevel: null },
         })
       : await prisma.resource.create({
-          data: { title, body, type: "NOTE", category: CATEGORY, published: true, pinned: true },
+          data: { title, description, body, type: "NOTE", category: CATEGORY, published: true, pinned: true },
         });
 
     return NextResponse.json(

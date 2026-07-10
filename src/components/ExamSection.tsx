@@ -44,8 +44,7 @@ export default function ExamSection() {
                 </button>
                 <div
                   id={`exam-panel-${i}`}
-                  className="exam-panel"
-                  style={{ maxHeight: open ? "900px" : "0px" }}
+                  className={`exam-panel ${open ? "open" : ""}`}
                 >
                   <div className="exam-panel-inner exam-content" dangerouslySetInnerHTML={{ __html: card.content }} />
                 </div>

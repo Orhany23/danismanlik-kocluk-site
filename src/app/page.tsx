@@ -7,6 +7,7 @@ import ServicesSection from "@/components/ServicesSection";
 import ProcessSection from "@/components/ProcessSection";
 import WhoForSection from "@/components/WhoForSection";
 import ExamSection from "@/components/ExamSection";
+import ArticlesSection from "@/components/ArticlesSection";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import CookieBanner from "@/components/CookieBanner";
@@ -30,6 +31,7 @@ export default function HomePage() {
       <ProcessSection />
       <WhoForSection />
       <ExamSection />
+      <ArticlesSection />
       <FAQSection />
       <ContactSection />
       <CookieBanner />
