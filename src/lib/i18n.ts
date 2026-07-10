@@ -69,6 +69,7 @@ export type Dictionary = {
     readTimeLabel: string;
     readMore: string;
     readLess: string;
+    daily: { badge: string; intro: string; sourceCta: string; rotateNote: string };
     items: Array<{ title: string; category: string; readTime: number; excerpt: string; content: string }>;
   };
   faq: {
@@ -336,6 +337,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       readTimeLabel: "dk okuma",
       readMore: "Devamını oku",
       readLess: "Daralt",
+      daily: {
+        badge: "Günün Araştırması",
+        intro: "Psikoloji tarihine yön vermiş klasik araştırmalardan her gün biri.",
+        sourceCta: "Kaynağı incele",
+        rotateNote: "Her gün yenilenir",
+      },
       items: [
         {
           title: "Bilimsel Kanıtlı Çalışma Teknikleri",
@@ -682,6 +689,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       readTimeLabel: "min read",
       readMore: "Read more",
       readLess: "Show less",
+      daily: {
+        badge: "Study of the Day",
+        intro: "One landmark study from the history of psychology, featured fresh each day.",
+        sourceCta: "View source",
+        rotateNote: "Refreshes daily",
+      },
       items: [
         {
           title: "Evidence-Based Study Techniques",

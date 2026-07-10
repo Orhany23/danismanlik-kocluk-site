@@ -22,7 +22,17 @@ type Resource = {
 const TYPE_ICON: Record<string, string> = { LINK: "🔗", VIDEO: "▶", FILE: "📄", NOTE: "📝" };
 const TYPE_OPEN: Record<string, string> = { LINK: "Bağlantıyı aç", VIDEO: "Videoyu izle", FILE: "Dosyayı aç" };
 
+// Not gövdesinin sonundaki "Kaynak: <url>" satırını ayırır; varsa metni ve
+// bağlantıyı ayrı döndürür, yoksa bağlantı null olur.
+function splitNoteBody(body: string): { text: string; sourceUrl: string | null } {
+  const match = body.match(/^Kaynak:\s*(https?:\S+)\s*$/m);
+  if (!match) return { text: body, sourceUrl: null };
+  const text = body.slice(0, match.index).replace(/\s+$/, "");
+  return { text, sourceUrl: match[1] };
+}
+
 function ResourceItem({ r }: { r: Resource }) {
+  const note = r.type === "NOTE" && r.body ? splitNoteBody(r.body) : null;
   return (
     <div className="resource-item">
       <span className="resource-icon" aria-hidden="true">{TYPE_ICON[r.type] || "🔗"}</span>
@@ -30,10 +40,15 @@ function ResourceItem({ r }: { r: Resource }) {
         {r.category && <span className="resource-cat">{r.category}</span>}
         <h4 className="resource-title">{r.title}</h4>
         {r.description && <p className="resource-desc">{r.description}</p>}
-        {r.type === "NOTE" && r.body && (
+        {note && (
           <details className="resource-note">
             <summary>Notu oku</summary>
-            <p>{r.body}</p>
+            <p>{note.text}</p>
+            {note.sourceUrl && (
+              <a className="resource-open" href={note.sourceUrl} target="_blank" rel="noopener noreferrer">
+                Kaynağı aç →
+              </a>
+            )}
           </details>
         )}
         {r.type !== "NOTE" && r.url && (

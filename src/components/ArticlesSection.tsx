@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { BrainCircuit, ListChecks, Clock, Plus, Minus } from "lucide-react";
+import { BrainCircuit, ListChecks, Clock, Plus, Minus, FlaskConical, ArrowUpRight } from "lucide-react";
+import { getDailyStudy } from "@/lib/dailyResearch";
+
+// Sunucuda false, istemcide (hydration sonrası) true döner. Günün araştırması
+// tarihe bağlı olduğundan SSR/istemci uyuşmazlığını böyle önleriz.
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
 
 const articleIcons = [
   <BrainCircuit key="0" strokeWidth={1.6} />,
@@ -13,6 +21,10 @@ export default function ArticlesSection() {
   const { dict } = useLocale();
   const t = dict.articles;
   const [openSet, setOpenSet] = useState<Set<number>>(new Set());
+  // Günün araştırması istemcide tarihe göre hesaplanır; mount olana kadar
+  // banner render edilmez (hydration uyuşmazlığını önlemek için).
+  const mounted = useMounted();
+  const daily = mounted ? getDailyStudy().study : null;
 
   const toggle = (i: number) => {
     setOpenSet((prev) => {
@@ -31,6 +43,30 @@ export default function ArticlesSection() {
           <h2 className="section-title" id="articles-title" style={{ maxWidth: 720 }} dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="section-sub" style={{ maxWidth: 560 }}>{t.subtitle}</p>
         </div>
+        {daily && (
+          <div className="article-daily">
+            <div className="article-daily-head">
+              <span className="article-daily-badge">
+                <FlaskConical strokeWidth={1.6} aria-hidden="true" />
+                {t.daily.badge}
+              </span>
+              <span className="article-daily-note">{t.daily.rotateNote}</span>
+            </div>
+            <p className="article-daily-intro">{t.daily.intro}</p>
+            <h3 className="article-daily-title">{daily.t}</h3>
+            <p className="article-daily-meta">{daily.r} · {daily.y}</p>
+            <p className="article-daily-summary">{daily.s}</p>
+            <a
+              className="article-daily-link"
+              href={daily.u}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{t.daily.sourceCta}</span>
+              <ArrowUpRight strokeWidth={2} aria-hidden="true" />
+            </a>
+          </div>
+        )}
         <div className="article-grid">
           {t.items.map((item, i) => {
             const open = openSet.has(i);
