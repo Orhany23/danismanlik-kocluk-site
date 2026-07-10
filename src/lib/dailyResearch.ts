@@ -1,6 +1,6 @@
 import studies from "@/data/gunun-arastirmasi.json";
 
-export type DailyStudy = { t: string; r: string; y: string; s: string; u: string };
+export type DailyStudy = { t: string; r: string; y: string; s: string; a: string; m: string; f: string; p: string; u: string };
 
 const pool = studies as DailyStudy[];
 

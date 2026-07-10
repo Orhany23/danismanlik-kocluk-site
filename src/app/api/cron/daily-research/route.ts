@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
     const title = `Günün Araştırması: ${s.t}`;
     const description = `${s.r} · ${s.y}`;
-    const body = `${s.s}\n\nKaynak: ${s.u}`;
+    const body = `${s.s}\n\nAraştırmanın Amacı\n${s.a}\n\nYöntem ve Denekler\n${s.m}\n\nBulgular ve Sonuç\n${s.f}\n\nPsikolojik Yorum\n${s.p}\n\nKaynak: ${s.u}`;
 
     // Kütüphanede tek kart tutulur: varsa güncelle, yoksa oluştur
     const existing = await prisma.resource.findFirst({

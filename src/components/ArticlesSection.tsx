@@ -21,6 +21,8 @@ export default function ArticlesSection() {
   const { dict } = useLocale();
   const t = dict.articles;
   const [openSet, setOpenSet] = useState<Set<number>>(new Set());
+  // Günün araştırması banner'ındaki "detaylı incele" bölümünün aç/kapa durumu.
+  const [dailyOpen, setDailyOpen] = useState(false);
   // Günün araştırması istemcide tarihe göre hesaplanır; mount olana kadar
   // banner render edilmez (hydration uyuşmazlığını önlemek için).
   const mounted = useMounted();
@@ -56,6 +58,30 @@ export default function ArticlesSection() {
             <h3 className="article-daily-title">{daily.t}</h3>
             <p className="article-daily-meta">{daily.r} · {daily.y}</p>
             <p className="article-daily-summary">{daily.s}</p>
+            <button
+              className="article-daily-toggle"
+              onClick={() => setDailyOpen((v) => !v)}
+              aria-expanded={dailyOpen}
+              aria-controls="daily-detail"
+            >
+              <span>{dailyOpen ? t.daily.detailsClose : t.daily.detailsOpen}</span>
+              {dailyOpen ? <Minus strokeWidth={2} aria-hidden="true" /> : <Plus strokeWidth={2} aria-hidden="true" />}
+            </button>
+            <div
+              id="daily-detail"
+              className={`article-daily-detail ${dailyOpen ? "open" : ""}`}
+            >
+              <div className="article-daily-detail-inner">
+                <h4 className="article-daily-section-title">{t.daily.sections.purpose}</h4>
+                <p className="article-daily-section-text">{daily.a}</p>
+                <h4 className="article-daily-section-title">{t.daily.sections.method}</h4>
+                <p className="article-daily-section-text">{daily.m}</p>
+                <h4 className="article-daily-section-title">{t.daily.sections.findings}</h4>
+                <p className="article-daily-section-text">{daily.f}</p>
+                <h4 className="article-daily-section-title">{t.daily.sections.interpretation}</h4>
+                <p className="article-daily-section-text">{daily.p}</p>
+              </div>
+            </div>
             <a
               className="article-daily-link"
               href={daily.u}
@@ -84,10 +110,11 @@ export default function ArticlesSection() {
                 <p className="article-excerpt">{item.excerpt}</p>
                 <div
                   id={`article-panel-${i}`}
-                  className="article-panel"
-                  style={{ maxHeight: open ? "900px" : "0px" }}
+                  className={`article-panel ${open ? "open" : ""}`}
                 >
-                  <div className="article-content" dangerouslySetInnerHTML={{ __html: item.content }} />
+                  <div className="article-panel-inner">
+                    <div className="article-content" dangerouslySetInnerHTML={{ __html: item.content }} />
+                  </div>
                 </div>
                 <button
                   className="article-toggle"

@@ -69,7 +69,15 @@ export type Dictionary = {
     readTimeLabel: string;
     readMore: string;
     readLess: string;
-    daily: { badge: string; intro: string; sourceCta: string; rotateNote: string };
+    daily: {
+      badge: string;
+      intro: string;
+      sourceCta: string;
+      rotateNote: string;
+      sections: { purpose: string; method: string; findings: string; interpretation: string };
+      detailsOpen: string;
+      detailsClose: string;
+    };
     items: Array<{ title: string; category: string; readTime: number; excerpt: string; content: string }>;
   };
   faq: {
@@ -342,6 +350,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
         intro: "Psikoloji tarihine yön vermiş klasik araştırmalardan her gün biri.",
         sourceCta: "Kaynağı incele",
         rotateNote: "Her gün yenilenir",
+        sections: {
+          purpose: "Araştırmanın Amacı",
+          method: "Yöntem ve Denekler",
+          findings: "Bulgular ve Sonuç",
+          interpretation: "Psikolojik Yorum",
+        },
+        detailsOpen: "Araştırmayı detaylı incele",
+        detailsClose: "Detayı kapat",
       },
       items: [
         {
@@ -694,6 +710,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
         intro: "One landmark study from the history of psychology, featured fresh each day.",
         sourceCta: "View source",
         rotateNote: "Refreshes daily",
+        sections: {
+          purpose: "Purpose of the Study",
+          method: "Method & Subjects",
+          findings: "Findings & Conclusion",
+          interpretation: "Psychological Interpretation",
+        },
+        detailsOpen: "Explore the study in detail",
+        detailsClose: "Collapse details",
       },
       items: [
         {
