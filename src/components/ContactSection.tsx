@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { MessageCircle, Video, MapPin, Clock } from "lucide-react";
 
 export default function ContactSection() {
   const { dict, locale } = useLocale();
@@ -9,6 +10,7 @@ export default function ContactSection() {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -17,6 +19,7 @@ export default function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setError(false);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -27,9 +30,13 @@ export default function ContactSection() {
         setSuccess(true);
         setFormData({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
         setTimeout(() => setSuccess(false), 5000);
+      } else {
+        setError(true);
+        setTimeout(() => setError(false), 6000);
       }
     } catch {
-      // Silent fail
+      setError(true);
+      setTimeout(() => setError(false), 6000);
     } finally {
       setSubmitting(false);
     }
@@ -45,26 +52,56 @@ export default function ContactSection() {
   return (
     <section id="contact" className="section" aria-labelledby="contact-title" style={{ background: "var(--clr-bg2)" }}>
       <div className="container">
-        <div className="text-center mb-14">
+        <div className="text-center mb-14 reveal">
           <span className="section-label">{t.label}</span>
           <h2 className="section-title" id="contact-title">{t.title}</h2>
           <p className="section-sub mx-auto">{t.subtitle}</p>
         </div>
         <div className="contact-grid max-w-[1000px] mx-auto">
-          <div className="contact-info">
+          <div className="contact-info reveal-left">
             <div className="contact-info-item">
-              <div className="contact-info-icon">💬</div>
+              <div className="contact-info-icon">
+                <MessageCircle aria-hidden="true" />
+              </div>
               <div>
                 <div className="contact-info-label">WhatsApp</div>
                 <div className="contact-info-value">
                   <a href="https://wa.me/905432500417?text=Merhaba,%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" className="hover:text-[var(--clr-primary)]">
-                    {locale === "tr" ? "Mesaj gönderin" : "Send a message"}
+                    {t.info.whatsappCta}
                   </a>
                 </div>
+                <div className="contact-info-label" style={{ marginTop: 4 }}>{t.info.whatsappNote}</div>
+              </div>
+            </div>
+            <div className="contact-info-item">
+              <div className="contact-info-icon">
+                <Video aria-hidden="true" />
+              </div>
+              <div>
+                <div className="contact-info-label">{t.info.onlineLabel}</div>
+                <div className="contact-info-value">{t.info.onlineValue}</div>
+              </div>
+            </div>
+            <div className="contact-info-item">
+              <div className="contact-info-icon">
+                <MapPin aria-hidden="true" />
+              </div>
+              <div>
+                <div className="contact-info-label">{t.info.locationLabel}</div>
+                <div className="contact-info-value">{t.location}</div>
+              </div>
+            </div>
+            <div className="contact-info-item">
+              <div className="contact-info-icon">
+                <Clock aria-hidden="true" />
+              </div>
+              <div>
+                <div className="contact-info-label">{t.hours}</div>
+                <div className="contact-info-value">{t.hoursValue}</div>
               </div>
             </div>
           </div>
-          <form className="contact-form" onSubmit={handleSubmit}>
+          <form className="contact-form reveal-right" onSubmit={handleSubmit}>
             <input
               type="text"
               name="website"
@@ -111,7 +148,8 @@ export default function ContactSection() {
                 {submitting ? (locale === "tr" ? "Gönderiliyor..." : "Sending...") : t.form.submit}
               </button>
             </div>
-            <div className={`form-success ${success ? "show" : ""}`}>{t.form.success}</div>
+            <div className={`form-success ${success ? "show" : ""}`} role="status">{t.form.success}</div>
+            <div className={`form-error ${error ? "show" : ""}`} role="alert">{t.form.error}</div>
           </form>
         </div>
       </div>

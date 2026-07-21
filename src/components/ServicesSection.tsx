@@ -33,7 +33,7 @@ export default function ServicesSection() {
     <section id="services" aria-labelledby="services-title">
       {/* Section intro */}
       <div className="section" style={{ paddingBottom: 48 }}>
-        <div className="container">
+        <div className="container reveal">
           <span className="section-label">{t.label}</span>
           <h2
             className="section-title"
@@ -53,7 +53,7 @@ export default function ServicesSection() {
             className={`domain-band ${inverted ? "domain-band--ink" : ""}`}
           >
             <div className="container">
-              <div className="domain-head">
+              <div className="domain-head reveal">
                 <span className="domain-eyebrow">{group.eyebrow}</span>
                 <h3 className="domain-heading">{group.heading}</h3>
                 <p className="domain-blurb">{group.blurb}</p>
@@ -61,7 +61,7 @@ export default function ServicesSection() {
 
               <div className="domain-grid">
                 {group.items.map((item, i) => (
-                  <article key={i} className="domain-card">
+                  <article key={i} className={`domain-card reveal delay-${(i % 3) + 1}`}>
                     <div className="domain-card-top">
                       <span className="domain-card-icon">{groupIcons[group.key]?.[i]}</span>
                       {item.tag && <span className="domain-tag">{item.tag}</span>}

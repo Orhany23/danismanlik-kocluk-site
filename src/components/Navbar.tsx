@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const { dict, toggleLocale } = useLocale();
@@ -63,6 +64,7 @@ export default function Navbar() {
         </ul>
 
         <div className="nav-actions flex items-center gap-3">
+          <ThemeToggle className="p-1.5 rounded-lg border border-[var(--clr-border)] text-[var(--clr-text2)] hover:border-[var(--clr-primary)] hover:text-[var(--clr-primary)] transition-colors" />
           <button
             id="lang-toggle"
             onClick={toggleLocale}
@@ -117,6 +119,10 @@ export default function Navbar() {
               {t[key]}
             </button>
           ))}
+          <div className="mobile-menu-link flex items-center justify-between">
+            <span>{t.theme}</span>
+            <ThemeToggle className="p-1.5 rounded-lg border border-[var(--clr-border)] text-[var(--clr-text2)] hover:border-[var(--clr-primary)] hover:text-[var(--clr-primary)] transition-colors" />
+          </div>
           {panelHref ? (
             <a href={panelHref} className="btn btn-ghost !py-3 mt-3 justify-center !text-[0.9rem]">Panelim</a>
           ) : (
