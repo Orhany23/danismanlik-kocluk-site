@@ -1,12 +1,25 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { GraduationCap, MapPin, MessageCircleHeart } from "lucide-react";
+import { GraduationCap, MapPin, MessageCircleHeart, FlaskConical } from "lucide-react";
 import PsiMark from "@/components/PsiMark";
+import { getDailyStudy } from "@/lib/dailyResearch";
+
+// Sunucuda false, istemcide (hydration sonrası) true döner. Günün araştırması
+// tarihe bağlı olduğundan SSR/istemci uyuşmazlığını böyle önleriz (ArticlesSection deseni).
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
 
 export default function HeroSection() {
   const { dict, locale } = useLocale();
   const t = dict.hero;
+  // Günün araştırması istemcide tarihe göre hesaplanır; mount olana kadar
+  // şerit render edilmez (hydration uyuşmazlığını önlemek için).
+  const mounted = useMounted();
+  const daily = mounted ? getDailyStudy().study : null;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -28,6 +41,16 @@ export default function HeroSection() {
                 <span className="hero-badge-dot" aria-hidden="true" />
                 {t.badge}
               </div>
+
+              {/* Kompakt Günün Araştırması — ilk ekranda okunabilsin diye başlığın üstünde */}
+              {mounted && daily && (
+                <a href="#articles" className="hero-daily">
+                  <FlaskConical strokeWidth={1.8} aria-hidden="true" />
+                  <span className="hero-daily-label">{dict.articles.daily.badge}</span>
+                  <span className="hero-daily-title">{daily.t}</span>
+                  <span className="hero-daily-cta">{t.dailyCta} →</span>
+                </a>
+              )}
 
               <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t.title }} />
 

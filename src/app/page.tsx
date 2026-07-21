@@ -6,6 +6,7 @@ import AboutSection from "@/components/AboutSection";
 import ServicesSection from "@/components/ServicesSection";
 import ProcessSection from "@/components/ProcessSection";
 import WhoForSection from "@/components/WhoForSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import ExamSection from "@/components/ExamSection";
 import ArticlesSection from "@/components/ArticlesSection";
 import FAQSection from "@/components/FAQSection";
@@ -31,6 +32,7 @@ export default function HomePage() {
       <ServicesSection />
       <ProcessSection />
       <WhoForSection />
+      <TestimonialsSection />
       <ExamSection />
       <ArticlesSection />
       <FAQSection />

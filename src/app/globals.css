@@ -195,12 +195,40 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   grid-template-columns: 1.15fr 0.85fr;
   gap: 60px; align-items: center;
 }
+.hero-copy { min-width: 0; }
 .hero-copy > * { animation: rise 0.9s var(--transition) both; }
 .hero-copy > *:nth-child(1) { animation-delay: 0.05s; }
 .hero-copy > *:nth-child(2) { animation-delay: 0.15s; }
 .hero-copy > *:nth-child(3) { animation-delay: 0.27s; }
 .hero-copy > *:nth-child(4) { animation-delay: 0.39s; }
 .hero-copy > *:nth-child(5) { animation-delay: 0.50s; }
+.hero-copy > *:nth-child(6) { animation-delay: 0.60s; }
+
+/* Hero — kompakt Günün Araştırması şeridi */
+.hero-daily {
+  display: inline-flex; align-items: center; gap: 10px;
+  max-width: 100%; margin-bottom: 26px;
+  padding: 9px 16px; border-radius: 999px;
+  background: var(--clr-card); border: 1px solid var(--clr-border);
+  transition: border-color 0.25s var(--transition), box-shadow 0.25s var(--transition), transform 0.25s var(--transition);
+}
+.hero-daily:hover { border-color: var(--clr-sage); box-shadow: 0 10px 26px -18px var(--clr-shadow); transform: translateY(-1px); }
+.hero-daily > svg { width: 16px; height: 16px; flex: none; color: var(--clr-sage); }
+.hero-daily-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--clr-sage); flex: none;
+}
+.hero-daily-title {
+  font-size: 0.86rem; font-weight: 600; color: var(--clr-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  flex: 0 1 auto; max-width: 340px; min-width: 0;
+}
+.hero-daily-cta { font-size: 0.8rem; font-weight: 700; color: var(--clr-primary); flex: none; }
+@media (max-width: 480px) {
+  .hero-daily { width: 100%; }
+  .hero-daily-title { flex: 1 1 0; max-width: none; }
+}
 
 .hero-badge {
   display: inline-flex; align-items: center; gap: 9px;
@@ -828,3 +856,77 @@ footer > .container { position: relative; z-index: 1; }
 .resource-note[open] summary::before { transform: rotate(90deg); }
 .resource-note p { margin-top: 6px; font-size: 0.92rem; line-height: 1.72; color: var(--clr-text2); white-space: pre-wrap; overflow-wrap: anywhere; }
 .resource-note-heading { display: block; margin-top: 14px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--clr-primary); }
+
+/* ===== ÖĞRENCİ PANELİ — Deneyimini Paylaş (yorum formu) ===== */
+.testimonial-form {
+  background: var(--clr-card); border: 1px solid var(--clr-border);
+  border-radius: var(--radius); padding: 26px 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.testimonial-form-desc { color: var(--clr-text2); font-size: 0.95rem; line-height: 1.65; margin: 0; }
+.testimonial-field { display: flex; flex-direction: column; gap: 8px; }
+.testimonial-label { font-size: 0.86rem; font-weight: 600; color: var(--clr-text); }
+.testimonial-stars-input { display: inline-flex; gap: 4px; }
+.testimonial-star-btn {
+  font-size: 1.7rem; line-height: 1; color: var(--clr-border);
+  background: transparent; cursor: pointer; padding: 2px;
+  transition: color 0.15s var(--transition), transform 0.15s var(--transition);
+}
+.testimonial-star-btn:hover { transform: scale(1.12); }
+.testimonial-star-btn.is-on { color: var(--clr-sage); }
+.testimonial-textarea {
+  font-family: inherit; font-size: 0.96rem; line-height: 1.6;
+  padding: 12px 14px; min-height: 120px; resize: vertical;
+  border: 1.5px solid var(--clr-border); border-radius: var(--radius-sm);
+  background: var(--clr-bg); color: var(--clr-text); width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.testimonial-textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 0 0 4px var(--clr-accent-tint); }
+.testimonial-count { font-size: 0.8rem; color: var(--clr-text3); }
+.testimonial-count.is-low { color: #C0392B; }
+.testimonial-prefs { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.testimonial-pref { display: inline-flex; align-items: center; gap: 8px; font-size: 0.92rem; color: var(--clr-text2); cursor: pointer; }
+.testimonial-pref input { accent-color: var(--clr-primary); }
+.testimonial-msg { font-size: 0.92rem; margin: 0; border-radius: var(--radius-sm); padding: 10px 13px; }
+.testimonial-msg.is-ok { color: var(--clr-sage-dark); background: var(--clr-sage-tint); }
+.testimonial-msg.is-err { color: #C0392B; background: rgba(192,57,43,0.08); }
+.testimonial-submit { align-self: flex-start; padding-left: 24px; padding-right: 24px; }
+.testimonial-status-badge {
+  font-family: var(--font-body); font-size: 0.74rem; font-weight: 600;
+  border-radius: 999px; padding: 4px 12px; line-height: 1.3;
+}
+.testimonial-status-badge.is-pending { color: #92660A; background: #FDF1D6; }
+.testimonial-status-badge.is-approved { color: var(--clr-sage-dark); background: var(--clr-sage-tint); }
+.testimonial-status-badge.is-rejected { color: #C0392B; background: rgba(192,57,43,0.10); }
+
+/* ===== ANA SAYFA — Öğrenci Yorumları bölümü ===== */
+.testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.testimonial-card {
+  display: flex; flex-direction: column; gap: 16px;
+  background: var(--clr-card); border: 1px solid var(--clr-border);
+  border-radius: var(--radius); padding: 28px 26px;
+  box-shadow: 0 10px 30px -22px var(--clr-shadow);
+  animation: rise 0.5s var(--transition) both;
+  transition: transform 0.3s var(--transition), box-shadow 0.3s var(--transition), border-color 0.3s;
+}
+.testimonial-card:nth-child(2) { animation-delay: 0.08s; }
+.testimonial-card:nth-child(3) { animation-delay: 0.16s; }
+.testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 26px 52px -30px var(--clr-shadow-lg); border-color: var(--clr-primary-light); }
+.testimonial-stars { display: inline-flex; gap: 3px; }
+.testimonial-stars svg { width: 18px; height: 18px; color: var(--clr-border); fill: none; }
+.testimonial-stars svg.is-on { color: var(--clr-sage); fill: var(--clr-sage); }
+.testimonial-text {
+  font-size: 0.98rem; line-height: 1.72; color: var(--clr-text2);
+  font-style: italic; overflow-wrap: anywhere; flex: 1;
+}
+.testimonial-who { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+.testimonial-avatar {
+  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--clr-accent-tint); color: var(--clr-primary);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.92rem;
+}
+.testimonial-who-meta { display: flex; flex-direction: column; min-width: 0; }
+.testimonial-who-meta strong { font-size: 0.94rem; font-weight: 600; color: var(--clr-text); }
+.testimonial-who-meta span { font-size: 0.8rem; color: var(--clr-text3); }
+@media (max-width: 900px) { .testimonial-grid { grid-template-columns: 1fr; } }

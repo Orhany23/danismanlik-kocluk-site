@@ -91,6 +91,19 @@ model Student {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   resources       Resource[]
+  testimonial     Testimonial?
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  studentId   String   @unique
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  rating      Int      // 1-5
+  text        String
+  displayPref String   @default("NAME")    // NAME | INITIALS
+  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Account {
