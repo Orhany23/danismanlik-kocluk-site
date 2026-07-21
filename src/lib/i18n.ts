@@ -176,7 +176,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Çanakkale ve Türkiye geneli online koçluk ve danışmanlık",
-      title: "Zihin bir kap değil,<br><em>uyandırılacak bir ışıktır.</em>",
+      title: "Geleceği tahmin etmenin en iyi yolu,<br><em>onu kendi ellerinle yaratmaktır.</em>",
       subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
       cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
       scroll: "Keşfet",
@@ -547,7 +547,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Online coaching & counseling across Turkey",
-      title: "The mind is not a vessel,<br><em>but a light to awaken.</em>",
+      title: "The best way to predict the future<br><em>is to create it with your own hands.</em>",
       subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
       cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
       scroll: "Explore",
