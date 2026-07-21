@@ -8,7 +8,7 @@ import { useEffect } from "react";
 export default function ScrollReveal() {
   useEffect(() => {
     const els = Array.from(
-      document.querySelectorAll<HTMLElement>(".reveal, .reveal-left, .reveal-right")
+      document.querySelectorAll<HTMLElement>(".reveal, .reveal-left, .reveal-right, .reveal-scale")
     );
     if (!("IntersectionObserver" in window)) {
       els.forEach((el) => el.classList.add("visible"));

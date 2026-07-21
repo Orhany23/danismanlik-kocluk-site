@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/components/LocaleProvider";
 import { GraduationCap, MapPin, MessageCircleHeart } from "lucide-react";
+import PsiMark from "@/components/PsiMark";
 
 export default function HeroSection() {
   const { dict, locale } = useLocale();
@@ -18,6 +19,7 @@ export default function HeroSection() {
 
   return (
     <section id="hero" aria-label="Ana başlık">
+      <PsiMark className="psi-mark psi-hero" />
       <div className="container">
         <div className="hero-inner">
           <div className="hero-grid">

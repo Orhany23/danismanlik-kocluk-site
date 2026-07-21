@@ -5,6 +5,7 @@ import {
   Target, CalendarCheck, School, Compass, BookOpen,
   UserRound, Wind, Brain, Puzzle, Home, HeartHandshake, Video,
 } from "lucide-react";
+import PsiMark from "@/components/PsiMark";
 
 const groupIcons: Record<string, React.ReactNode[]> = {
   academic: [
@@ -52,6 +53,7 @@ export default function ServicesSection() {
             key={group.key}
             className={`domain-band ${inverted ? "domain-band--ink" : ""}`}
           >
+            {inverted && <PsiMark className="psi-mark psi-ink" />}
             <div className="container">
               <div className="domain-head reveal">
                 <span className="domain-eyebrow">{group.eyebrow}</span>
