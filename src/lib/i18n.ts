@@ -13,6 +13,9 @@ export type Dictionary = {
     contact: string;
     appointment: string;
     lang: string;
+    theme: string;
+    themeToDark: string;
+    themeToLight: string;
   };
   hero: {
     badge: string;
@@ -95,6 +98,13 @@ export type Dictionary = {
     location: string;
     hours: string;
     hoursValue: string;
+    info: {
+      whatsappCta: string;
+      whatsappNote: string;
+      onlineLabel: string;
+      onlineValue: string;
+      locationLabel: string;
+    };
     form: {
       name: string;
       email: string;
@@ -103,6 +113,7 @@ export type Dictionary = {
       message: string;
       submit: string;
       success: string;
+      error: string;
       placeholders: {
         name: string;
         email: string;
@@ -159,6 +170,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
       contact: "İletişim",
       appointment: "Randevu Al",
       lang: "EN",
+      theme: "Tema",
+      themeToDark: "Koyu temaya geç",
+      themeToLight: "Açık temaya geç",
     },
     hero: {
       badge: "Çanakkale ve Türkiye geneli online koçluk ve danışmanlık",
@@ -424,6 +438,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       location: "Çanakkale, Türkiye",
       hours: "Çalışma Saatleri",
       hoursValue: "Hafta içi ve Cumartesi: 09:00 - 19:00",
+      info: {
+        whatsappCta: "Mesaj gönderin",
+        whatsappNote: "Hızlı yanıt",
+        onlineLabel: "Online Görüşme",
+        onlineValue: "Çanakkale yüz yüze · Türkiye geneli online",
+        locationLabel: "Konum",
+      },
       form: {
         name: "Adınız Soyadınız",
         email: "E-posta Adresiniz",
@@ -432,6 +453,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         message: "Mesajınız",
         submit: "Mesajı Gönder",
         success: "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağım.",
+        error: "Mesajınız gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden ulaşın.",
         placeholders: {
           name: "Adınız ve soyadınız",
           email: "ornek@mail.com",
@@ -519,6 +541,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
       contact: "Contact",
       appointment: "Book Now",
       lang: "TR",
+      theme: "Theme",
+      themeToDark: "Switch to dark theme",
+      themeToLight: "Switch to light theme",
     },
     hero: {
       badge: "Online coaching & counseling across Turkey",
@@ -784,6 +809,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       location: "Çanakkale, Turkey",
       hours: "Working Hours",
       hoursValue: "Weekdays & Saturday: 09:00 - 19:00",
+      info: {
+        whatsappCta: "Send a message",
+        whatsappNote: "Fast response",
+        onlineLabel: "Online Sessions",
+        onlineValue: "In person in Çanakkale · Online across Türkiye",
+        locationLabel: "Location",
+      },
       form: {
         name: "Your Full Name",
         email: "Your Email",
@@ -792,6 +824,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         message: "Your Message",
         submit: "Send Message",
         success: "Your message has been sent successfully! I will get back to you as soon as possible.",
+        error: "Your message could not be sent. Please try again or reach out via WhatsApp.",
         placeholders: {
           name: "Your full name",
           email: "example@mail.com",

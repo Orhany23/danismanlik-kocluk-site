@@ -22,12 +22,12 @@ export default function ExamSection() {
   return (
     <section id="exams" className="section" aria-labelledby="exams-title">
       <div className="container">
-        <div className="mb-12">
+        <div className="mb-12 reveal">
           <span className="section-label">{t.label}</span>
           <h2 className="section-title" id="exams-title" style={{ maxWidth: 720 }} dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="section-sub" style={{ maxWidth: 560 }}>{t.subtitle}</p>
         </div>
-        <div className="exam-list">
+        <div className="exam-list reveal">
           {t.cards.map((card, i) => {
             const open = openIndex === i;
             return (

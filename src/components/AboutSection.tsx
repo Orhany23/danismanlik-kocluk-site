@@ -19,7 +19,7 @@ export default function AboutSection() {
     <section id="about" className="section" aria-labelledby="about-title" style={{ background: "var(--clr-bg2)" }}>
       <div className="container">
         <div className="about-split">
-          <div className="about-portrait">
+          <div className="about-portrait reveal-left">
             <div className="about-portrait-frame">
               <img
                 src="/orhan-about.jpg"
@@ -39,7 +39,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="about-content">
+          <div className="about-content reveal-right">
             <span className="section-label">{t.label}</span>
             <h2 className="section-title" id="about-title" dangerouslySetInnerHTML={{ __html: t.title }} />
 

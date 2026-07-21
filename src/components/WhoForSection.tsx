@@ -18,14 +18,14 @@ export default function WhoForSection() {
   return (
     <section id="who-for" className="section" aria-labelledby="whofor-title" style={{ background: "var(--clr-bg2)" }}>
       <div className="container">
-        <div className="text-center mb-14">
+        <div className="text-center mb-14 reveal">
           <span className="section-label">{t.label}</span>
           <h2 className="section-title" id="whofor-title" dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="section-sub mx-auto">{t.subtitle}</p>
         </div>
         <div className="services-grid">
           {t.profiles.map((profile, i) => (
-            <div key={i} className="service-card">
+            <div key={i} className={`service-card reveal delay-${(i % 3) + 1}`}>
               <div className="service-icon">{profileIcons[i]}</div>
               <h3 className="service-title">{profile.title}</h3>
               <p className="service-desc">{profile.desc}</p>

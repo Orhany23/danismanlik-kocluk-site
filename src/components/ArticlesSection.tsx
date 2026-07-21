@@ -40,7 +40,7 @@ export default function ArticlesSection() {
   return (
     <section id="articles" className="section" aria-labelledby="articles-title">
       <div className="container">
-        <div className="mb-12">
+        <div className="mb-12 reveal">
           <span className="section-label">{t.label}</span>
           <h2 className="section-title" id="articles-title" style={{ maxWidth: 720 }} dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="section-sub" style={{ maxWidth: 560 }}>{t.subtitle}</p>
@@ -97,7 +97,7 @@ export default function ArticlesSection() {
           {t.items.map((item, i) => {
             const open = openSet.has(i);
             return (
-              <article key={i} className={`article-card ${open ? "open" : ""}`}>
+              <article key={i} className={`article-card reveal delay-${(i % 2) + 1} ${open ? "open" : ""}`}>
                 <div className="article-card-head">
                   <span className="article-card-icon" aria-hidden="true">{articleIcons[i % articleIcons.length]}</span>
                   <span className="article-tag">{item.category}</span>
