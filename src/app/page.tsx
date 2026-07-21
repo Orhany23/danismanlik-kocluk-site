@@ -11,6 +11,7 @@ import ArticlesSection from "@/components/ArticlesSection";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import CookieBanner from "@/components/CookieBanner";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function HomePage() {
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function HomePage() {
       <FAQSection />
       <ContactSection />
       <CookieBanner />
+      <ScrollReveal />
     </>
   );
 }
