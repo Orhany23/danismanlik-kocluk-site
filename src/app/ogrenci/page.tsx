@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
+import StudentTestimonial from "@/components/StudentTestimonial";
 
 export const metadata = {
   title: "Öğrenci Paneli | Orhan Yaşlı",
@@ -180,6 +181,9 @@ export default async function StudentDashboard() {
             </div>
           )}
         </section>
+
+        {/* Deneyimini Paylaş — öğrenci yorumu (onaya düşer) */}
+        <StudentTestimonial />
 
         {/* Hesap Ayarları — şifre değiştirme */}
         <StudentPasswordChange />

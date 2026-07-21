@@ -1,7 +1,19 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+
+// Bekleyen yorum sayısı — tablo üretimde henüz oluşmamışsa dashboard çökmesin
+// diye güvenli şekilde alınır (hata halinde 0 döner).
+async function getPendingTestimonials(): Promise<number> {
+  try {
+    await ensureTestimonialTable();
+    return await prisma.testimonial.count({ where: { status: "PENDING" } });
+  } catch {
+    return 0;
+  }
+}
 
 async function getStats() {
   const [clientCount, messageCount, appointmentCount, sessionCount] = await Promise.all([
@@ -35,12 +47,14 @@ export default async function AdminDashboardPage() {
   const stats = await getStats();
   const appointments = await getRecentAppointments();
   const messages = await getRecentMessages();
+  const pendingTestimonials = await getPendingTestimonials();
 
   const statCards = [
     { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", icon: "👥" },
     { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", icon: "✉" },
     { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", icon: "📅" },
     { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", icon: "📋" },
+    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", icon: "⭐" },
   ];
 
   return (

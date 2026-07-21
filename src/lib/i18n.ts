@@ -23,6 +23,7 @@ export type Dictionary = {
     subtitle: string;
     cta: { free: string; whatsapp: string };
     scroll: string;
+    dailyCta: string;
   };
   about: {
     label: string;
@@ -58,6 +59,11 @@ export type Dictionary = {
     title: string;
     subtitle: string;
     profiles: Array<{ title: string; desc: string }>;
+  };
+  testimonials: {
+    label: string;
+    title: string;
+    subtitle: string;
   };
   exams: {
     label: string;
@@ -180,6 +186,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
       cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
       scroll: "Keşfet",
+      dailyCta: "Oku",
     },
     about: {
       label: "Hakkımda",
@@ -324,6 +331,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
           desc: '"Hadi ders çalış" demenin kavgaya dönüştüğü, ebeveynin denetleyici rolünden destekleyici role geçmek istediği aileler. Koç, bu üçgeni profesyonelce yöneterek iletişimi rahatlatır.',
         },
       ],
+    },
+    testimonials: {
+      label: "Öğrenci Yorumları",
+      title: "Öğrencilerim<br><em>Ne Diyor?</em>",
+      subtitle: "Birlikte çalıştığım öğrencilerin deneyimleri — her yorum onaydan geçer.",
     },
     exams: {
       label: "Sınavlar",
@@ -551,6 +563,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
       cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
       scroll: "Explore",
+      dailyCta: "Read",
     },
     about: {
       label: "About Me",
@@ -695,6 +708,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
           desc: 'Families where "go study" turns into arguments, where parents want to shift from controller to supporter.',
         },
       ],
+    },
+    testimonials: {
+      label: "Student Reviews",
+      title: "What My Students<br><em>Say</em>",
+      subtitle: "Experiences from students I've worked with — every review is moderated.",
     },
     exams: {
       label: "Exams",
