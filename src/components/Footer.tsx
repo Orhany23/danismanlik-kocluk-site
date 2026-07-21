@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/components/LocaleProvider";
+import PsiMark from "@/components/PsiMark";
 
 export default function Footer() {
   const { dict } = useLocale();
@@ -13,6 +14,7 @@ export default function Footer() {
 
   return (
     <footer>
+      <PsiMark className="psi-mark psi-footer" />
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">

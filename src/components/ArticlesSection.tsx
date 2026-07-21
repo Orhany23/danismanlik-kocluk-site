@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { BrainCircuit, ListChecks, Clock, Plus, Minus, FlaskConical, ArrowUpRight } from "lucide-react";
-import { getDailyStudy } from "@/lib/dailyResearch";
+import { getDailyStudy, poolSize } from "@/lib/dailyResearch";
 
 // Sunucuda false, istemcide (hydration sonrası) true döner. Günün araştırması
 // tarihe bağlı olduğundan SSR/istemci uyuşmazlığını böyle önleriz.
@@ -26,7 +26,9 @@ export default function ArticlesSection() {
   // Günün araştırması istemcide tarihe göre hesaplanır; mount olana kadar
   // banner render edilmez (hydration uyuşmazlığını önlemek için).
   const mounted = useMounted();
-  const daily = mounted ? getDailyStudy().study : null;
+  const dailyData = mounted ? getDailyStudy() : null;
+  const daily = dailyData?.study ?? null;
+  const index = dailyData?.index ?? 0;
 
   const toggle = (i: number) => {
     setOpenSet((prev) => {
@@ -52,7 +54,15 @@ export default function ArticlesSection() {
                 <FlaskConical strokeWidth={1.6} aria-hidden="true" />
                 {t.daily.badge}
               </span>
-              <span className="article-daily-note">{t.daily.rotateNote}</span>
+              <div className="article-daily-head-right">
+                <span className="article-daily-series" aria-label={`${t.daily.badge} ${index + 1} / ${poolSize}`}>
+                  {index + 1} / {poolSize}
+                </span>
+                <span className="article-daily-note">{t.daily.rotateNote}</span>
+              </div>
+            </div>
+            <div className="article-daily-progress" aria-hidden="true">
+              <i style={{ width: `${((index + 1) / poolSize) * 100}%` }} />
             </div>
             <p className="article-daily-intro">{t.daily.intro}</p>
             <h3 className="article-daily-title">{daily.t}</h3>
