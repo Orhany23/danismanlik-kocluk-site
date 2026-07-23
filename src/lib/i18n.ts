@@ -89,6 +89,14 @@ export type Dictionary = {
     };
     items: Array<{ title: string; category: string; readTime: number; excerpt: string; content: string }>;
   };
+  spark: {
+    label: string;
+    title: string;
+    subtitle: string;
+    rotateNote: string;
+    todayLabel: string;
+    kinds: { motivasyon: string; hikaye: string; teknik: string; taktik: string };
+  };
   faq: {
     label: string;
     title: string;
@@ -401,6 +409,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p>Araştırmaların önerdiği çalışma sırası:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>1. Önce hatırla:</strong> Yeni konuya başlamadan önce dünkü konuyu 5 dakika defter kapalı hatırlamaya çalışın.</li><li><strong>2. Odaklı bloklar:</strong> 25-40 dakika kesintisiz çalışma + 5-10 dakika mola (Pomodoro). Telefon başka odada — görüş alanında olması bile dikkati böler.</li><li><strong>3. Karıştırarak çalışın (Interleaving):</strong> 3 saat boyunca tek ders yerine matematik → fen → matematik gibi dönüşümlü çalışmak, sınavda soru tipini tanıma becerisini güçlendirir.</li><li><strong>4. Anlat ve öğren (Feynman Tekniği):</strong> Konuyu bir arkadaşınıza ya da kendinize basit cümlelerle anlatın. Anlatamadığınız yer, tam olarak çalışmanız gereken yerdir.</li></ul><p style="margin-top:8px;"><strong>Unutmayın:</strong> 7-9 saat uyku öğrenmenin parçasıdır — beyin, bilgiyi uykuda kalıcı hale getirir. Sınav öncesi gece sabahlamak net kaybettirir.</p>`,
         },
       ],
+    },
+    spark: {
+      label: "Her Güne Bir Kıvılcım",
+      title: "Günün Kıvılcımı",
+      subtitle: "Motivasyon sözü, kısa bir hikaye, bir soru çözüm tekniği ya da pratik bir taktik — her gün yeni biri.",
+      rotateNote: "Her gün yenilenir",
+      todayLabel: "Bugün",
+      kinds: {
+        motivasyon: "Motivasyon",
+        hikaye: "Kısa Hikaye",
+        teknik: "Soru Çözüm Tekniği",
+        taktik: "Pratik Taktik",
+      },
     },
     faq: {
       label: "S.S.S.",
@@ -778,6 +799,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p>The order research recommends:</p><ul style="margin-top:8px;padding-left:16px;"><li><strong>1. Recall first:</strong> Before new material, spend 5 minutes recalling yesterday's topic with the notebook closed.</li><li><strong>2. Focused blocks:</strong> 25-40 minutes of uninterrupted work + a 5-10 minute break (Pomodoro). Phone in another room — even seeing it splits attention.</li><li><strong>3. Interleave subjects:</strong> Alternating math → science → math beats 3 hours of a single subject and builds problem-type recognition.</li><li><strong>4. Teach it (Feynman Technique):</strong> Explain the topic in simple words. Wherever you get stuck is exactly what to study next.</li></ul><p style="margin-top:8px;"><strong>Remember:</strong> 7-9 hours of sleep is part of learning — the brain consolidates knowledge during sleep. All-nighters before exams cost points.</p>`,
         },
       ],
+    },
+    spark: {
+      label: "A Spark for Every Day",
+      title: "Spark of the Day",
+      subtitle: "A line of motivation, a short story, a problem-solving technique or a practical tactic — a new one every day.",
+      rotateNote: "Refreshed daily",
+      todayLabel: "Today",
+      kinds: {
+        motivasyon: "Motivation",
+        hikaye: "Short Story",
+        teknik: "Problem-Solving Technique",
+        taktik: "Practical Tactic",
+      },
     },
     faq: {
       label: "FAQ",

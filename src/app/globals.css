@@ -701,6 +701,79 @@ footer > .container { position: relative; z-index: 1; }
 }
 .article-daily-link:hover { gap: 11px; color: var(--clr-primary-dark, var(--clr-primary)); }
 .article-daily-link svg { width: 17px; height: 17px; }
+
+/* Günün Kıvılcımı — her gün değişen motivasyon / hikaye / teknik / taktik kartı */
+.spark-card {
+  position: relative;
+  max-width: 780px;
+  background: var(--clr-card);
+  border: 1px solid var(--clr-border);
+  border-radius: 22px;
+  padding: 34px 36px 30px;
+  box-shadow: 0 30px 70px -40px var(--clr-shadow-lg);
+  overflow: hidden;
+}
+/* Sol kenar vurgusu — türe göre yeşil ya da amber */
+.spark-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--clr-primary);
+}
+.spark-motivasyon::before, .spark-taktik::before { background: var(--clr-sage); }
+.spark-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap; margin-bottom: 22px;
+}
+.spark-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--clr-primary);
+  background: var(--clr-accent-tint);
+  border-radius: 999px; padding: 7px 15px 7px 12px;
+}
+.spark-motivasyon .spark-badge, .spark-taktik .spark-badge {
+  color: var(--clr-sage-dark); background: var(--clr-sage-tint);
+}
+.spark-badge svg { width: 16px; height: 16px; flex: none; }
+.spark-today {
+  font-family: var(--font-mono-label, ui-monospace, monospace);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--clr-text3);
+}
+.spark-quote {
+  position: relative; margin: 0; padding: 4px 0 8px 2px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+  font-weight: 560; line-height: 1.32; letter-spacing: -0.005em;
+  color: var(--clr-text); text-wrap: balance;
+}
+.spark-quote-mark {
+  width: 34px; height: 34px; color: var(--clr-sage);
+  opacity: 0.6; margin-bottom: 6px; display: block;
+}
+.spark-item-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  font-weight: 600; letter-spacing: -0.01em; line-height: 1.2;
+  color: var(--clr-text); margin: 0 0 14px;
+}
+.spark-item-body {
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  line-height: 1.78; color: var(--clr-text2); margin: 0; max-width: 64ch;
+}
+.spark-foot {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--clr-border);
+  font-size: 0.82rem; font-weight: 500; color: var(--clr-text3);
+}
+.spark-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--clr-sage);
+  box-shadow: 0 0 0 4px var(--clr-sage-tint);
+}
+@media (max-width: 560px) {
+  .spark-card { padding: 26px 22px 24px; border-radius: 18px; }
+}
 /* Günün araştırması — detaylı bölüm (yapılandırılmış içerik) */
 .article-daily-toggle {
   display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
