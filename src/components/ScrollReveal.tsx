@@ -22,7 +22,9 @@ export default function ScrollReveal() {
             io.unobserve(e.target);
           }
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 }
+      // Pozitif alt margin: öğeler görünüme girmeden ~%20 önce belirmeye başlar,
+      // böylece hızlı kaydırmada içerik ekrana geldiğinde çoktan görünür olur.
+      { rootMargin: "0px 0px 20% 0px", threshold: 0 }
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
