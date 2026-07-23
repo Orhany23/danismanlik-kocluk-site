@@ -793,6 +793,13 @@ footer > .container { position: relative; z-index: 1; }
   html { scroll-behavior: auto; }
 }
 
+/* Yatay telefon (kısa ekran): scroll-reveal fade'i kaydırma sırasında içeriği
+   geçici olarak boş/soluk gösteriyordu. Bu ekranlarda reveal'ı kapatıp içeriği
+   anında göster — kaydırırken beyaz boşluk oluşmaz. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
 /* ===== PORTRAIT FRAME — tasarlanmış "fotoğrafsız" hali ===== */
 .hero-portrait-frame,
 .about-portrait-frame {
