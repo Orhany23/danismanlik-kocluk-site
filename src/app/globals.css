@@ -7,25 +7,27 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --clr-bg:        #F4F6FB;
-  --clr-bg2:       #FAFBFE;
+  /* Palet konuya oturur: rehberlik/büyüme için koyu yeşil (primary),
+     mum ışığı/vurgu için amber (sage token'ı), sakin nötr kağıt zemin. */
+  --clr-bg:        #F2F4F1;
+  --clr-bg2:       #FAFBF9;
   --clr-card:      #FFFFFF;
-  --clr-ink:       #1D2340;
-  --clr-text:      #232A4A;
-  --clr-text2:     #5A6180;
-  --clr-text3:     #8B91AB;
-  --clr-border:    #DFE4F0;
-  --clr-shadow:    rgba(29,35,64,0.08);
-  --clr-shadow-lg: rgba(29,35,64,0.14);
-  --clr-primary:        #4F46B8;
-  --clr-primary-dark:   #3D3596;
-  --clr-primary-light:  #6C63D6;
-  --clr-accent:         #4F46B8;
-  --clr-accent-dark:    #3D3596;
-  --clr-accent-tint:    #E8E6F9;
-  --clr-sage:       #0EA5A4;
-  --clr-sage-dark:  #0B807F;
-  --clr-sage-tint:  #DDF3F2;
+  --clr-ink:       #1B2A22;
+  --clr-text:      #22322A;
+  --clr-text2:     #56635A;
+  --clr-text3:     #889389;
+  --clr-border:    #E0E5DF;
+  --clr-shadow:    rgba(27,42,34,0.08);
+  --clr-shadow-lg: rgba(27,42,34,0.14);
+  --clr-primary:        #2F6A4A;
+  --clr-primary-dark:   #234E37;
+  --clr-primary-light:  #3E8560;
+  --clr-accent:         #2F6A4A;
+  --clr-accent-dark:    #234E37;
+  --clr-accent-tint:    #E4EDE7;
+  --clr-sage:       #BE7B25;
+  --clr-sage-dark:  #966018;
+  --clr-sage-tint:  #F5EAD7;
   --clr-navy: var(--clr-ink);
   --navbar-h: 76px;
   --radius:    16px;
@@ -37,18 +39,18 @@
 }
 
 .dark {
-  --clr-bg:    #14172A;
-  --clr-bg2:   #191D33;
-  --clr-card:  #1E2340;
-  --clr-text:  #E9ECF8;
-  --clr-text2: #AAB1CE;
-  --clr-text3: #7B82A3;
-  --clr-border:#2C3155;
+  --clr-bg:    #121A15;
+  --clr-bg2:   #16211A;
+  --clr-card:  #1B261F;
+  --clr-text:  #E8EDE9;
+  --clr-text2: #A6B2AA;
+  --clr-text3: #78857D;
+  --clr-border:#2A362F;
   --clr-shadow: rgba(0,0,0,0.4);
   --clr-shadow-lg: rgba(0,0,0,0.5);
-  --clr-primary:#8A82E8; --clr-primary-light:#A19AF0; --clr-accent:#8A82E8;
-  --clr-accent-tint:#2A2A55;
-  --clr-sage:#35C4BE; --clr-sage-tint:#123A3B;
+  --clr-primary:#5FB185; --clr-primary-light:#7EC49E; --clr-accent:#5FB185;
+  --clr-accent-tint:#1E3A2B;
+  --clr-sage:#E0A64A; --clr-sage-tint:#3A2E18;
 }
 
 /* Tarayıcıya aktif renk şemasını bildir (form kontrolleri, scrollbar vb.) */
@@ -56,7 +58,7 @@
 .dark { color-scheme: dark; }
 
 /* Karanlık temada okunabilirlik boşluk düzeltmeleri */
-.dark { --clr-primary-dark: #A19AF0; --clr-sage-dark: #67D6D0; }
+.dark { --clr-primary-dark: #7EC49E; --clr-sage-dark: #E9BE73; }
 .dark ::selection { color: var(--clr-text); }
 .dark body::before { background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); }
 
@@ -84,7 +86,7 @@ body {
 body::before {
   content: "";
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-image: radial-gradient(rgba(60,70,130,0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(47,106,74,0.05) 1px, transparent 1px);
   background-size: 4px 4px;
   opacity: 0.6;
 }
@@ -339,7 +341,7 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 .domain-band { padding: 88px 0 100px; border-top: 1px solid var(--clr-border); background: var(--clr-bg2); }
 .domain-band--ink {
   background:
-    radial-gradient(100% 80% at 90% 0%, rgba(110,125,94,0.16) 0%, transparent 50%),
+    radial-gradient(100% 80% at 90% 0%, rgba(190,123,37,0.18) 0%, transparent 50%),
     var(--clr-ink);
   color: #F2EADC; border-top: none;
   position: relative; overflow: hidden;
