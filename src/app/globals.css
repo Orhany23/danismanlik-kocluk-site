@@ -102,6 +102,28 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 ::-webkit-scrollbar-thumb:hover { background: var(--clr-primary-light); }
 
 section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
+
+/* Okuma-ilerleme çizgisi: navbar'ın hemen altında, kaydırdıkça soldan sağa
+   dolan ince çizgi (Evrim Ağacı tarzı). scaleX ile dolduğu için performanslı. */
+.scroll-progress {
+  position: fixed;
+  top: calc(var(--navbar-h) - 1px);
+  left: 0; right: 0;
+  height: 3px;
+  z-index: 51;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--clr-border) 55%, transparent);
+}
+.scroll-progress-bar {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--clr-primary) 0%, var(--clr-sage) 100%);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-progress-bar { transition: transform 0.08s linear; }
+}
 .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 .section { padding: 124px 0; }
 @media (max-width: 768px) { .section { padding: 76px 0; } }

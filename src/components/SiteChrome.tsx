@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import ScrollProgress from "@/components/ScrollProgress";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LegalModals from "@/components/LegalModals";
@@ -10,7 +11,12 @@ import LegalModals from "@/components/LegalModals";
 export function SiteHeader() {
   const pathname = usePathname();
   if (pathname.startsWith("/admin")) return null;
-  return <Navbar />;
+  return (
+    <>
+      <Navbar />
+      <ScrollProgress />
+    </>
+  );
 }
 
 export function SiteFooter() {
