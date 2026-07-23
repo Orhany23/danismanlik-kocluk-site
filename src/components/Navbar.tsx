@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { useLocale } from "@/components/LocaleProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -8,19 +9,13 @@ export default function Navbar() {
   const { dict, toggleLocale } = useLocale();
   const t = dict.nav;
   const [menuOpen, setMenuOpen] = useState(false);
-  // Oturum varsa Giriş Yap / Kayıt Ol yerine "Panelim" gösterilir
-  const [panelHref, setPanelHref] = useState<string | null>(null);
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((r) => r.json())
-      .then((d) => {
-        const role = d?.user?.role;
-        if (role === "STUDENT") setPanelHref("/ogrenci");
-        else if (role === "ADMIN") setPanelHref("/admin");
-        else setPanelHref(null);
-      })
-      .catch(() => setPanelHref(null));
-  }, []);
+  // Oturum varsa Giriş Yap / Kayıt Ol yerine "Panelim" gösterilir.
+  // Oturum durumu NextAuth SessionProvider üzerinden okunur (elle fetch yerine
+  // güvenilir; tarayıcı önbelleğine takılmaz, girişten sonra otomatik güncellenir).
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  const panelHref =
+    role === "STUDENT" ? "/ogrenci" : role === "ADMIN" ? "/admin" : null;
 
   const sectionIds: Record<string, string> = { whoFor: "who-for" };
 

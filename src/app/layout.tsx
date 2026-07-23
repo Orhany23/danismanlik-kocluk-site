@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LocaleProvider } from "@/components/LocaleProvider";
+import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import "./globals.css";
 
@@ -64,9 +65,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <LocaleProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <AuthProvider>
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </AuthProvider>
         </LocaleProvider>
       </body>
     </html>
