@@ -75,7 +75,7 @@ export default function Navbar() {
           {panelHref ? (
             <a
               href={panelHref}
-              className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
+              className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden lg:!inline-flex"
             >
               Panelim
             </a>
@@ -83,19 +83,19 @@ export default function Navbar() {
             <>
               <a
                 href="/ogrenci/giris"
-                className="nav-link text-[0.82rem] !font-semibold hidden sm:inline-flex items-center"
+                className="nav-link text-[0.82rem] !font-semibold hidden lg:inline-flex items-center"
               >
                 Giriş Yap
               </a>
               <a
                 href="/ogrenci/kayit"
-                className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex"
+                className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden lg:!inline-flex"
               >
                 Kayıt Ol
               </a>
             </>
           )}
-          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] !hidden sm:!inline-flex">
+          <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] !hidden lg:!inline-flex">
             {t.appointment}
           </button>
           <button
