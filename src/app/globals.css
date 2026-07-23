@@ -311,6 +311,17 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   .hero-title { max-width: 18ch; }
 }
 
+/* Yatay telefonlar (geniş ama kısa ekran): iki sütunlu hero, portre sütununun
+   yanında büyük boş alan bırakıyordu. Kısa yükseklikte tek sütuna geç, 94vh
+   min-height'i kaldır ve üst/alt dolguyu kısalt ki ilk ekran derli toplu olsun. */
+@media (orientation: landscape) and (max-height: 620px) {
+  #hero { min-height: 0; }
+  .hero-inner { padding: calc(var(--navbar-h) + 28px) 0 52px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: start; }
+  .hero-portrait { max-width: 340px; }
+  .hero-title { max-width: 22ch; }
+}
+
 .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .exams-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 .service-card {
