@@ -208,7 +208,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Hizmetler",
-      title: "Geleceği tahmin etmenin en iyi yolu,<br>onu kendi ellerinle <em>yaratmaktır.</em>",
+      title: "İki alan, <em>tek bütüncül yaklaşım.</em>",
       subtitle: "Akademik destek ve psikolojik danışmanlık birbirinden ayrı yürütülen ama birbirini besleyen iki alandır. Hangi kapıdan girerseniz girin, bütüncül bir yaklaşımla karşılanırsınız.",
       groups: [
         {
@@ -585,7 +585,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Services",
-      title: "The best way to predict the future,<br>is to <em>create it.</em>",
+      title: "Two domains, <em>one holistic approach.</em>",
       subtitle: "Academic support and psychological counseling are two distinct but mutually reinforcing domains. Whichever door you enter through, you are met with a holistic approach.",
       groups: [
         {

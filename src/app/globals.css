@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -31,7 +31,7 @@
   --radius:    16px;
   --radius-sm: 12px;
   --transition: cubic-bezier(0.22,0.61,0.36,1);
-  --font-display:    'Montserrat', 'Segoe UI', sans-serif;
+  --font-display:    'Fraunces', Georgia, serif;
   --font-body:       'Figtree', system-ui, sans-serif;
   --font-mono-label: 'IBM Plex Mono', ui-monospace, monospace;
 }
@@ -119,15 +119,16 @@ section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
 .section-title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 4.2vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
+  font-weight: 620;
+  font-variation-settings: "opsz" 90;
+  letter-spacing: -0.012em;
+  line-height: 1.1;
   margin-bottom: 22px;
   text-wrap: balance;
 }
 .section-title em {
-  font-style: normal;
-  font-weight: 800;
+  font-style: italic;
+  font-weight: 600;
   color: var(--clr-sage);
 }
 .section-sub {
@@ -244,15 +245,16 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--clr-sage); flex: none; box-shadow: 0 0 0 4px var(--clr-sage-tint); }
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 6vw, 4.7rem);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
+  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
+  font-weight: 590;
+  font-variation-settings: "opsz" 130;
+  letter-spacing: -0.015em;
+  line-height: 1.06;
   color: var(--clr-text);
-  margin: 0 0 26px; max-width: 16ch;
+  margin: 0 0 26px; max-width: 18ch;
   text-wrap: balance;
 }
-.hero-title em { font-style: normal; font-weight: 800; color: var(--clr-sage); }
+.hero-title em { font-style: italic; font-weight: 560; color: var(--clr-sage); }
 .hero-sub {
   font-size: clamp(1.04rem, 1.5vw, 1.18rem);
   color: var(--clr-text2);
