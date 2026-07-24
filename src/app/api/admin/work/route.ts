@@ -10,11 +10,18 @@ export async function GET() {
 
   try {
     await ensureStudentWorkTable();
-    const works = await prisma.studentWork.findMany({
+    const rows = await prisma.studentWork.findMany({
       orderBy: { createdAt: "desc" },
       take: 300,
       include: { student: { select: { id: true, name: true, gradeLevel: true } } },
     });
+    // Dosyalar private; ham Blob URL'i istemciye verilmez. LINK dışında url
+    // gizlenir; dosya varsa hasFile ile işaretlenir (admin /api/admin/work/[id]/file kullanır).
+    const works = rows.map((w) => ({
+      ...w,
+      url: w.type === "LINK" ? w.url : null,
+      hasFile: w.type === "FILE" || w.type === "PHOTO",
+    }));
     return NextResponse.json({ works });
   } catch (err) {
     console.error("Admin work GET error:", err);

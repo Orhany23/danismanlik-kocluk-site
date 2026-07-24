@@ -11,6 +11,7 @@ type Work = {
   note: string | null;
   url: string | null;
   fileName: string | null;
+  hasFile?: boolean;
   seen: boolean;
   createdAt: string;
 };
@@ -238,9 +239,14 @@ export default function StudentWorkForm() {
                     {w.title || w.fileName || TYPE_META[w.type].label}
                   </span>
                   {w.note && <span className="work-history-note">{w.note}</span>}
-                  {w.url && (
+                  {w.type === "LINK" && w.url && (
                     <a className="work-history-link" href={w.url} target="_blank" rel="noopener noreferrer">
-                      {w.type === "LINK" ? "Bağlantıyı aç" : "Dosyayı aç"} <ExternalLink strokeWidth={1.8} />
+                      Bağlantıyı aç <ExternalLink strokeWidth={1.8} />
+                    </a>
+                  )}
+                  {w.hasFile && (
+                    <a className="work-history-link" href={`/api/student/work/${w.id}/file`} target="_blank" rel="noopener noreferrer">
+                      {w.type === "PHOTO" ? "Fotoğrafı aç" : "Dosyayı aç"} <ExternalLink strokeWidth={1.8} />
                     </a>
                   )}
                 </div>

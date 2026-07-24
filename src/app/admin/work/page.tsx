@@ -11,6 +11,7 @@ type Work = {
   url: string | null;
   fileName: string | null;
   fileSize: number | null;
+  hasFile?: boolean;
   seen: boolean;
   createdAt: string;
   student: { id: string; name: string; gradeLevel: string | null };
@@ -130,21 +131,32 @@ export default function AdminWorkPage() {
                 {w.title && <div className="text-sm font-medium text-gray-800">{w.title}</div>}
                 {w.note && <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{w.note}</p>}
 
-                {w.type === "PHOTO" && w.url && (
-                  <a href={w.url} target="_blank" rel="noopener noreferrer" className="block">
+                {w.type === "PHOTO" && w.hasFile && (
+                  <a href={`/api/admin/work/${w.id}/file`} target="_blank" rel="noopener noreferrer" className="block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={w.url} alt={w.title ?? "Öğrenci fotoğrafı"} className="rounded-xl border border-gray-100 max-h-64 w-auto object-contain" />
+                    <img src={`/api/admin/work/${w.id}/file`} alt={w.title ?? "Öğrenci fotoğrafı"} className="rounded-xl border border-gray-100 max-h-64 w-auto object-contain" />
                   </a>
                 )}
 
-                {w.url && w.type !== "PHOTO" && (
+                {w.type === "FILE" && w.hasFile && (
                   <a
-                    href={w.url}
+                    href={`/api/admin/work/${w.id}/file`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit"
                   >
-                    {w.type === "FILE" ? "📄 PDF'i aç" : "🔗 Bağlantıyı aç"}
+                    📄 PDF&apos;i aç
+                  </a>
+                )}
+
+                {w.type === "LINK" && w.url && (
+                  <a
+                    href={w.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit break-all"
+                  >
+                    🔗 Bağlantıyı aç
                   </a>
                 )}
 
