@@ -31,11 +31,11 @@ function fmtDate(iso: string) {
 export default function AdminWorkPage() {
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
-  const [onlyUnseen, setOnlyUnseen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<"all" | "unseen" | "seen">("all");
   const [studentFilter, setStudentFilter] = useState<string>("");
 
   const load = () => {
-    fetch("/api/admin/work")
+    fetch("/api/admin/work", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setWorks(d.works ?? []))
       .catch(() => {})
@@ -50,13 +50,16 @@ export default function AdminWorkPage() {
     return Array.from(map, ([id, name]) => ({ id, name }));
   }, [works]);
 
-  const filtered = works.filter(
-    (w) => (!onlyUnseen || !w.seen) && (!studentFilter || w.student.id === studentFilter),
-  );
+  const filtered = works.filter((w) => {
+    if (statusFilter === "unseen" && w.seen) return false;
+    if (statusFilter === "seen" && !w.seen) return false;
+    if (studentFilter && w.student.id !== studentFilter) return false;
+    return true;
+  });
   const unseenCount = works.filter((w) => !w.seen).length;
 
-  const toggleSeen = async (w: Work) => {
-    const seen = !w.seen;
+  const setSeen = async (w: Work, seen: boolean) => {
+    if (w.seen === seen) return;
     setWorks((prev) => prev.map((x) => (x.id === w.id ? { ...x, seen } : x)));
     await fetch(`/api/admin/work/${w.id}`, {
       method: "PATCH",
@@ -64,6 +67,7 @@ export default function AdminWorkPage() {
       body: JSON.stringify({ seen }),
     }).catch(() => load());
   };
+  const toggleSeen = (w: Work) => setSeen(w, !w.seen);
 
   const remove = async (w: Work) => {
     if (!confirm("Bu çalışmayı silmek istediğinize emin misiniz? (Dosyaysa depodan da silinir)")) return;
@@ -94,12 +98,24 @@ export default function AdminWorkPage() {
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
-          <button
-            onClick={() => setOnlyUnseen((v) => !v)}
-            className={`text-sm rounded-lg px-3 py-2 border transition-colors ${onlyUnseen ? "bg-[var(--clr-primary)] text-white border-transparent" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}`}
-          >
-            Sadece bekleyenler
-          </button>
+          <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden bg-white">
+            {([
+              ["all", "Tümü"],
+              ["unseen", "Bekleyenler"],
+              ["seen", "Görülenler"],
+            ] as const).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setStatusFilter(key)}
+                className={`text-sm px-3 py-2 transition-colors ${statusFilter === key ? "bg-[var(--clr-primary)] text-white" : "text-gray-600 hover:bg-gray-50"}`}
+              >
+                {label}
+                {key === "unseen" && unseenCount > 0 && (
+                  <span className={`ml-1.5 text-xs ${statusFilter === key ? "opacity-90" : "text-[var(--clr-primary)]"}`}>{unseenCount}</span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -132,7 +148,7 @@ export default function AdminWorkPage() {
                 {w.note && <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{w.note}</p>}
 
                 {w.type === "PHOTO" && w.hasFile && (
-                  <a href={`/api/admin/work/${w.id}/file`} target="_blank" rel="noopener noreferrer" className="block">
+                  <a href={`/api/admin/work/${w.id}/file`} target="_blank" rel="noopener noreferrer" className="block" onClick={() => setSeen(w, true)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={`/api/admin/work/${w.id}/file`} alt={w.title ?? "Öğrenci fotoğrafı"} className="rounded-xl border border-gray-100 max-h-64 w-auto object-contain" />
                   </a>
@@ -143,6 +159,7 @@ export default function AdminWorkPage() {
                     href={`/api/admin/work/${w.id}/file`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => setSeen(w, true)}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit"
                   >
                     📄 PDF&apos;i aç
