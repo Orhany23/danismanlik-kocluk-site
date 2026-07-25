@@ -52,7 +52,7 @@ export async function GET() {
       url: w.type === "LINK" ? w.url : null,
       hasFile: w.type === "FILE" || w.type === "PHOTO",
     }));
-    return NextResponse.json({ works });
+    return NextResponse.json({ works }, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("Student work GET error:", err);
     return NextResponse.json({ error: "Çalışmalar getirilemedi." }, { status: 500 });

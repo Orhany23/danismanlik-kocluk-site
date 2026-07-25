@@ -68,7 +68,7 @@ export default function StudentWorkForm() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
-    const data: { works?: Work[] } = await fetch("/api/student/work")
+    const data: { works?: Work[] } = await fetch("/api/student/work", { cache: "no-store" })
       .then((r) => r.json())
       .catch(() => ({ works: [] }));
     setWorks(data.works ?? []);
