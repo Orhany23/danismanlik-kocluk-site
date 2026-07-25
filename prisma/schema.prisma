@@ -92,6 +92,7 @@ model Student {
   updatedAt       DateTime @updatedAt
   resources       Resource[]
   testimonial     Testimonial?
+  works           StudentWork[]
 }
 
 model Testimonial {
@@ -150,4 +151,21 @@ model Resource {
 
   @@index([studentId])
   @@index([gradeLevel])
+}
+
+model StudentWork {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  type      String   @default("NOTE")  // NOTE | LINK | FILE | PHOTO
+  title     String?                      // kısa başlık (ör. "Matematik - Türev denemesi")
+  note      String?                      // NOTE metni ya da dosya/bağlantı açıklaması
+  url       String?                      // LINK için bağlantı, FILE/PHOTO için Blob URL
+  fileName  String?                      // yüklenen dosyanın orijinal adı
+  fileSize  Int?                         // bayt cinsinden boyut
+  seen      Boolean  @default(false)     // koç (admin) gördü mü
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+  @@index([createdAt])
 }

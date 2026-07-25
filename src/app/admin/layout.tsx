@@ -11,6 +11,7 @@ const sidebarLinks = [
   { href: "/admin/sessions", label: "Seanslar", icon: "📋" },
   { href: "/admin/messages", label: "Mesajlar", icon: "✉" },
   { href: "/admin/students", label: "Öğrenciler", icon: "🎓" },
+  { href: "/admin/work", label: "Öğrenci Çalışmaları", icon: "📥" },
   { href: "/admin/resources", label: "Kaynaklar", icon: "📚" },
   { href: "/admin/testimonials", label: "Yorumlar", icon: "⭐" },
   { href: "/admin/settings", label: "Ayarlar", icon: "⚙" },

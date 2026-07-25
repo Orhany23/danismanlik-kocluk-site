@@ -3,6 +3,7 @@ import { auth, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
 import StudentTestimonial from "@/components/StudentTestimonial";
+import StudentWorkForm from "@/components/StudentWorkForm";
 
 export const metadata = {
   title: "Öğrenci Paneli | Orhan Yaşlı",
@@ -147,6 +148,9 @@ export default async function StudentDashboard() {
         <p className="student-lead">
           Sana özel içerikler ve kaynak kütüphanen burada. Yeni içerik eklendikçe bu sayfada görünür.
         </p>
+
+        {/* Bugün Ne Çalıştın? — öğrenci günlük çalışma gönderir */}
+        <StudentWorkForm />
 
         {/* Sana Özel İçerikler */}
         <section className="student-section">
