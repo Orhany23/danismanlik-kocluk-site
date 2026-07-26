@@ -43,7 +43,10 @@ export async function GET() {
       where: { studentId },
       orderBy: { createdAt: "desc" },
       take: 50,
-      select: { id: true, type: true, title: true, note: true, url: true, fileName: true, seen: true, createdAt: true },
+      select: {
+        id: true, type: true, title: true, note: true, url: true, fileName: true,
+        seen: true, feedback: true, feedbackAt: true, createdAt: true,
+      },
     });
     // Dosyalar private; ham Blob URL'i istemciye verilmez. LINK dışında url gizlenir,
     // dosya varsa hasFile ile işaretlenir (istemci /api/student/work/[id]/file kullanır).
