@@ -16,9 +16,14 @@ export async function ensureStudentWorkTable(): Promise<void> {
     "fileName" TEXT,
     "fileSize" INTEGER,
     "seen" BOOLEAN NOT NULL DEFAULT false,
+    "feedback" TEXT,
+    "feedbackAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "StudentWork_pkey" PRIMARY KEY ("id")
   )`);
+  // Tablo daha önce (dönüt alanları olmadan) oluşturulmuş olabilir.
+  await prisma.$executeRawUnsafe(`ALTER TABLE "StudentWork" ADD COLUMN IF NOT EXISTS "feedback" TEXT`);
+  await prisma.$executeRawUnsafe(`ALTER TABLE "StudentWork" ADD COLUMN IF NOT EXISTS "feedbackAt" TIMESTAMP(3)`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StudentWork_studentId_idx" ON "StudentWork"("studentId")`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StudentWork_createdAt_idx" ON "StudentWork"("createdAt")`);
   await prisma.$executeRawUnsafe(`DO $$ BEGIN

@@ -1003,6 +1003,25 @@ footer > .container { position: relative; z-index: 1; }
 }
 .work-history-status svg { width: 14px; height: 14px; }
 .work-history-status.is-seen { color: var(--clr-sage-dark); }
+.work-history-status.is-replied { color: var(--clr-primary); }
+
+/* Koçun öğrenci çalışmasına yazdığı dönüt */
+.work-feedback {
+  margin-top: 10px; padding: 12px 14px;
+  background: var(--clr-accent-tint);
+  border-left: 3px solid var(--clr-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.work-feedback-head {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em;
+  color: var(--clr-primary); margin-bottom: 6px;
+}
+.work-feedback-head svg { width: 15px; height: 15px; }
+.work-feedback-text {
+  margin: 0; font-size: 0.9rem; line-height: 1.65;
+  color: var(--clr-text); white-space: pre-wrap;
+}
 
 .resource-list { display: flex; flex-direction: column; gap: 12px; }
 .resource-item {

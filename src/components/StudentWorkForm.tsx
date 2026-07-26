@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FileText, LinkIcon, FileUp, Camera, Check, Clock, ExternalLink } from "lucide-react";
+import { FileText, LinkIcon, FileUp, Camera, Check, Clock, ExternalLink, MessageCircle } from "lucide-react";
 
 type WorkType = "NOTE" | "LINK" | "FILE" | "PHOTO";
 type Work = {
@@ -13,6 +13,8 @@ type Work = {
   fileName: string | null;
   hasFile?: boolean;
   seen: boolean;
+  feedback: string | null;
+  feedbackAt: string | null;
   createdAt: string;
 };
 
@@ -249,9 +251,24 @@ export default function StudentWorkForm() {
                       {w.type === "PHOTO" ? "Fotoğrafı aç" : "Dosyayı aç"} <ExternalLink strokeWidth={1.8} />
                     </a>
                   )}
+                  {w.feedback && (
+                    <div className="work-feedback">
+                      <span className="work-feedback-head">
+                        <MessageCircle strokeWidth={1.8} aria-hidden="true" />
+                        Koçunun dönütü
+                      </span>
+                      <p className="work-feedback-text">{w.feedback}</p>
+                    </div>
+                  )}
                 </div>
-                <span className={`work-history-status ${w.seen ? "is-seen" : ""}`}>
-                  {w.seen ? <><Check strokeWidth={2.2} /> Görüldü</> : <><Clock strokeWidth={1.8} /> Bekliyor</>}
+                <span className={`work-history-status ${w.feedback ? "is-replied" : w.seen ? "is-seen" : ""}`}>
+                  {w.feedback ? (
+                    <><MessageCircle strokeWidth={2} /> Dönüt var</>
+                  ) : w.seen ? (
+                    <><Check strokeWidth={2.2} /> Görüldü</>
+                  ) : (
+                    <><Clock strokeWidth={1.8} /> Bekliyor</>
+                  )}
                 </span>
               </li>
             ))}

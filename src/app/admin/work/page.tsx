@@ -13,6 +13,8 @@ type Work = {
   fileSize: number | null;
   hasFile?: boolean;
   seen: boolean;
+  feedback: string | null;
+  feedbackAt: string | null;
   createdAt: string;
   student: { id: string; name: string; gradeLevel: string | null };
 };
@@ -177,6 +179,10 @@ export default function AdminWorkPage() {
                   </a>
                 )}
 
+                <FeedbackBox work={w} onSaved={(fb, at) =>
+                  setWorks((prev) => prev.map((x) => (x.id === w.id ? { ...x, feedback: fb, feedbackAt: at, seen: fb ? true : x.seen } : x)))
+                } />
+
                 <div className="flex items-center justify-between gap-3 pt-2 mt-auto border-t border-gray-50">
                   <button
                     onClick={() => toggleSeen(w)}
@@ -191,6 +197,106 @@ export default function AdminWorkPage() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+// Koçun bir çalışmaya yazdığı değerlendirme/dönüt. Kaydedilince öğrencinin
+// panelinde görünür ve çalışma otomatik "görüldü" sayılır.
+function FeedbackBox({
+  work,
+  onSaved,
+}: {
+  work: Work;
+  onSaved: (feedback: string | null, feedbackAt: string | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState(work.feedback ?? "");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const res = await fetch(`/api/admin/work/${work.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feedback: text }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        onSaved(data.feedback ?? null, data.feedbackAt ?? null);
+        setSaved(true);
+        setOpen(false);
+        setTimeout(() => setSaved(false), 2500);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Dönüt varsa ve düzenlenmiyorsa: yazılanı göster
+  if (work.feedback && !open) {
+    return (
+      <div className="rounded-xl bg-[var(--clr-accent-tint)] border border-[var(--clr-primary)]/20 px-4 py-3">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className="text-xs font-semibold text-[var(--clr-primary)]">💬 Dönütün</span>
+          <button onClick={() => { setText(work.feedback ?? ""); setOpen(true); }} className="text-xs text-gray-500 hover:underline">
+            Düzenle
+          </button>
+        </div>
+        <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{work.feedback}</p>
+      </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit"
+      >
+        💬 Dönüt yaz
+      </button>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-gray-200 p-3 space-y-2">
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={3}
+        maxLength={4000}
+        autoFocus
+        placeholder="Öğrenciye değerlendirmeni yaz — neyi iyi yapmış, neye dikkat etmeli, sıradaki adım ne?"
+        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 leading-relaxed focus:outline-none focus:ring-1 focus:ring-[var(--clr-primary)]"
+      />
+      <div className="flex items-center gap-2">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="text-xs font-medium rounded-lg px-3 py-1.5 bg-[var(--clr-primary)] text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Gönderiliyor…" : "Öğrenciye gönder"}
+        </button>
+        <button
+          onClick={() => { setOpen(false); setText(work.feedback ?? ""); }}
+          className="text-xs text-gray-500 hover:underline"
+        >
+          Vazgeç
+        </button>
+        {work.feedback && (
+          <button
+            onClick={() => { setText(""); }}
+            className="text-xs text-red-500 hover:underline ml-auto"
+          >
+            Temizle
+          </button>
+        )}
+        {saved && <span className="text-xs text-emerald-600 ml-auto">Gönderildi ✓</span>}
+      </div>
     </div>
   );
 }

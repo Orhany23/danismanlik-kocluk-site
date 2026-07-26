@@ -164,6 +164,8 @@ model StudentWork {
   fileName  String?                      // yüklenen dosyanın orijinal adı
   fileSize  Int?                         // bayt cinsinden boyut
   seen      Boolean  @default(false)     // koç (admin) gördü mü
+  feedback   String?                      // koçun öğrenciye yazdığı değerlendirme
+  feedbackAt DateTime?                    // dönüt ne zaman yazıldı/güncellendi
   createdAt DateTime @default(now())
 
   @@index([studentId])
