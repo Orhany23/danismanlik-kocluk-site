@@ -12,6 +12,9 @@ type Student = {
   active: boolean;
   createdAt: string;
   client?: { id: string; name: string } | null;
+  birthYear?: number | null;
+  guardianName?: string | null;
+  guardianPhone?: string | null;
 };
 
 export default function AdminStudentsPage() {
@@ -92,7 +95,15 @@ export default function AdminStudentsPage() {
             <tbody>
               {students.map((s) => (
                 <tr key={s.id} className={`border-t border-gray-50 ${s.active ? "" : "bg-gray-50/60"}`}>
-                  <td className="px-5 py-3 font-medium text-gray-800">{s.name}</td>
+                  <td className="px-5 py-3 font-medium text-gray-800">
+                    {s.name}
+                    {/* 18 yaş altı kayıtlarda veli bilgisi — KVKK kaydı görünür olsun */}
+                    {s.guardianName && (
+                      <span className="block text-xs font-normal text-amber-700 mt-0.5">
+                        veli: {s.guardianName} · {s.guardianPhone}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-5 py-3 text-gray-600">{s.email}</td>
                   <td className="px-5 py-3 text-gray-600">{s.gradeLevel || "—"}</td>
                   <td className="px-5 py-3 text-gray-400">

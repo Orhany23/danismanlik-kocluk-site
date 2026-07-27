@@ -86,6 +86,11 @@ model Student {
   email           String   @unique
   password        String
   gradeLevel      String?  // örn. "LGS", "YKS-Sayısal", "Mezun"
+  // Veli onayı kaydı. Tek kutu "18'den küçüğüm VEYA büyüğüm" diyordu ve iki
+  // durumu ayırt edemiyordu; doğum yılı + veli iletişimi ile ayrıştırıldı.
+  birthYear       Int?
+  guardianName    String?
+  guardianPhone   String?
   guardianConsent Boolean  @default(false)
   consentAt       DateTime?
   active          Boolean  @default(true)

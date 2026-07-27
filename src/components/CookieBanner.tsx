@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
 
 export default function CookieBanner() {
@@ -22,20 +23,6 @@ export default function CookieBanner() {
     setVisible(false);
   };
 
-  const openModal = (id: string) => {
-    const content = document.getElementById(`${id}-content`);
-    if (content) {
-      // Load legal content into modal from i18n
-      const localeEl = document.querySelector("html")?.getAttribute("lang") || "tr";
-      import("@/lib/i18n").then((mod) => {
-        const dict_ = mod.dictionaries[localeEl as "tr" | "en"];
-        if (id === "modal-privacy") {
-          content.innerHTML = `<h2>${dict_.legal.privacyTitle}</h2><p>${dict_.legal.privacyContent}</p>`;
-        }
-      });
-    }
-    document.getElementById(id)?.classList.add("show");
-  };
 
   return (
     <div
@@ -48,9 +35,9 @@ export default function CookieBanner() {
     >
       <p className="flex-1 text-[0.88rem]">
         {dict.cookie.text}{" "}
-        <button onClick={() => openModal("modal-privacy")} style={{ color: "var(--clr-accent)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontSize: "0.88rem" }}>
+        <Link href="/gizlilik" style={{ color: "var(--clr-accent)", textDecoration: "underline", fontSize: "0.88rem" }}>
           {dict.cookie.privacy}
-        </button>
+        </Link>
       </p>
       <div className="flex items-center gap-2 shrink-0">
         <button className="cookie-btn flex-1 sm:flex-none bg-[var(--clr-primary)] text-white px-5 py-2 rounded-full text-[0.85rem] font-semibold hover:bg-[var(--clr-primary-dark)] transition-colors" onClick={accept}>
