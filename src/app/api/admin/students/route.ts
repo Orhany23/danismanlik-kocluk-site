@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { ensureStudentClientLink } from "@/lib/ensureStudentClientLink";
 
 export async function GET() {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  if (!session || role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const session = await requireAdmin();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Bağ sütunu üretimde henüz yoksa ekle; eklenemezse liste yine dönsün.
+  let withLink = true;
+  try {
+    await ensureStudentClientLink();
+  } catch (err) {
+    console.error("Student-client link ensure failed:", err);
+    withLink = false;
   }
 
   const students = await prisma.student.findMany({
@@ -20,8 +27,11 @@ export async function GET() {
       gradeLevel: true,
       active: true,
       createdAt: true,
+      ...(withLink
+        ? { client: { select: { id: true, name: true } } }
+        : {}),
     },
   });
 
-  return NextResponse.json({ students });
+  return NextResponse.json({ students }, { headers: { "Cache-Control": "no-store" } });
 }

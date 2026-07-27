@@ -30,6 +30,7 @@ model Client {
   updatedAt    DateTime      @updatedAt
   appointments Appointment[]
   sessions     Session[]
+  student      Student?      // portal hesabı varsa bağlı öğrenci
 }
 
 model Appointment {
@@ -88,6 +89,10 @@ model Student {
   guardianConsent Boolean  @default(false)
   consentAt       DateTime?
   active          Boolean  @default(true)
+  // Portal hesabını (öğrenci) randevu/seans kimliğine (danışan) bağlar.
+  // Böylece bir öğrenciye seans yazılabilir ve tüm geçmiş tek kişide toplanır.
+  clientId        String?  @unique
+  client          Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   resources       Resource[]
