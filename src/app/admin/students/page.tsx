@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import Link from "next/link";
+
 type Student = {
   id: string;
   name: string;
@@ -9,12 +11,14 @@ type Student = {
   gradeLevel: string | null;
   active: boolean;
   createdAt: string;
+  client?: { id: string; name: string } | null;
 };
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [resetFor, setResetFor] = useState<Student | null>(null);
+  const [linking, setLinking] = useState<string | null>(null);
 
   const load = () => {
     fetch("/api/admin/students", { cache: "no-store" })
@@ -25,6 +29,25 @@ export default function AdminStudentsPage() {
   };
 
   useEffect(load, []);
+
+  // Öğrenciye bir danışan kaydı oluşturup bağlar. Böylece bu kişiye randevu/seans
+  // yazılabilir ve tüm geçmişi danışan detay sayfasında tek ekranda görünür.
+  const linkStudent = async (s: Student) => {
+    if (!confirm(`${s.name} için bir danışan kaydı oluşturulup bağlansın mı?\n\nBöylece bu öğrenciye randevu ve seans yazabilirsin.`)) return;
+    setLinking(s.id);
+    try {
+      const res = await fetch(`/api/admin/students/${s.id}/link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ create: true }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) load();
+      else alert(data.error || "Bağlantı kurulamadı.");
+    } finally {
+      setLinking(null);
+    }
+  };
 
   const toggleActive = async (s: Student) => {
     const active = !s.active;
@@ -61,6 +84,7 @@ export default function AdminStudentsPage() {
                 <th className="px-5 py-3 font-medium">E-posta</th>
                 <th className="px-5 py-3 font-medium">Hedef</th>
                 <th className="px-5 py-3 font-medium">Kayıt</th>
+                <th className="px-5 py-3 font-medium">Danışan kaydı</th>
                 <th className="px-5 py-3 font-medium">Durum</th>
                 <th className="px-5 py-3 font-medium text-right">İşlem</th>
               </tr>
@@ -73,6 +97,24 @@ export default function AdminStudentsPage() {
                   <td className="px-5 py-3 text-gray-600">{s.gradeLevel || "—"}</td>
                   <td className="px-5 py-3 text-gray-400">
                     {new Date(s.createdAt).toLocaleDateString("tr-TR")}
+                  </td>
+                  <td className="px-5 py-3">
+                    {s.client ? (
+                      <Link
+                        href={`/admin/clients/${s.client.id}`}
+                        className="text-xs font-medium text-[var(--clr-primary)] hover:underline"
+                      >
+                        {s.client.name} →
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => linkStudent(s)}
+                        disabled={linking === s.id}
+                        className="text-xs font-medium rounded-lg px-2.5 py-1 border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        {linking === s.id ? "Bağlanıyor…" : "Danışana bağla"}
+                      </button>
+                    )}
                   </td>
                   <td className="px-5 py-3">
                     <span

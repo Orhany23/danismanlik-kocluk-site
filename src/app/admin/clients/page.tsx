@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 type Client = {
   id: string;
@@ -120,12 +121,17 @@ export default function AdminClientsPage() {
             <tbody>
               {clients.map((c) => (
                 <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-700">{c.name}</td>
+                  <td className="px-6 py-4 text-sm font-medium">
+                    <Link href={`/admin/clients/${c.id}`} className="text-gray-700 hover:text-[var(--clr-primary)] hover:underline">
+                      {c.name}
+                    </Link>
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-500">{c.email || "—"}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{c.phone || "—"}</td>
                   <td className="px-6 py-4 text-sm text-gray-400">{new Date(c.createdAt).toLocaleDateString("tr-TR")}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
+                      <Link href={`/admin/clients/${c.id}`} className="text-xs text-[var(--clr-primary)] hover:underline">Detay</Link>
                       <button onClick={() => editClient(c)} className="text-xs text-[var(--clr-primary)] hover:underline">Düzenle</button>
                       <button onClick={() => deleteClient(c.id)} className="text-xs text-red-500 hover:underline">Sil</button>
                     </div>
