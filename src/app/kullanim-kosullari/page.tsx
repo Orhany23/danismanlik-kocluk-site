@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LEGAL_UPDATED } from "@/lib/legal";
 
 export const metadata = {
   title: "Kullanım Koşulları | Orhan Yaşlı",
@@ -18,7 +19,7 @@ export default function KullanimKosullariPage() {
             Hizmet Kullanım Koşulları
           </h1>
           <p className="text-gray-500 text-sm mb-8">
-            Son güncelleme: Haziran 2026 · psdorhanyasli.com.tr
+            Son güncelleme: {LEGAL_UPDATED} · psdorhanyasli.com.tr
           </p>
 
           <div className="mb-6">
