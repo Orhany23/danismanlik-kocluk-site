@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
+import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -12,6 +13,21 @@ async function getPendingTestimonials(): Promise<number> {
     return await prisma.testimonial.count({ where: { status: "PENDING" } });
   } catch {
     return 0;
+  }
+}
+
+// Öğrenci tarafı sayıları — tablolar üretimde runtime DDL ile oluştuğu için
+// dashboard'un çökmemesi adına ayrı ve güvenli şekilde alınır.
+async function getStudentStats(): Promise<{ students: number; pendingWork: number }> {
+  try {
+    await ensureStudentWorkTable();
+    const [students, pendingWork] = await Promise.all([
+      prisma.student.count({ where: { active: true } }),
+      prisma.studentWork.count({ where: { seen: false } }),
+    ]);
+    return { students, pendingWork };
+  } catch {
+    return { students: 0, pendingWork: 0 };
   }
 }
 
@@ -48,13 +64,17 @@ export default async function AdminDashboardPage() {
   const appointments = await getRecentAppointments();
   const messages = await getRecentMessages();
   const pendingTestimonials = await getPendingTestimonials();
+  const studentStats = await getStudentStats();
 
+  // Önce günlük bakılan işler (bekleyen çalışma/mesaj), sonra genel sayılar.
   const statCards = [
-    { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", icon: "👥" },
-    { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", icon: "✉" },
-    { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", icon: "📅" },
-    { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", icon: "📋" },
-    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", icon: "⭐" },
+    { label: "Bekleyen Çalışma", value: studentStats.pendingWork, color: "bg-teal-500", icon: "📥", href: "/admin/work" },
+    { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", icon: "✉", href: "/admin/messages" },
+    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", icon: "⭐", href: "/admin/testimonials" },
+    { label: "Aktif Öğrenci", value: studentStats.students, color: "bg-indigo-500", icon: "🎓", href: "/admin/students" },
+    { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", icon: "👥", href: "/admin/clients" },
+    { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", icon: "📅", href: "/admin/appointments" },
+    { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", icon: "📋", href: "/admin/sessions" },
   ];
 
   return (
@@ -67,14 +87,18 @@ export default async function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {statCards.map((card) => (
-          <div key={card.label} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <Link
+            key={card.label}
+            href={card.href}
+            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm transition-shadow hover:shadow-md"
+          >
             <div className="flex items-center justify-between mb-3">
               <span className="text-2xl">{card.icon}</span>
               <span className={`w-2 h-2 rounded-full ${card.color}`} />
             </div>
             <div className="text-3xl font-bold text-gray-800 mb-1">{card.value}</div>
             <div className="text-sm text-gray-500">{card.label}</div>
-          </div>
+          </Link>
         ))}
       </div>
 

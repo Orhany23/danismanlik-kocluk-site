@@ -10,7 +10,9 @@ export async function GET() {
   }
 
   const students = await prisma.student.findMany({
-    orderBy: { createdAt: "desc" },
+    // id ikincil sıralama: aynı saniyede kaydolan öğrencilerde sıra kararsız
+    // kalmasın (aksi halde liste her yenilemede yer değiştirebiliyor).
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: {
       id: true,
       name: true,
