@@ -1,8 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+
+type Counts = { messages: number; work: number; testimonials: number };
+
+// Hangi menü maddesinin hangi "bekleyen" sayısını göstereceği.
+function badgeFor(href: string, c: Counts): number {
+  if (href === "/admin/messages") return c.messages;
+  if (href === "/admin/work") return c.work;
+  if (href === "/admin/testimonials") return c.testimonials;
+  return 0;
+}
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: "📊" },
@@ -20,6 +31,16 @@ const sidebarLinks = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
+  const [counts, setCounts] = useState<Counts>({ messages: 0, work: 0, testimonials: 0 });
+
+  // Sayfa değiştikçe tazele — bir işi hallettikten sonra rozet güncel kalsın.
+  useEffect(() => {
+    if (isLoginPage) return;
+    fetch("/api/admin/counts", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setCounts({ messages: d.messages ?? 0, work: d.work ?? 0, testimonials: d.testimonials ?? 0 }))
+      .catch(() => {});
+  }, [pathname, isLoginPage]);
 
   if (isLoginPage) {
     return <>{children}</>;
@@ -47,7 +68,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 }`}
               >
                 <span>{link.icon}</span>
-                {link.label}
+                <span className="flex-1">{link.label}</span>
+                {badgeFor(link.href, counts) > 0 && (
+                  <span
+                    className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold ${
+                      isActive ? "bg-white/25 text-white" : "bg-[var(--clr-primary)] text-white"
+                    }`}
+                  >
+                    {badgeFor(link.href, counts)}
+                  </span>
+                )}
               </Link>
             );
           })}
