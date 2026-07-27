@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/db";
+import { ensureStudentClientLink } from "@/lib/ensureStudentClientLink";
 
 // Basit in-memory rate limit
 const hits = new Map<string, { count: number; ts: number }>();
@@ -27,12 +28,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Çok fazla deneme. Lütfen biraz sonra tekrar deneyin." }, { status: 429 });
     }
 
+    // ÖNEMLİ: Student'a dokunan ilk sorgudan ÖNCE çalışmalı. Prisma yeni
+    // alanları (birthYear/guardian*) SELECT'e dahil ettiği için, sütunlar
+    // eklenmeden yapılan findUnique "ColumnNotFound" ile patlıyor.
+    await ensureStudentClientLink();
+
     const body = await req.json();
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").toLowerCase().trim();
     const password = String(body.password ?? "");
     const gradeLevel = body.gradeLevel ? String(body.gradeLevel).slice(0, 40) : null;
     const consent = body.guardianConsent === true;
+    const birthYear = Number.parseInt(String(body.birthYear ?? ""), 10);
+    const guardianName = String(body.guardianName ?? "").trim().slice(0, 120);
+    const guardianPhone = String(body.guardianPhone ?? "").trim().slice(0, 50);
     const website = body.website; // honeypot
 
     if (website) return NextResponse.json({ ok: true }); // bot
@@ -50,6 +59,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Devam etmek için onay kutusunu işaretlemelisiniz." }, { status: 400 });
     }
 
+    // Doğum yılı → reşit mi? 18 yaş altındaysa veli adı ve telefonu zorunlu;
+    // böylece onay kaydı "kim onayladı, nasıl ulaşılır" bilgisini de içerir.
+    const thisYear = new Date().getFullYear();
+    if (!Number.isFinite(birthYear) || birthYear < thisYear - 100 || birthYear > thisYear) {
+      return NextResponse.json({ error: "Lütfen geçerli bir doğum yılı seçin." }, { status: 400 });
+    }
+    const isMinor = thisYear - birthYear < 18;
+    if (isMinor) {
+      if (guardianName.length < 3) {
+        return NextResponse.json({ error: "18 yaş altı kayıtlarda veli adı soyadı gerekli." }, { status: 400 });
+      }
+      if (guardianPhone.replace(/\D/g, "").length < 10) {
+        return NextResponse.json({ error: "18 yaş altı kayıtlarda veli telefonu gerekli." }, { status: 400 });
+      }
+    }
+
     const existing = await prisma.student.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json({ error: "Bu e-posta ile zaten bir kayıt var." }, { status: 409 });
@@ -62,6 +87,9 @@ export async function POST(req: NextRequest) {
         email,
         password: hashed,
         gradeLevel,
+        birthYear,
+        guardianName: isMinor ? guardianName : null,
+        guardianPhone: isMinor ? guardianPhone : null,
         guardianConsent: true,
         consentAt: new Date(),
       },

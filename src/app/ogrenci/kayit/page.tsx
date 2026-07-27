@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
+// Kayıt formundaki doğum yılı seçenekleri (bugünden 100 yıl geriye).
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from({ length: 60 }, (_, i) => CURRENT_YEAR - 6 - i);
+
 export default function StudentRegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -12,11 +16,16 @@ export default function StudentRegisterPage() {
     email: "",
     password: "",
     gradeLevel: "",
+    birthYear: "",
+    guardianName: "",
+    guardianPhone: "",
     guardianConsent: false,
     website: "",
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const isMinor = form.birthYear !== "" && CURRENT_YEAR - Number(form.birthYear) < 18;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,11 +111,42 @@ export default function StudentRegisterPage() {
             </select>
           </label>
 
+          <label className="auth-label">
+            Doğum yılı
+            <select className="auth-input" value={form.birthYear} required
+              onChange={(e) => setForm({ ...form, birthYear: e.target.value })}>
+              <option value="">Seçiniz</option>
+              {BIRTH_YEARS.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </label>
+
+          {/* 18 yaş altındaysa veli bilgisi zorunlu: onay kaydı "kim onayladı,
+              nasıl ulaşılır" bilgisini de içersin. */}
+          {isMinor && (
+            <>
+              <label className="auth-label">
+                Veli adı soyadı
+                <input className="auth-input" type="text" required value={form.guardianName}
+                  onChange={(e) => setForm({ ...form, guardianName: e.target.value })} />
+              </label>
+              <label className="auth-label">
+                Veli telefonu
+                <input className="auth-input" type="tel" required value={form.guardianPhone}
+                  placeholder="05XX XXX XX XX"
+                  onChange={(e) => setForm({ ...form, guardianPhone: e.target.value })} />
+              </label>
+            </>
+          )}
+
           <label className="auth-consent">
             <input type="checkbox" checked={form.guardianConsent} required
               onChange={(e) => setForm({ ...form, guardianConsent: e.target.checked })} />
             <span>
-              18 yaşından küçüğüm ve velim bu kayıttan haberdar; veya 18 yaşından büyüğüm.{" "}
+              {isMinor
+                ? "Velim bu kaydı biliyor ve onay veriyor. "
+                : "18 yaşından büyüğüm. "}
               <Link href="/gizlilik" target="_blank" className="auth-link">Gizlilik Politikası</Link>{" "}
               ve{" "}
               <Link href="/kullanim-kosullari" target="_blank" className="auth-link">Kullanım Koşulları</Link>{"'nı"} okudum, kabul ediyorum.

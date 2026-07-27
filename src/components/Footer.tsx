@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
 import PsiMark from "@/components/PsiMark";
 
@@ -33,16 +34,17 @@ export default function Footer() {
             <h4>{t.about}</h4>
             {t.aboutLinks.map((link, i) => {
               const targets = ["about", "faq", "privacy"];
+              if (targets[i] === "privacy") {
+                return (
+                  <Link key={i} href="/gizlilik" className="!text-left w-full block">
+                    {link}
+                  </Link>
+                );
+              }
               return (
                 <button
                   key={i}
-                  onClick={() => {
-                    if (targets[i] === "privacy") {
-                      document.getElementById("modal-privacy")?.classList.add("show");
-                    } else {
-                      scrollTo(targets[i]);
-                    }
-                  }}
+                  onClick={() => scrollTo(targets[i])}
                   className="!text-left w-full"
                 >
                   {link}
@@ -62,12 +64,12 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>{t.copyright}</span>
           <div className="flex gap-4">
-            <button onClick={() => document.getElementById("modal-privacy")?.classList.add("show")} className="hover:underline">
+            <Link href="/gizlilik" className="hover:underline">
               {t.privacy}
-            </button>
-            <button onClick={() => document.getElementById("modal-terms")?.classList.add("show")} className="hover:underline">
+            </Link>
+            <Link href="/kullanim-kosullari" className="hover:underline">
               {t.terms}
-            </button>
+            </Link>
             <a href="/admin/login" className="hover:underline opacity-75">
               Yönetici
             </a>
