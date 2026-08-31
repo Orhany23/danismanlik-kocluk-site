@@ -31,12 +31,12 @@ export default function HomePage() {
       <HeroSection />
       <AboutSection />
       <ServicesSection />
+      <ArticlesSection />
       <ProcessSection />
       <WhoForSection />
       <DailySpark />
       <TestimonialsSection />
       <ExamSection />
-      <ArticlesSection />
       <FAQSection />
       <ContactSection />
       <CookieBanner />
