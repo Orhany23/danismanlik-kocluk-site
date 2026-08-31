@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
-
-async function requireAdmin() {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  return session && role === "ADMIN";
-}
 
 // Statü sıralama önceliği: PENDING önce, sonra APPROVED, sonra REJECTED
 const STATUS_ORDER: Record<string, number> = { PENDING: 0, APPROVED: 1, REJECTED: 2 };

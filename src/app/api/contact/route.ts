@@ -1,35 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { clientIp, rateLimited } from "@/lib/rateLimit";
 
-// Basit in-memory rate limit (Vercel'de instance başına çalışır; sıfır maliyetli ilk savunma)
-const hits = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 10 * 60 * 1000; // 10 dk
-const MAX_HITS = 5;
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now - rec.ts > WINDOW_MS) {
-    hits.set(ip, { count: 1, ts: now });
-    return false;
-  }
-  rec.count++;
-  return rec.count > MAX_HITS;
-}
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-    if (rateLimited(ip)) {
+    if (rateLimited("contact", clientIp(req), 5, 10 * 60 * 1000)) {
       return NextResponse.json({ ok: false, error: "Too many requests" }, { status: 429 });
     }
 
     const body = await req.json();
     const { name, email, phone, subject, message, website } = body;
 
-    // Honeypot: gerçek kullanıcılar "website" alanını görmez/doldurmaz
     if (website) {
-      return NextResponse.json({ ok: true }); // botu sessizce yut
+      return NextResponse.json({ ok: true });
     }
 
     if (!name || typeof name !== "string" || name.length > 200) {
@@ -38,8 +23,10 @@ export async function POST(req: NextRequest) {
     if (!message || typeof message !== "string" || message.length > 5000) {
       return NextResponse.json({ ok: false, error: "Invalid message" }, { status: 400 });
     }
+    if (email && (typeof email !== "string" || !EMAIL_RE.test(email) || email.length > 200)) {
+      return NextResponse.json({ ok: false, error: "Invalid email" }, { status: 400 });
+    }
 
-    // 1) Önce veritabanına kaydet — Telegram düşse bile mesaj kaybolmaz
     await prisma.message.create({
       data: {
         name: name.slice(0, 200),
@@ -50,13 +37,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 2) Telegram bildirimi (best-effort; serverless'ta istek tamamlanmadan
-    // fonksiyon dondurulmasın diye beklenir, hata olsa bile form başarılı sayılır)
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
     if (BOT_TOKEN && CHAT_ID) {
       const text = `Yeni İletişim Formu Mesajı\n\nAd: ${name}\nE-posta: ${email ?? "-"}\nTelefon: ${phone ?? "-"}\nKonu: ${subject ?? "-"}\nMesaj: ${message}`;
-      // parse_mode kullanılmıyor: kullanıcı girdisi Markdown injection yapamasın
       try {
         const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: "POST",
@@ -69,8 +53,6 @@ export async function POST(req: NextRequest) {
       } catch (e) {
         console.error("Telegram fetch failed:", e);
       }
-    } else {
-      console.warn("Telegram not configured: TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID missing");
     }
 
     return NextResponse.json({ ok: true }, { status: 201 });

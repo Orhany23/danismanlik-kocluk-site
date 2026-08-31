@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/lib/auth";
+import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
 import StudentTestimonial from "@/components/StudentTestimonial";
@@ -9,6 +9,8 @@ export const metadata = {
   title: "Öğrenci Paneli | Orhan Yaşlı",
   robots: { index: false, follow: false },
 };
+
+export const dynamic = "force-dynamic";
 
 type Resource = {
   id: string;
@@ -93,22 +95,14 @@ function ResourceItem({ r }: { r: Resource }) {
 }
 
 export default async function StudentDashboard() {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  const studentId = (session?.user as { id?: string } | undefined)?.id;
-
-  if (!session || role !== "STUDENT" || !studentId) {
+  const student = await requireStudent();
+  if (!student) {
     redirect("/ogrenci/giris");
   }
 
-  const student = await prisma.student.findUnique({
-    where: { id: studentId },
-    select: { gradeLevel: true },
-  });
-
   const [personal, library] = await Promise.all([
     prisma.resource.findMany({
-      where: { studentId, published: true },
+      where: { studentId: student.id, published: true },
       orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
     }),
     prisma.resource.findMany({
@@ -144,7 +138,7 @@ export default async function StudentDashboard() {
       </header>
 
       <main className="student-main">
-        <h1 className="student-hello">Merhaba, {session.user?.name?.split(" ")[0]} 👋</h1>
+        <h1 className="student-hello">Merhaba, {student.name.split(" ")[0]} 👋</h1>
         <p className="student-lead">
           Sana özel içerikler ve kaynak kütüphanen burada. Yeni içerik eklendikçe bu sayfada görünür.
         </p>

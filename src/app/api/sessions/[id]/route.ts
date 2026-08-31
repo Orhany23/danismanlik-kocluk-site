@@ -22,14 +22,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
+    const STATUSES = ["PLANNED", "COMPLETED", "CANCELLED"];
     const updated = await prisma.session.update({
       where: { id },
       data: {
-        title: body.title ?? undefined,
+        title: typeof body.title === "string" ? body.title.trim().slice(0, 200) : undefined,
         date: body.date ? new Date(body.date) : undefined,
-        duration: body.duration ?? undefined,
-        status: body.status ?? undefined,
-        notes: body.notes ?? undefined,
+        duration: typeof body.duration === "number" ? body.duration : undefined,
+        status: STATUSES.includes(body.status) ? body.status : undefined,
+        notes: typeof body.notes === "string" ? body.notes.slice(0, 4000) : undefined,
       },
       include: { client: { select: { id: true, name: true } } },
     });

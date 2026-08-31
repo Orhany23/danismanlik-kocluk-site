@@ -50,9 +50,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const body = await req.json();
+    const name = typeof body.name === "string" ? body.name.trim().slice(0, 120) : undefined;
+    const email = typeof body.email === "string" ? body.email.trim().slice(0, 200) : undefined;
+    const phone = typeof body.phone === "string" ? body.phone.trim().slice(0, 50) : undefined;
+    const notes = typeof body.notes === "string" ? body.notes.slice(0, 4000) : undefined;
     const client = await prisma.client.update({
       where: { id },
-      data: { name: body.name, email: body.email, phone: body.phone, notes: body.notes },
+      data: { name, email, phone, notes },
     });
     return NextResponse.json(client);
   } catch {

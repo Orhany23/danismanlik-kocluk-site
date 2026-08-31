@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { parseHttpUrl } from "@/lib/httpUrl";
 
 const TYPES = ["LINK", "VIDEO", "FILE", "NOTE"];
-
-async function requireAdmin() {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  return session && role === "ADMIN";
-}
 
 export async function GET() {
   if (!(await requireAdmin())) {
@@ -20,7 +15,7 @@ export async function GET() {
     include: { student: { select: { id: true, name: true, email: true } } },
   });
 
-  return NextResponse.json({ resources });
+  return NextResponse.json({ resources }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(req: Request) {
@@ -33,9 +28,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Başlık zorunludur." }, { status: 400 });
   }
 
+  const title = data.title.trim().slice(0, 200);
+  if (!title) {
+    return NextResponse.json({ error: "Başlık zorunludur." }, { status: 400 });
+  }
+
   const type = TYPES.includes(data.type) ? data.type : "LINK";
-  if (type !== "NOTE" && !data.url) {
-    return NextResponse.json({ error: "Bağlantı (URL) zorunludur." }, { status: 400 });
+  let url: string | null = null;
+  if (type !== "NOTE") {
+    url = parseHttpUrl(data.url);
+    if (!url) {
+      return NextResponse.json({ error: "Geçerli bir http(s) bağlantısı zorunludur." }, { status: 400 });
+    }
   }
   if (type === "NOTE" && !data.body) {
     return NextResponse.json({ error: "Not metni zorunludur." }, { status: 400 });
@@ -43,14 +47,14 @@ export async function POST(req: Request) {
 
   const resource = await prisma.resource.create({
     data: {
-      title: data.title.trim(),
-      description: data.description?.trim() || null,
+      title,
+      description: typeof data.description === "string" ? data.description.trim().slice(0, 500) || null : null,
       type,
-      url: type === "NOTE" ? null : data.url.trim(),
-      body: type === "NOTE" ? data.body.trim() : null,
-      category: data.category?.trim() || null,
-      gradeLevel: data.gradeLevel?.trim() || null,
-      studentId: data.studentId || null,
+      url,
+      body: type === "NOTE" && typeof data.body === "string" ? data.body.trim().slice(0, 20000) : null,
+      category: typeof data.category === "string" ? data.category.trim().slice(0, 80) || null : null,
+      gradeLevel: typeof data.gradeLevel === "string" ? data.gradeLevel.trim().slice(0, 40) || null : null,
+      studentId: typeof data.studentId === "string" && data.studentId ? data.studentId : null,
       published: data.published !== false,
       pinned: data.pinned === true,
     },

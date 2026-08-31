@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { requireAdmin } from "@/lib/auth";
+import { hashPassword, isPasswordPolicyOk, requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
 
 // Koç, şifresini unutan öğrencinin şifresini sıfırlar.
@@ -14,12 +13,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const body = await req.json().catch(() => ({}));
   const password = typeof body.password === "string" ? body.password : "";
 
-  if (password.length < 8) {
-    return NextResponse.json({ error: "Şifre en az 8 karakter olmalı." }, { status: 400 });
+  if (!isPasswordPolicyOk(password)) {
+    return NextResponse.json({ error: "Şifre 8–128 karakter olmalı." }, { status: 400 });
   }
 
   try {
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await hashPassword(password);
     await prisma.student.update({ where: { id }, data: { password: hashed } });
     return NextResponse.json({ ok: true });
   } catch (err) {

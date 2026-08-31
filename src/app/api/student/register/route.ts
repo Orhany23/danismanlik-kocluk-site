@@ -1,29 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import prisma from "@/lib/db";
-
-// Basit in-memory rate limit
-const hits = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_HITS = 5;
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now - rec.ts > WINDOW_MS) {
-    hits.set(ip, { count: 1, ts: now });
-    return false;
-  }
-  rec.count++;
-  return rec.count > MAX_HITS;
-}
+import { hashPassword, isPasswordPolicyOk } from "@/lib/password";
+import { clientIp, rateLimited } from "@/lib/rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const GRADE_LEVELS = new Set(["", "LGS", "YKS-Sayısal", "YKS-EA", "YKS-Sözel", "YKS-Dil", "Mezun", "Diğer"]);
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-    if (rateLimited(ip)) {
+    if (rateLimited("register", clientIp(req), 5, 15 * 60 * 1000)) {
       return NextResponse.json({ error: "Çok fazla deneme. Lütfen biraz sonra tekrar deneyin." }, { status: 429 });
     }
 
@@ -31,11 +16,12 @@ export async function POST(req: NextRequest) {
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").toLowerCase().trim();
     const password = String(body.password ?? "");
-    const gradeLevel = body.gradeLevel ? String(body.gradeLevel).slice(0, 40) : null;
+    const rawGrade = body.gradeLevel ? String(body.gradeLevel).slice(0, 40) : "";
+    const gradeLevel = GRADE_LEVELS.has(rawGrade) && rawGrade ? rawGrade : null;
     const consent = body.guardianConsent === true;
-    const website = body.website; // honeypot
+    const website = body.website;
 
-    if (website) return NextResponse.json({ ok: true }); // bot
+    if (website) return NextResponse.json({ ok: true });
 
     if (name.length < 2 || name.length > 100) {
       return NextResponse.json({ error: "Lütfen geçerli bir ad girin." }, { status: 400 });
@@ -43,8 +29,8 @@ export async function POST(req: NextRequest) {
     if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ error: "Lütfen geçerli bir e-posta girin." }, { status: 400 });
     }
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Şifre en az 8 karakter olmalı." }, { status: 400 });
+    if (!isPasswordPolicyOk(password)) {
+      return NextResponse.json({ error: "Şifre 8–128 karakter olmalı." }, { status: 400 });
     }
     if (!consent) {
       return NextResponse.json({ error: "Devam etmek için onay kutusunu işaretlemelisiniz." }, { status: 400 });
@@ -55,7 +41,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Bu e-posta ile zaten bir kayıt var." }, { status: 409 });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await hashPassword(password);
     await prisma.student.create({
       data: {
         name,
@@ -69,7 +55,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (err) {
-    // Yarış durumu: findUnique ile create arasında aynı e-posta kaydedilmiş olabilir
     if (err && typeof err === "object" && "code" in err && (err as { code?: string }).code === "P2002") {
       return NextResponse.json({ error: "Bu e-posta ile zaten bir kayıt var." }, { status: 409 });
     }

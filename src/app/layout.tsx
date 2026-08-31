@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import ConsentAnalytics from "@/components/ConsentAnalytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -72,9 +72,7 @@ export default function RootLayout({
             <SiteFooter />
           </AuthProvider>
         </LocaleProvider>
-        {/* Ziyaretçi/sayfa ölçümü — hangi bölüme kadar iniliyor, hangi kanal
-            dönüşüyor görebilmek için. Kişisel veri toplamaz. */}
-        <Analytics />
+        <ConsentAnalytics />
       </body>
     </html>
   );

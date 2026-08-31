@@ -5,7 +5,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const connectionString = process.env.DATABASE_URL ?? "";
 
 // Serverless (Vercel) ortamında her invocation yeni bir Pool açmasın diye
 // küçük bir havuz limiti veriyoruz; sağlayıcıların bağlantı limitine takılmayı önler.

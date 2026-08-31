@@ -14,7 +14,7 @@ export default function Navbar() {
   // Oturum durumu NextAuth SessionProvider üzerinden okunur (elle fetch yerine
   // güvenilir; tarayıcı önbelleğine takılmaz, girişten sonra otomatik güncellenir).
   const { data: session } = useSession();
-  const role = (session?.user as { role?: string } | undefined)?.role;
+  const role = session?.user?.role;
   const panelHref =
     role === "STUDENT" ? "/ogrenci" : role === "ADMIN" ? "/admin" : null;
 

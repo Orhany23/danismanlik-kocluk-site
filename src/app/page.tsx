@@ -13,7 +13,6 @@ import ExamSection from "@/components/ExamSection";
 import ArticlesSection from "@/components/ArticlesSection";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
-import CookieBanner from "@/components/CookieBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export default function HomePage() {
@@ -41,7 +40,6 @@ export default function HomePage() {
       <ExamSection />
       <FAQSection />
       <ContactSection />
-      <CookieBanner />
       <ScrollReveal />
     </>
   );

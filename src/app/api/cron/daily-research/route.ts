@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getDailyStudy, getStudyByIndex } from "@/lib/dailyResearch";
+import { safeEqual } from "@/lib/safeEqual";
 
 const CATEGORY = "Günün Araştırması";
 
@@ -12,14 +13,12 @@ export async function GET(req: NextRequest) {
   // Elle tetikleme için ?secret= de kabul edilir.
   const secret = process.env.CRON_SECRET;
   if (!secret) {
-    return NextResponse.json(
-      { error: "CRON_SECRET tanımlı değil. Vercel ortam değişkenlerine ekleyin." },
-      { status: 503 }
-    );
+    console.error("CRON_SECRET missing");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const auth = req.headers.get("authorization");
+  const bearer = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
   const qs = req.nextUrl.searchParams.get("secret");
-  if (auth !== `Bearer ${secret}` && qs !== secret) {
+  if (!safeEqual(bearer, secret) && !safeEqual(qs, secret)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
