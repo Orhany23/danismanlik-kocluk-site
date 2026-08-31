@@ -2,8 +2,9 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { BrainCircuit, ListChecks, Clock, Plus, Minus, FlaskConical, ArrowUpRight } from "lucide-react";
-import { getDailyStudy, poolSize } from "@/lib/dailyResearch";
+import Link from "next/link";
+import { BrainCircuit, ListChecks, Clock, Plus, Minus, FlaskConical, ArrowUpRight, ArrowRight } from "lucide-react";
+import { getDailyStudy, poolSize, slugify } from "@/lib/dailyResearch";
 
 // Sunucuda false, istemcide (hydration sonrası) true döner. Günün araştırması
 // tarihe bağlı olduğundan SSR/istemci uyuşmazlığını böyle önleriz.
@@ -92,17 +93,33 @@ export default function ArticlesSection() {
                 <p className="article-daily-section-text">{daily.p}</p>
               </div>
             </div>
-            <a
-              className="article-daily-link"
-              href={daily.u}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>{t.daily.sourceCta}</span>
-              <ArrowUpRight strokeWidth={2} aria-hidden="true" />
-            </a>
+            <div className="article-daily-actions">
+              <Link className="article-daily-page" href={`/makaleler/${slugify(daily.t)}`}>
+                <span>Bu araştırmanın sayfası</span>
+                <ArrowRight strokeWidth={2} aria-hidden="true" />
+              </Link>
+              <a
+                className="article-daily-link"
+                href={daily.u}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>{t.daily.sourceCta}</span>
+                <ArrowUpRight strokeWidth={2} aria-hidden="true" />
+              </a>
+            </div>
           </div>
         )}
+
+        <Link href="/makaleler" className="article-all-cta">
+          <span className="article-all-cta-text">
+            <strong>Tüm araştırmalar</strong>
+            <small>{poolSize} klasik psikoloji çalışması, kaynaklarıyla birlikte</small>
+          </span>
+          <ArrowRight strokeWidth={2} aria-hidden="true" />
+        </Link>
+
+        <h3 className="article-grid-heading">Çalışma Rehberleri</h3>
         <div className="article-grid">
           {t.items.map((item, i) => {
             const open = openSet.has(i);
