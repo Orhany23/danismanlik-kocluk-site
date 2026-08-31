@@ -19,27 +19,7 @@ export default function AboutSection() {
     <section id="about" className="section" aria-labelledby="about-title" style={{ background: "var(--clr-bg2)" }}>
       <div className="container">
         <div className="about-split">
-          <div className="about-portrait reveal-left">
-            <div className="about-portrait-frame">
-              <img
-                src="/orhan-about.jpg"
-                alt="Orhan Yaşlı"
-                loading="lazy"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-              />
-            </div>
-            <div className="about-portrait-tag">
-              <span className="about-portrait-tag-mark">
-                <GraduationCap size={19} strokeWidth={1.8} />
-              </span>
-              <span>
-                <strong>Orhan Yaşlı</strong>
-                <span>RPD Mezunu · Rehber Öğretmen</span>
-              </span>
-            </div>
-          </div>
-
-          <div className="about-content reveal-right">
+          <div className="about-content reveal">
             <span className="section-label">{t.label}</span>
             <h2 className="section-title" id="about-title" dangerouslySetInnerHTML={{ __html: t.title }} />
 
