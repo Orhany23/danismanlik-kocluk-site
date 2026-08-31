@@ -1,40 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireStudent } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
-
-// Basit in-memory rate limit (register/route.ts deseni)
-const hits = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_HITS = 5;
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now - rec.ts > WINDOW_MS) {
-    hits.set(ip, { count: 1, ts: now });
-    return false;
-  }
-  rec.count++;
-  return rec.count > MAX_HITS;
-}
+import { clientIp, rateLimited } from "@/lib/rateLimit";
 
 const DISPLAY_PREFS = ["NAME", "INITIALS"];
 
-// Giriş yapmış öğrencinin kendi yorumunu getirir
 export async function GET() {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  const studentId = (session?.user as { id?: string } | undefined)?.id;
-
-  if (!session?.user || role !== "STUDENT" || !studentId) {
+  const student = await requireStudent();
+  if (!student) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     await ensureTestimonialTable();
     const testimonial = await prisma.testimonial.findUnique({
-      where: { studentId },
+      where: { studentId: student.id },
       select: { rating: true, text: true, displayPref: true, status: true },
     });
     return NextResponse.json({ testimonial: testimonial ?? null });
@@ -44,18 +25,13 @@ export async function GET() {
   }
 }
 
-// Öğrenci yorum oluşturur/günceller (upsert). Her gönderim onay bekler.
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  const studentId = (session?.user as { id?: string } | undefined)?.id;
-
-  if (!session?.user || role !== "STUDENT" || !studentId) {
+  const student = await requireStudent();
+  if (!student) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (rateLimited(ip)) {
+  if (rateLimited("testimonial", clientIp(req), 5, 15 * 60 * 1000)) {
     return NextResponse.json({ error: "Çok fazla deneme. Lütfen biraz sonra tekrar deneyin." }, { status: 429 });
   }
 
@@ -85,10 +61,9 @@ export async function POST(req: NextRequest) {
 
     await ensureTestimonialTable();
 
-    // Her gönderim/düzenleme yeniden onaya düşer (status PENDING)
     await prisma.testimonial.upsert({
-      where: { studentId },
-      create: { studentId, rating, text, displayPref, status: "PENDING" },
+      where: { studentId: student.id },
+      create: { studentId: student.id, rating, text, displayPref, status: "PENDING" },
       update: { rating, text, displayPref, status: "PENDING" },
     });
 

@@ -1,46 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
-import { auth } from "@/lib/auth";
+import { requireStudent } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
-
-// Basit in-memory rate limit (diğer öğrenci uçlarıyla aynı desen)
-const hits = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_HITS = 30;
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now - rec.ts > WINDOW_MS) {
-    hits.set(ip, { count: 1, ts: now });
-    return false;
-  }
-  rec.count++;
-  return rec.count > MAX_HITS;
-}
+import { clientIp, rateLimited } from "@/lib/rateLimit";
+import { parseHttpUrl } from "@/lib/httpUrl";
+import { looksLikeImage, looksLikePdf } from "@/lib/fileSniff";
 
 const TYPES = ["NOTE", "LINK", "FILE", "PHOTO"] as const;
-// Vercel serverless istek gövdesi limitinin (≈4.5 MB) altında kalmak için 4 MB.
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const IMAGE_MIME = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 
-function studentIdFrom(session: { user?: { role?: string; id?: string } } | null): string | null {
-  const role = session?.user?.role;
-  const id = session?.user?.id;
-  return session?.user && role === "STUDENT" && id ? id : null;
-}
-
-// Öğrencinin kendi gönderdiği çalışmaları listeler
 export async function GET() {
-  const session = await auth();
-  const studentId = studentIdFrom(session as { user?: { role?: string; id?: string } } | null);
-  if (!studentId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const student = await requireStudent();
+  if (!student) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     await ensureStudentWorkTable();
     const rows = await prisma.studentWork.findMany({
-      where: { studentId },
+      where: { studentId: student.id },
       orderBy: { createdAt: "desc" },
       take: 50,
       select: {
@@ -48,8 +26,6 @@ export async function GET() {
         seen: true, feedback: true, feedbackAt: true, createdAt: true,
       },
     });
-    // Dosyalar private; ham Blob URL'i istemciye verilmez. LINK dışında url gizlenir,
-    // dosya varsa hasFile ile işaretlenir (istemci /api/student/work/[id]/file kullanır).
     const works = rows.map((w) => ({
       ...w,
       url: w.type === "LINK" ? w.url : null,
@@ -62,14 +38,11 @@ export async function GET() {
   }
 }
 
-// Öğrenci yeni çalışma gönderir (not / bağlantı / PDF / fotoğraf)
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  const studentId = studentIdFrom(session as { user?: { role?: string; id?: string } } | null);
-  if (!studentId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const student = await requireStudent();
+  if (!student) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (rateLimited(ip)) {
+  if (rateLimited("work", clientIp(req), 30, 10 * 60 * 1000)) {
     return NextResponse.json({ error: "Çok fazla gönderim. Lütfen biraz sonra tekrar deneyin." }, { status: 429 });
   }
 
@@ -90,19 +63,12 @@ export async function POST(req: NextRequest) {
     if (type === "NOTE") {
       if (!note) return NextResponse.json({ error: "Lütfen bir not yaz." }, { status: 400 });
     } else if (type === "LINK") {
-      const raw = String(form.get("url") ?? "").trim();
-      let parsed: URL;
-      try {
-        parsed = new URL(raw);
-      } catch {
+      const parsed = parseHttpUrl(form.get("url"));
+      if (!parsed) {
         return NextResponse.json({ error: "Geçerli bir bağlantı gir (https:// ile başlamalı)." }, { status: 400 });
       }
-      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-        return NextResponse.json({ error: "Bağlantı http/https olmalı." }, { status: 400 });
-      }
-      url = parsed.toString().slice(0, 2000);
+      url = parsed;
     } else {
-      // FILE (PDF) veya PHOTO (görsel)
       const file = form.get("file");
       if (!(file instanceof File) || file.size === 0) {
         return NextResponse.json({ error: "Lütfen bir dosya seç." }, { status: 400 });
@@ -110,18 +76,22 @@ export async function POST(req: NextRequest) {
       if (file.size > MAX_FILE_BYTES) {
         return NextResponse.json({ error: "Dosya 4 MB'dan küçük olmalı." }, { status: 400 });
       }
-      if (type === "FILE" && file.type !== "application/pdf") {
-        return NextResponse.json({ error: "Yalnızca PDF yükleyebilirsin." }, { status: 400 });
+      if (type === "FILE") {
+        if (file.type !== "application/pdf" || !(await looksLikePdf(file))) {
+          return NextResponse.json({ error: "Yalnızca PDF yükleyebilirsin." }, { status: 400 });
+        }
       }
-      if (type === "PHOTO" && !IMAGE_MIME.includes(file.type)) {
-        return NextResponse.json({ error: "Yalnızca görsel (JPG/PNG/WebP) yükleyebilirsin." }, { status: 400 });
+      if (type === "PHOTO") {
+        if (!IMAGE_MIME.includes(file.type) || !(await looksLikeImage(file))) {
+          return NextResponse.json({ error: "Yalnızca görsel (JPG/PNG/WebP) yükleyebilirsin." }, { status: 400 });
+        }
       }
 
       const safeName = (file.name || (type === "FILE" ? "belge.pdf" : "foto.jpg"))
         .replace(/[^\w.\-]+/g, "_")
         .slice(-80);
       try {
-        const blob = await put(`student-work/${studentId}/${Date.now()}-${safeName}`, file, {
+        const blob = await put(`student-work/${student.id}/${Date.now()}-${safeName}`, file, {
           access: "private",
           addRandomSuffix: true,
           contentType: file.type,
@@ -140,7 +110,7 @@ export async function POST(req: NextRequest) {
 
     await ensureStudentWorkTable();
     await prisma.studentWork.create({
-      data: { studentId, type, title, note, url, fileName, fileSize },
+      data: { studentId: student.id, type, title, note, url, fileName, fileSize },
     });
 
     return NextResponse.json({ ok: true }, { status: 201 });

@@ -6,6 +6,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LegalModals from "@/components/LegalModals";
+import CookieBanner from "@/components/CookieBanner";
 
 // Site menüsü, footer ve WhatsApp butonu admin panelinde görünmemeli.
 export function SiteHeader() {
@@ -27,6 +28,7 @@ export function SiteFooter() {
       <Footer />
       <WhatsAppButton />
       <LegalModals />
+      <CookieBanner />
     </>
   );
 }

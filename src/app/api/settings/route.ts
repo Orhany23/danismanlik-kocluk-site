@@ -25,8 +25,16 @@ export async function PUT(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const ALLOWED_KEYS = new Set([
+      "phone", "email", "address", "hours",
+      "instagram", "linkedin", "youtube", "twitter",
+      "siteTitle", "siteDescription", "siteKeywords",
+    ]);
     const body = await req.json();
     if (!body?.key || typeof body.key !== "string" || typeof body.value !== "string") {
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    }
+    if (!ALLOWED_KEYS.has(body.key) || body.value.length > 4000) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
     await ensureSettingTable();

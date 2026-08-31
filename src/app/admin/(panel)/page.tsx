@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
@@ -57,8 +57,7 @@ async function getRecentMessages() {
 }
 
 export default async function AdminDashboardPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/admin/login");
+  if (!(await requireAdmin())) redirect("/admin/login");
 
   const stats = await getStats();
   const appointments = await getRecentAppointments();

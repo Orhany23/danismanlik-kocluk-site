@@ -7,7 +7,6 @@ import { signOut } from "next-auth/react";
 
 type Counts = { messages: number; work: number; testimonials: number };
 
-// Hangi menü maddesinin hangi "bekleyen" sayısını göstereceği.
 function badgeFor(href: string, c: Counts): number {
   if (href === "/admin/messages") return c.messages;
   if (href === "/admin/work") return c.work;
@@ -28,27 +27,19 @@ const sidebarLinks = [
   { href: "/admin/settings", label: "Ayarlar", icon: "⚙" },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/admin/login";
   const [counts, setCounts] = useState<Counts>({ messages: 0, work: 0, testimonials: 0 });
 
-  // Sayfa değiştikçe tazele — bir işi hallettikten sonra rozet güncel kalsın.
   useEffect(() => {
-    if (isLoginPage) return;
     fetch("/api/admin/counts", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setCounts({ messages: d.messages ?? 0, work: d.work ?? 0, testimonials: d.testimonials ?? 0 }))
       .catch(() => {});
-  }, [pathname, isLoginPage]);
-
-  if (isLoginPage) {
-    return <>{children}</>;
-  }
+  }, [pathname]);
 
   return (
     <div className="min-h-screen flex bg-[#f5f7fa]">
-      {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-100">
           <h1 className="text-lg font-serif font-bold text-[var(--clr-navy)]">Yönetim Paneli</h1>
@@ -92,7 +83,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
         </div>
       </aside>
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="bg-white border-b border-gray-200 px-8 py-4">
           <div className="flex items-center justify-between">
