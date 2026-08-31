@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type CoachingSession = {
   id: string;
@@ -27,6 +28,7 @@ async function fetchClientsList(): Promise<{ id: string; name: string }[]> {
 }
 
 export default function AdminSessionsPage() {
+  const { confirm } = useAdminDialog();
   const [sessions, setSessions] = useState<CoachingSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -64,7 +66,13 @@ export default function AdminSessionsPage() {
   };
 
   const deleteSession = async (id: string) => {
-    if (!confirm("Bu seansı silmek istediğinize emin misiniz?")) return;
+    const ok = await confirm({
+      title: "Seans silinsin mi?",
+      description: "Bu işlem geri alınamaz.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     await fetch(`/api/sessions/${id}`, { method: "DELETE" });
     fetchSessionsData().then(setSessions);
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type Appointment = {
   id: string;
@@ -20,6 +21,7 @@ async function fetchAppointments(): Promise<Appointment[]> {
 }
 
 export default function AdminAppointmentsPage() {
+  const { confirm } = useAdminDialog();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -71,7 +73,13 @@ export default function AdminAppointmentsPage() {
   };
 
   const deleteAppointment = async (id: string) => {
-    if (!confirm("Bu randevuyu silmek istediğinize emin misiniz?")) return;
+    const ok = await confirm({
+      title: "Randevu silinsin mi?",
+      description: "Bu işlem geri alınamaz.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     const res = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
     if (res.ok) fetchAppointments();
   };

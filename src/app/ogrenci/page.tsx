@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { CalendarClock, FileText, Link2, MapPin, MessageSquareQuote, NotebookPen, PlayCircle, Video } from "lucide-react";
 import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
@@ -23,7 +24,12 @@ type Resource = {
   pinned: boolean;
 };
 
-const TYPE_ICON: Record<string, string> = { LINK: "🔗", VIDEO: "▶", FILE: "📄", NOTE: "📝" };
+const TYPE_ICON: Record<string, React.ReactNode> = {
+  LINK: <Link2 strokeWidth={1.8} aria-hidden="true" />,
+  VIDEO: <PlayCircle strokeWidth={1.8} aria-hidden="true" />,
+  FILE: <FileText strokeWidth={1.8} aria-hidden="true" />,
+  NOTE: <NotebookPen strokeWidth={1.8} aria-hidden="true" />,
+};
 const TYPE_OPEN: Record<string, string> = { LINK: "Bağlantıyı aç", VIDEO: "Videoyu izle", FILE: "Dosyayı aç" };
 
 // Not gövdesinin sonundaki "Kaynak: <url>" satırını ayırır; varsa metni ve
@@ -68,7 +74,9 @@ function ResourceItem({ r }: { r: Resource }) {
   const note = r.type === "NOTE" && r.body ? splitNoteBody(r.body) : null;
   return (
     <div className="resource-item">
-      <span className="resource-icon" aria-hidden="true">{TYPE_ICON[r.type] || "🔗"}</span>
+      <span className="resource-icon" aria-hidden="true">
+        {TYPE_ICON[r.type] ?? TYPE_ICON.LINK}
+      </span>
       <div className="resource-main">
         {r.category && <span className="resource-cat">{r.category}</span>}
         <h4 className="resource-title">{r.title}</h4>
@@ -94,11 +102,67 @@ function ResourceItem({ r }: { r: Resource }) {
   );
 }
 
+type NextMeeting = { title: string; date: Date; type: string; kind: "appointment" | "session" };
+
+// Bağlı danışan kaydı üzerinden en yakın gelecek randevu/seansı bulur.
+// Öğrencinin portal hesabı bir Client'a bağlı değilse (clientId yok) null döner.
+async function getNextMeeting(clientId: string | null): Promise<NextMeeting | null> {
+  if (!clientId) return null;
+  const now = new Date();
+  try {
+    const [appointment, session] = await Promise.all([
+      prisma.appointment.findFirst({
+        where: { clientId, date: { gte: now }, status: { notIn: ["CANCELLED", "IPTAL"] } },
+        orderBy: { date: "asc" },
+        select: { title: true, date: true, type: true },
+      }),
+      prisma.session.findFirst({
+        where: { clientId, date: { gte: now }, status: "PLANNED" },
+        orderBy: { date: "asc" },
+        select: { title: true, date: true, type: true },
+      }),
+    ]);
+    const candidates: NextMeeting[] = [];
+    if (appointment) candidates.push({ ...appointment, kind: "appointment" });
+    if (session) candidates.push({ ...session, kind: "session" });
+    if (candidates.length === 0) return null;
+    return candidates.sort((a, b) => a.date.getTime() - b.date.getTime())[0];
+  } catch {
+    return null;
+  }
+}
+
+// Koçun yazdığı en son dönüt (StudentWork.feedback).
+async function getLatestFeedback(studentId: string) {
+  try {
+    return await prisma.studentWork.findFirst({
+      where: { studentId, feedback: { not: null } },
+      orderBy: [{ feedbackAt: "desc" }, { createdAt: "desc" }],
+      select: { title: true, feedback: true, feedbackAt: true, createdAt: true },
+    });
+  } catch {
+    return null;
+  }
+}
+
+const DATE_FMT = new Intl.DateTimeFormat("tr-TR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 export default async function StudentDashboard() {
   const student = await requireStudent();
   if (!student) {
     redirect("/ogrenci/giris");
   }
+
+  const [nextMeeting, latestFeedback] = await Promise.all([
+    getNextMeeting(student.clientId),
+    getLatestFeedback(student.id),
+  ]);
 
   const [personal, library] = await Promise.all([
     prisma.resource.findMany({
@@ -138,10 +202,65 @@ export default async function StudentDashboard() {
       </header>
 
       <main className="student-main">
-        <h1 className="student-hello">Merhaba, {student.name.split(" ")[0]} 👋</h1>
+        <h1 className="student-hello">Merhaba, {student.name.split(" ")[0]}</h1>
         <p className="student-lead">
           Sana özel içerikler ve kaynak kütüphanen burada. Yeni içerik eklendikçe bu sayfada görünür.
         </p>
+
+        {/* Panelin ilk ekranında iki soru yanıtlanır: sıradaki görüşmem ne zaman,
+            koç son çalışmama ne dedi? */}
+        <div className="student-summary">
+          <section className="student-summary-card" aria-labelledby="next-meeting-title">
+            <span className="student-summary-icon" aria-hidden="true">
+              <CalendarClock strokeWidth={1.8} />
+            </span>
+            <h2 className="student-summary-title" id="next-meeting-title">Sonraki seans</h2>
+            {nextMeeting ? (
+              <>
+                <p className="student-summary-value">
+                  <time dateTime={nextMeeting.date.toISOString()}>{DATE_FMT.format(nextMeeting.date)}</time>
+                </p>
+                <p className="student-summary-meta">
+                  {nextMeeting.type === "ONLINE" ? (
+                    <Video strokeWidth={1.7} aria-hidden="true" />
+                  ) : (
+                    <MapPin strokeWidth={1.7} aria-hidden="true" />
+                  )}
+                  <span>
+                    {nextMeeting.title}
+                    {nextMeeting.type === "ONLINE" ? " · Online" : " · Yüz yüze"}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="student-summary-empty">
+                Henüz seans yok. Planlandığında tarih ve saat burada görünür.
+              </p>
+            )}
+          </section>
+
+          <section className="student-summary-card" aria-labelledby="last-feedback-title">
+            <span className="student-summary-icon" aria-hidden="true">
+              <MessageSquareQuote strokeWidth={1.8} />
+            </span>
+            <h2 className="student-summary-title" id="last-feedback-title">Koçun son notu</h2>
+            {latestFeedback?.feedback ? (
+              <>
+                <blockquote className="student-summary-quote">{latestFeedback.feedback}</blockquote>
+                <p className="student-summary-meta">
+                  <span>
+                    {latestFeedback.title ? `${latestFeedback.title} · ` : ""}
+                    {DATE_FMT.format(latestFeedback.feedbackAt ?? latestFeedback.createdAt)}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="student-summary-empty">
+                Henüz dönüt yok. Çalışmanı gönderdiğinde Orhan buradan yanıt yazacak.
+              </p>
+            )}
+          </section>
+        </div>
 
         {/* Bugün Ne Çalıştın? — öğrenci günlük çalışma gönderir */}
         <StudentWorkForm />
@@ -154,7 +273,7 @@ export default async function StudentDashboard() {
           </div>
           {personal.length === 0 ? (
             <div className="student-empty">
-              Henüz sana özel bir içerik eklenmedi. Orhan Yaşlı senin için içerik paylaştığında burada görünecek.
+              Henüz sana özel bir içerik yok. Orhan senin için içerik paylaştığında burada görünür.
             </div>
           ) : (
             <div className="resource-list">
@@ -171,7 +290,7 @@ export default async function StudentDashboard() {
           </div>
           {library.length === 0 ? (
             <div className="student-empty">
-              Kütüphane çok yakında doluyor. Ders çalışma teknikleri, deneme analizleri ve önerilen kaynaklar burada toplanacak.
+              Orhan senin için kaynak eklediğinde burada görünür.
             </div>
           ) : (
             <div className="resource-list">

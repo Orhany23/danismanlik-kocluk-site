@@ -2,15 +2,16 @@
 
 import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import ServicesSection from "@/components/ServicesSection";
+import GatewaySection from "@/components/GatewaySection";
 import PackagesSection from "@/components/PackagesSection";
 import ProcessSection from "@/components/ProcessSection";
-import WhoForSection from "@/components/WhoForSection";
-import DailySpark from "@/components/DailySpark";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import AboutSection from "@/components/AboutSection";
+import WhoForSection from "@/components/WhoForSection";
+import ServicesSection from "@/components/ServicesSection";
+import DiscoverStrip from "@/components/DiscoverStrip";
 import ExamSection from "@/components/ExamSection";
-import ArticlesSection from "@/components/ArticlesSection";
+import DailySpark from "@/components/DailySpark";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -26,18 +27,22 @@ export default function HomePage() {
     }
   }, []);
 
+  // Sıra ziyaretçinin karar akışına göre: ne sunuluyor (kapılar + paketler),
+  // nasıl işliyor (süreç), güven (yorumlar, hakkımda, kimler), kapsam (hizmetler),
+  // sonra keşif içerikleri ve iletişim. Makalelerin tamamı /makaleler sayfasında.
   return (
     <>
       <HeroSection />
-      <AboutSection />
-      <ServicesSection />
+      <GatewaySection />
       <PackagesSection />
-      <ArticlesSection />
       <ProcessSection />
-      <WhoForSection />
-      <DailySpark />
       <TestimonialsSection />
+      <AboutSection />
+      <WhoForSection />
+      <ServicesSection />
+      <DiscoverStrip />
       <ExamSection />
+      <DailySpark />
       <FAQSection />
       <ContactSection />
       <ScrollReveal />

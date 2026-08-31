@@ -3,6 +3,7 @@ export type Locale = "tr" | "en";
 export type Dictionary = {
   nav: {
     brand: string;
+    packages: string;
     about: string;
     services: string;
     process: string;
@@ -12,6 +13,8 @@ export type Dictionary = {
     faq: string;
     contact: string;
     appointment: string;
+    menuOpen: string;
+    menuClose: string;
     lang: string;
     theme: string;
     themeToDark: string;
@@ -20,10 +23,31 @@ export type Dictionary = {
   hero: {
     badge: string;
     title: string;
+    quote: string;
     subtitle: string;
-    cta: { free: string; whatsapp: string };
+    cta: { free: string; packages: string; whatsapp: string };
     scroll: string;
     dailyCta: string;
+  };
+  gateway: {
+    label: string;
+    title: string;
+    subtitle: string;
+    doors: Array<{
+      key: string;
+      eyebrow: string;
+      title: string;
+      desc: string;
+      points: string[];
+      note?: string;
+      cta: string;
+      href: string;
+    }>;
+  };
+  discover: {
+    label: string;
+    title: string;
+    items: Array<{ key: string; title: string; desc: string; cta: string }>;
   };
   about: {
     label: string;
@@ -40,6 +64,8 @@ export type Dictionary = {
     label: string;
     title: string;
     subtitle: string;
+    showAll: string;
+    showLess: string;
     groups: Array<{
       key: string;
       eyebrow: string;
@@ -86,11 +112,15 @@ export type Dictionary = {
     label: string;
     title: string;
     subtitle: string;
+    moderationNote: string;
+    sampleBadge: string;
+    samples: Array<{ initials: string; meta: string; text: string }>;
   };
   exams: {
     label: string;
     title: string;
     subtitle: string;
+    disclaimer: string;
     cards: Array<{ title: string; content: string }>;
   };
   articles: {
@@ -148,8 +178,11 @@ export type Dictionary = {
       subject: string;
       message: string;
       submit: string;
+      submitting: string;
       success: string;
       error: string;
+      required: string;
+      topics: { coaching: string; counseling: string; other: string; choose: string };
       placeholders: {
         name: string;
         email: string;
@@ -163,11 +196,12 @@ export type Dictionary = {
     brand: string;
     desc: string;
     services: string;
-    servicesLinks: string[];
+    servicesLinks: Array<{ label: string; href: string }>;
     about: string;
-    aboutLinks: string[];
+    aboutLinks: Array<{ label: string; href: string }>;
     contact: string;
-    contactLinks: string[];
+    contactLinks: Array<{ label: string; href: string }>;
+    langLabel: string;
     copyright: string;
     privacy: string;
     terms: string;
@@ -196,6 +230,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
   tr: {
     nav: {
       brand: "Orhan Yaşlı",
+      packages: "Paketler",
       about: "Hakkımda",
       services: "Hizmetler",
       process: "Süreç",
@@ -204,7 +239,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
       articles: "Makaleler",
       faq: "S.S.S.",
       contact: "İletişim",
-      appointment: "Randevu Al",
+      appointment: "Ücretsiz görüşme",
+      menuOpen: "Menüyü aç",
+      menuClose: "Menüyü kapat",
       lang: "EN",
       theme: "Tema",
       themeToDark: "Koyu temaya geç",
@@ -212,11 +249,70 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Çanakkale ve Türkiye geneli online koçluk ve danışmanlık",
-      title: "Geleceği tahmin etmenin en iyi yolu,<br><em>onu kendi ellerinle yaratmaktır.</em>",
-      subtitle: "Orhan Yaşlı ile sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık. Rehberlik ve Psikolojik Danışmanlık altyapısıyla öğrencilere özel destek.",
-      cta: { free: "Ücretsiz Ön Görüşme", whatsapp: "WhatsApp" },
+      title: "Çanakkale'de ve online: <em>sınav koçluğu ve psikolojik danışmanlık.</em>",
+      quote: "Geleceği tahmin etmenin en iyi yolu, onu kendi ellerinle yaratmaktır.",
+      subtitle: "Rehberlik ve Psikolojik Danışmanlık (RPD) altyapısıyla öğrenci koçluğu, sınav koçluğu ve bireysel danışmanlık. İlk tanışma görüşmesi yaklaşık 20 dakika ve ücretsiz.",
+      cta: { free: "Ücretsiz görüşme", packages: "Paketleri gör", whatsapp: "WhatsApp" },
       scroll: "Keşfet",
       dailyCta: "Oku",
+    },
+    gateway: {
+      label: "Nereden başlayacaksınız?",
+      title: "İki kapı, <em>tek bütüncül yaklaşım.</em>",
+      subtitle: "İhtiyacınıza en yakın kapıdan girin; hangisiyle başlarsanız başlayın ilk görüşme ücretsizdir.",
+      doors: [
+        {
+          key: "kocluk",
+          eyebrow: "Öğrenciler için",
+          title: "Koçluk",
+          desc: "Hedef, plan ve düzenli takip. Ders anlatılmaz; nasıl çalışılacağı öğretilir ve süreç baştan sona birlikte yönetilir.",
+          points: [
+            "Kişiye özel haftalık çalışma programı",
+            "Deneme analizi ve ilerleme takibi",
+            "Sınav kaygısıyla birlikte çalışma",
+          ],
+          cta: "Koçluk paketine bak",
+          href: "/paketler#kocluk",
+        },
+        {
+          key: "danismanlik",
+          eyebrow: "Çocuk, genç ve yetişkin",
+          title: "Danışmanlık",
+          desc: "RPD altyapısıyla yürütülen birebir görüşmeler. Kapsam ve sıklık ilk görüşmede birlikte belirlenir.",
+          points: [
+            "Kaygı, stres ve özgüven çalışmaları",
+            "Bilişsel davranışçı yaklaşım (BDT)",
+            "Çocuklarla oyun terapisi, aile görüşmeleri",
+          ],
+          note: "Görüşmeler etik kurallar çerçevesinde gizlidir; içerik üçüncü kişilerle paylaşılmaz.",
+          cta: "Danışmanlık paketine bak",
+          href: "/paketler#danismanlik",
+        },
+      ],
+    },
+    discover: {
+      label: "Keşfet",
+      title: "Daha fazlasını mı görmek istiyorsunuz?",
+      items: [
+        {
+          key: "articles",
+          title: "Makaleler ve araştırmalar",
+          desc: "Klasik psikoloji çalışmaları ve çalışma rehberleri, kaynaklarıyla birlikte.",
+          cta: "Makalelere git",
+        },
+        {
+          key: "exams",
+          title: "2026 sınav takvimi",
+          desc: "LGS, YKS, AGS ve diğer sınavlarda tarihler, başvuru ve sık sorulanlar.",
+          cta: "Takvime bak",
+        },
+        {
+          key: "spark",
+          title: "Günün kıvılcımı",
+          desc: "Her gün değişen kısa bir teknik, taktik ya da motivasyon notu.",
+          cta: "Bugünkünü gör",
+        },
+      ],
     },
     about: {
       label: "Hakkımda",
@@ -238,6 +334,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Hizmetler",
+      showAll: "Tümünü gör",
+      showLess: "Daha az göster",
       title: "İki alan, <em>tek bütüncül yaklaşım.</em>",
       subtitle: "Akademik destek ve psikolojik danışmanlık birbirinden ayrı yürütülen ama birbirini besleyen iki alandır. Hangi kapıdan girerseniz girin, bütüncül bir yaklaşımla karşılanırsınız.",
       groups: [
@@ -411,11 +509,26 @@ export const dictionaries: Record<Locale, Dictionary> = {
       label: "Öğrenci Yorumları",
       title: "Öğrencilerim<br><em>Ne Diyor?</em>",
       subtitle: "Birlikte çalıştığım öğrencilerin deneyimleri — her yorum onaydan geçer.",
+      moderationNote: "Yorumlar öğrenci panelinden gönderilir ve yayımlanmadan önce onaylanır.",
+      sampleBadge: "Örnek",
+      samples: [
+        {
+          initials: "E.K.",
+          meta: "12. sınıf · YKS",
+          text: "Programı birlikte kurduğumuz için ne zaman ne çalışacağımı bilmek beni rahatlattı. Deneme sonrası analiz alışkanlığı kazandım.",
+        },
+        {
+          initials: "M.A.",
+          meta: "8. sınıf velisi · LGS",
+          text: "Evde \"ders çalış\" tartışması azaldı. Haftalık takip sayesinde süreci birlikte görebiliyoruz.",
+        },
+      ],
     },
     exams: {
       label: "Sınavlar",
       title: "2026 Sınav Takvimi ve<br>Sistem Rehberi",
       subtitle: "Güncel sınav tarihleri, başvuru bilgileri ve velilerin en çok merak ettiği sorular.",
+      disclaimer: "Tarihler ÖSYM ve MEB duyurularına dayanır; başvuru öncesi resmi takvimi kontrol edin.",
       cards: [
         {
           title: "LGS 2026",
@@ -517,7 +630,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           q: "Seans ücretleri nedir?",
-          a: "Ücretler seans türüne ve pakete göre değişmektedir. En güncel bilgi için iletişim formu üzerinden bana ulaşabilirsiniz.",
+          a: "Koçluk paketi 7.000 ₺ / ay. Danışmanlık ücreti ilk görüşmede, ihtiyaca ve görüşme sıklığına göre birlikte belirlenir. İlk tanışma görüşmesi (yaklaşık 20 dakika) ücretsizdir.",
         },
         {
           q: "Psikolojik danışmanlık gizli midir?",
@@ -551,34 +664,58 @@ export const dictionaries: Record<Locale, Dictionary> = {
         phone: "Telefon Numaranız",
         subject: "Konu",
         message: "Mesajınız",
-        submit: "Mesajı Gönder",
-        success: "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağım.",
+        submit: "Mesajı gönder",
+        submitting: "Gönderiliyor…",
+        success: "Mesajınız ulaştı. 24 saat içinde dönüş yapacağım.",
         error: "Mesajınız gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden ulaşın.",
+        required: "Zorunlu alan",
+        topics: {
+          coaching: "Koçluk",
+          counseling: "Danışmanlık",
+          other: "Diğer",
+          choose: "Seçiniz",
+        },
         placeholders: {
           name: "Adınız ve soyadınız",
           email: "ornek@mail.com",
           phone: "05XX XXX XX XX",
           subject: "Görüşmek istediğiniz konu",
-          message: "Mesajınızı buraya yazın...",
+          message: "Mesajınızı buraya yazın…",
         },
       },
     },
     footer: {
       brand: "Orhan Yaşlı",
       desc: "Sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık alanında profesyonel destek.",
-      services: "Hizmetler",
-      servicesLinks: ["Sınav Koçluğu", "Öğrenci Koçluğu", "Sınav Kaygısı Yönetimi", "Online Koçluk", "Oyun Terapisi"],
+      services: "Paketler ve hizmetler",
+      servicesLinks: [
+        { label: "Koçluk paketi", href: "/paketler#kocluk" },
+        { label: "Danışmanlık paketi", href: "/paketler#danismanlik" },
+        { label: "İki paketi karşılaştır", href: "/paketler" },
+        { label: "Tüm hizmetler", href: "/#services" },
+        { label: "2026 sınav takvimi", href: "/#exams" },
+      ],
       about: "Kurumsal",
-      aboutLinks: ["Hakkımda", "S.S.S.", "Gizlilik Politikası"],
+      aboutLinks: [
+        { label: "Hakkımda", href: "/#about" },
+        { label: "S.S.S.", href: "/#faq" },
+        { label: "Makaleler", href: "/makaleler" },
+        { label: "Gizlilik Politikası", href: "modal:privacy" },
+      ],
       contact: "İletişim",
-      contactLinks: ["WhatsApp"],
+      contactLinks: [
+        { label: "WhatsApp'tan yazın", href: "https://wa.me/905432500417?text=Merhaba,%20bilgi%20almak%20istiyorum." },
+        { label: "İletişim formu", href: "/#contact" },
+        { label: "Öğrenci girişi", href: "/ogrenci/giris" },
+      ],
+      langLabel: "Dil",
       copyright: "© 2026 Orhan Yaşlı. Tüm hakları saklıdır.",
       privacy: "Gizlilik Politikası",
       terms: "Kullanım Koşulları",
       cookies: "Çerez Politikası",
     },
     cookie: {
-      text: "Bu site, deneyiminizi iyileştirmek için çerezler kullanmaktadır.",
+      text: "Oturum için zorunlu çerezler kullanılır. Analitik çerezler yalnızca kabul ederseniz çalışır.",
       accept: "Kabul Et",
       reject: "Reddet",
       privacy: "Gizlilik Politikası",
@@ -631,6 +768,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
   en: {
     nav: {
       brand: "Orhan Yaşlı",
+      packages: "Packages",
       about: "About",
       services: "Services",
       process: "Process",
@@ -639,7 +777,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
       articles: "Articles",
       faq: "FAQ",
       contact: "Contact",
-      appointment: "Book Now",
+      appointment: "Free consultation",
+      menuOpen: "Open menu",
+      menuClose: "Close menu",
       lang: "TR",
       theme: "Theme",
       themeToDark: "Switch to dark theme",
@@ -647,11 +787,70 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       badge: "Online coaching & counseling across Turkey",
-      title: "The best way to predict the future<br><em>is to create it with your own hands.</em>",
-      subtitle: "Exam coaching, student coaching and psychological counseling with Orhan Yaşlı. Personalized support with a Guidance & Psychological Counseling background.",
-      cta: { free: "Free Consultation", whatsapp: "WhatsApp" },
+      title: "In Çanakkale and online: <em>exam coaching and psychological counseling.</em>",
+      quote: "The best way to predict the future is to create it with your own hands.",
+      subtitle: "Student coaching, exam coaching and individual counseling with a Guidance & Psychological Counseling (PGR) background. The first introductory meeting takes about 20 minutes and is free.",
+      cta: { free: "Free consultation", packages: "See packages", whatsapp: "WhatsApp" },
       scroll: "Explore",
       dailyCta: "Read",
+    },
+    gateway: {
+      label: "Where would you like to start?",
+      title: "Two doors, <em>one integrated approach.</em>",
+      subtitle: "Pick the door closest to your need — whichever you choose, the first meeting is free.",
+      doors: [
+        {
+          key: "kocluk",
+          eyebrow: "For students",
+          title: "Coaching",
+          desc: "Goals, a plan and steady follow-up. No subject teaching; you learn how to study and we run the process together.",
+          points: [
+            "A weekly study plan built for you",
+            "Mock exam analysis and progress tracking",
+            "Exam anxiety addressed alongside academics",
+          ],
+          cta: "View the coaching package",
+          href: "/paketler#kocluk",
+        },
+        {
+          key: "danismanlik",
+          eyebrow: "Children, teens and adults",
+          title: "Counseling",
+          desc: "One-to-one sessions grounded in a PGR background. Scope and frequency are agreed together in the first meeting.",
+          points: [
+            "Anxiety, stress and self-esteem work",
+            "Cognitive behavioural approach (CBT)",
+            "Play therapy for children, family sessions",
+          ],
+          note: "Sessions are confidential within professional ethics; content is never shared with third parties.",
+          cta: "View the counseling package",
+          href: "/paketler#danismanlik",
+        },
+      ],
+    },
+    discover: {
+      label: "Explore",
+      title: "Want to dig deeper?",
+      items: [
+        {
+          key: "articles",
+          title: "Articles and research",
+          desc: "Classic psychology studies and study guides, with their sources.",
+          cta: "Go to articles",
+        },
+        {
+          key: "exams",
+          title: "2026 exam calendar",
+          desc: "Dates, applications and FAQs for LGS, YKS, AGS and more.",
+          cta: "See the calendar",
+        },
+        {
+          key: "spark",
+          title: "Spark of the day",
+          desc: "A short technique, tactic or motivation note that changes every day.",
+          cta: "See today's",
+        },
+      ],
     },
     about: {
       label: "About Me",
@@ -673,6 +872,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     services: {
       label: "Services",
+      showAll: "Show all",
+      showLess: "Show less",
       title: "Two domains, <em>one holistic approach.</em>",
       subtitle: "Academic support and psychological counseling are two distinct but mutually reinforcing domains. Whichever door you enter through, you are met with a holistic approach.",
       groups: [
@@ -846,11 +1047,26 @@ export const dictionaries: Record<Locale, Dictionary> = {
       label: "Student Reviews",
       title: "What My Students<br><em>Say</em>",
       subtitle: "Experiences from students I've worked with — every review is moderated.",
+      moderationNote: "Reviews are submitted from the student portal and approved before they are published.",
+      sampleBadge: "Sample",
+      samples: [
+        {
+          initials: "E.K.",
+          meta: "Grade 12 · YKS",
+          text: "Building the plan together made it clear what to study and when. I picked up the habit of analysing every mock exam.",
+        },
+        {
+          initials: "M.A.",
+          meta: "Parent, grade 8 · LGS",
+          text: "The \"go study\" argument at home has faded. Weekly tracking lets us follow the process together.",
+        },
+      ],
     },
     exams: {
       label: "Exams",
       title: "2026 Exam Calendar &<br>System Guide",
       subtitle: "Current exam dates, application info, and the most frequently asked questions.",
+      disclaimer: "Dates follow ÖSYM and MEB announcements; always check the official calendar before applying.",
       cards: [
         {
           title: "LGS 2026",
@@ -952,7 +1168,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           q: "What are the session fees?",
-          a: "Fees vary by session type and package. Please contact me via the form for the most current information.",
+          a: "The coaching package is 7,000 ₺ per month. Counseling fees are agreed in the first meeting based on your needs and session frequency. The first introductory meeting (about 20 minutes) is free.",
         },
         {
           q: "Is psychological counseling confidential?",
@@ -986,34 +1202,58 @@ export const dictionaries: Record<Locale, Dictionary> = {
         phone: "Your Phone Number",
         subject: "Subject",
         message: "Your Message",
-        submit: "Send Message",
-        success: "Your message has been sent successfully! I will get back to you as soon as possible.",
+        submit: "Send message",
+        submitting: "Sending…",
+        success: "Your message has arrived. I will reply within 24 hours.",
         error: "Your message could not be sent. Please try again or reach out via WhatsApp.",
+        required: "Required field",
+        topics: {
+          coaching: "Coaching",
+          counseling: "Counseling",
+          other: "Other",
+          choose: "Select",
+        },
         placeholders: {
           name: "Your full name",
           email: "example@mail.com",
           phone: "+90 XXX XXX XX XX",
           subject: "Subject you want to discuss",
-          message: "Write your message here...",
+          message: "Write your message here…",
         },
       },
     },
     footer: {
       brand: "Orhan Yaşlı",
       desc: "Professional support in exam coaching, student coaching, and psychological counseling.",
-      services: "Services",
-      servicesLinks: ["Exam Coaching", "Student Coaching", "Exam Anxiety Management", "Online Coaching", "Play Therapy"],
+      services: "Packages and services",
+      servicesLinks: [
+        { label: "Coaching package", href: "/paketler#kocluk" },
+        { label: "Counseling package", href: "/paketler#danismanlik" },
+        { label: "Compare the packages", href: "/paketler" },
+        { label: "All services", href: "/#services" },
+        { label: "2026 exam calendar", href: "/#exams" },
+      ],
       about: "Company",
-      aboutLinks: ["About Me", "FAQ", "Privacy Policy"],
+      aboutLinks: [
+        { label: "About Me", href: "/#about" },
+        { label: "FAQ", href: "/#faq" },
+        { label: "Articles", href: "/makaleler" },
+        { label: "Privacy Policy", href: "modal:privacy" },
+      ],
       contact: "Contact",
-      contactLinks: ["WhatsApp"],
+      contactLinks: [
+        { label: "Message on WhatsApp", href: "https://wa.me/905432500417?text=Hello,%20I%20would%20like%20some%20information." },
+        { label: "Contact form", href: "/#contact" },
+        { label: "Student login", href: "/ogrenci/giris" },
+      ],
+      langLabel: "Language",
       copyright: "© 2026 Orhan Yaşlı. All rights reserved.",
       privacy: "Privacy Policy",
       terms: "Terms of Use",
       cookies: "Cookie Policy",
     },
     cookie: {
-      text: "This site uses cookies to improve your experience.",
+      text: "Essential cookies keep your session working. Analytics cookies run only if you accept them.",
       accept: "Accept",
       reject: "Reject",
       privacy: "Privacy Policy",

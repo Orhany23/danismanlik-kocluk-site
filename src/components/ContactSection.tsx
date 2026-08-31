@@ -5,7 +5,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { MessageCircle, Video, MapPin, Clock } from "lucide-react";
 
 export default function ContactSection() {
-  const { dict, locale } = useLocale();
+  const { dict } = useLocale();
   const t = dict.contact;
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -43,11 +43,18 @@ export default function ContactSection() {
   };
 
   const fields = [
-    { name: "name", type: "text", ph: t.form.placeholders.name, col: "span" },
-    { name: "email", type: "email", ph: t.form.placeholders.email, col: "half" },
-    { name: "phone", type: "tel", ph: t.form.placeholders.phone, col: "half" },
-    { name: "subject", type: "text", ph: t.form.placeholders.subject, col: "span" },
+    { name: "name", type: "text", ph: t.form.placeholders.name, col: "span", autoComplete: "name" },
+    { name: "email", type: "email", ph: t.form.placeholders.email, col: "half", autoComplete: "email" },
+    { name: "phone", type: "tel", ph: t.form.placeholders.phone, col: "half", autoComplete: "tel" },
   ] as const;
+
+  // Konu serbest metin yerine üç seçenek: gelen talep doğru kanala düşer,
+  // ziyaretçi de ne yazacağını düşünmez (GOV.UK: kapalı uçlu, kısa liste).
+  const topics = [
+    { value: "Koçluk", label: t.form.topics.coaching },
+    { value: "Danışmanlık", label: t.form.topics.counseling },
+    { value: "Diğer", label: t.form.topics.other },
+  ];
 
   return (
     <section id="contact" className="section" aria-labelledby="contact-title" style={{ background: "var(--clr-bg2)" }}>
@@ -116,7 +123,9 @@ export default function ContactSection() {
               {fields.map((f) => (
                 <div key={f.name} className={f.col === "half" ? "form-group" : "form-group col-span-2"}>
                   <label htmlFor={f.name}>
-                    {(f.name === "name" ? t.form.name : f.name === "email" ? t.form.email : f.name === "phone" ? t.form.phone : t.form.subject)} <span>*</span>
+                    {(f.name === "name" ? t.form.name : f.name === "email" ? t.form.email : t.form.phone)}{" "}
+                    <span aria-hidden="true">*</span>
+                    <span className="sr-only">({t.form.required})</span>
                   </label>
                   <input
                     id={f.name}
@@ -125,14 +134,37 @@ export default function ContactSection() {
                     value={formData[f.name]}
                     onChange={handleChange}
                     placeholder={f.ph}
+                    autoComplete={f.autoComplete}
                     required
                     className="form-control"
                   />
                 </div>
               ))}
+              <div className="form-group col-span-2">
+                <label htmlFor="subject">
+                  {t.form.subject} <span aria-hidden="true">*</span>
+                  <span className="sr-only">({t.form.required})</span>
+                </label>
+                <select
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="form-control form-select"
+                >
+                  <option value="">{t.form.topics.choose}</option>
+                  {topics.map((topic) => (
+                    <option key={topic.value} value={topic.value}>{topic.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="message">{t.form.message} <span>*</span></label>
+              <label htmlFor="message">
+                {t.form.message} <span aria-hidden="true">*</span>
+                <span className="sr-only">({t.form.required})</span>
+              </label>
               <textarea
                 id="message"
                 name="message"
@@ -145,11 +177,15 @@ export default function ContactSection() {
             </div>
             <div className="form-submit flex items-center gap-3 flex-wrap">
               <button type="submit" disabled={submitting} className="btn-submit">
-                {submitting ? (locale === "tr" ? "Gönderiliyor..." : "Sending...") : t.form.submit}
+                {submitting ? t.form.submitting : t.form.submit}
               </button>
             </div>
-            <div className={`form-success ${success ? "show" : ""}`} role="status">{t.form.success}</div>
-            <div className={`form-error ${error ? "show" : ""}`} role="alert">{t.form.error}</div>
+            <div className={`form-success ${success ? "show" : ""}`} role="status" aria-live="polite">
+              {success ? t.form.success : ""}
+            </div>
+            <div className={`form-error ${error ? "show" : ""}`} role="alert">
+              {error ? t.form.error : ""}
+            </div>
           </form>
         </div>
       </div>

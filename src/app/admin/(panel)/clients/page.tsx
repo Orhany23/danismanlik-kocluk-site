@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type Client = {
   id: string;
@@ -19,6 +20,7 @@ async function fetchClients(): Promise<Client[]> {
 }
 
 export default function AdminClientsPage() {
+  const { confirm } = useAdminDialog();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -60,7 +62,13 @@ export default function AdminClientsPage() {
   };
 
   const deleteClient = async (id: string) => {
-    if (!confirm("Bu danışanı silmek istediğinize emin misiniz?")) return;
+    const ok = await confirm({
+      title: "Danışan silinsin mi?",
+      description: "Danışanın kaydı kalıcı olarak silinir.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     await fetch(`/api/clients/${id}`, { method: "DELETE" });
     fetchClients();
   };

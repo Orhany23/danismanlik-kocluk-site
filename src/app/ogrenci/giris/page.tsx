@@ -64,6 +64,21 @@ export default function StudentLoginPage() {
           </button>
         </form>
 
+        {/* Şifre sıfırlama otomatik değil; kullanıcıyı çıkmaza sokmamak için
+            hazır WhatsApp mesajıyla doğrudan koça yönlendiriyoruz. */}
+        <p className="auth-foot">
+          <a
+            className="auth-link"
+            href={`https://wa.me/905432500417?text=${encodeURIComponent(
+              "Merhaba, öğrenci paneli şifremi unuttum. Hesabımın e-postası: "
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Şifremi unuttum
+          </a>
+        </p>
+
         <p className="auth-foot">
           Hesabın yok mu?{" "}
           <Link href="/ogrenci/kayit" className="auth-link">Kayıt ol</Link>

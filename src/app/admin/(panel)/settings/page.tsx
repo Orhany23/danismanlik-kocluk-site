@@ -4,7 +4,10 @@ import { useState, useEffect, useRef } from "react";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
-  const valuesRef = useRef<Record<string, string>>({});
+  // Sunucudaki son bilinen değerler — "kaydedilmemiş değişiklik var mı?"
+  // sorusunu yanıtlamak için tutulur.
+  const savedRef = useRef<Record<string, string>>({});
+  const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -15,71 +18,61 @@ export default function AdminSettingsPage() {
       .then((r) => r.json())
       .then((data) => {
         setSettings(data);
-        valuesRef.current = { ...data };
+        savedRef.current = { ...data };
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const handleSave = async (key: string, value: string) => {
-    setSaving(true);
-    try {
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, value }),
-      });
-      if (res.ok) {
-        setSettings((prev) => ({ ...prev, [key]: value }));
-        valuesRef.current[key] = value;
-        setMessageType("ok");
-        setMessage("Kaydedildi!");
-      } else {
-        setMessageType("err");
-        setMessage("HATA: Kaydedilemedi, tekrar deneyin.");
-      }
-    } catch {
-      setMessageType("err");
-      setMessage("HATA: Bağlantı sorunu, kaydedilemedi.");
-    } finally {
-      setSaving(false);
-      setTimeout(() => setMessage(""), 4000);
-    }
-  };
-
+  // Yalnızca değişen alanlar gönderilir; kayıt tek ve açık bir eylemdir
+  // (alan terk edilince sessizce kaydetmek kullanıcıyı kontrolsüz bırakıyordu).
   const handleSaveAll = async () => {
+    const changed = Object.entries(settings).filter(([key, value]) => savedRef.current[key] !== value);
+    if (changed.length === 0) {
+      setMessageType("ok");
+      setMessage("Değişiklik yok.");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
     setSaving(true);
     let failed = 0;
-    for (const [key, value] of Object.entries(valuesRef.current)) {
+    for (const [key, value] of changed) {
       try {
         const res = await fetch("/api/settings", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ key, value }),
         });
-        if (res.ok) {
-          setSettings((prev) => ({ ...prev, [key]: value }));
-        } else {
-          failed++;
-        }
+        if (res.ok) savedRef.current[key] = value;
+        else failed++;
       } catch {
         failed++;
       }
     }
     setSaving(false);
+    setDirty(failed > 0);
     if (failed === 0) {
       setMessageType("ok");
-      setMessage("Tüm değişiklikler kaydedildi!");
+      setMessage(`Kaydedildi (${changed.length} alan).`);
     } else {
       setMessageType("err");
-      setMessage(`HATA: ${failed} alan kaydedilemedi, tekrar deneyin.`);
+      setMessage(`${failed} alan kaydedilemedi, tekrar deneyin.`);
     }
     setTimeout(() => setMessage(""), 5000);
   };
 
+  const handleReset = () => {
+    setSettings({ ...savedRef.current });
+    setDirty(false);
+    setMessage("");
+  };
+
   const updateField = (key: string, value: string) => {
-    valuesRef.current[key] = value;
-    setSettings((prev) => ({ ...prev, [key]: value }));
+    setSettings((prev) => {
+      const next = { ...prev, [key]: value };
+      setDirty(Object.entries(next).some(([k, v]) => savedRef.current[k] !== v));
+      return next;
+    });
   };
 
   if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
@@ -107,23 +100,19 @@ export default function AdminSettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
-              <input value={settings.phone || ""} onChange={(e) => updateField("phone", e.target.value)}
-                onBlur={(e) => handleSave("phone", e.target.value)} className="form-control" />
+              <input value={settings.phone || ""} onChange={(e) => updateField("phone", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
-              <input value={settings.email || ""} onChange={(e) => updateField("email", e.target.value)}
-                onBlur={(e) => handleSave("email", e.target.value)} className="form-control" />
+              <input value={settings.email || ""} onChange={(e) => updateField("email", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
-              <input value={settings.address || ""} onChange={(e) => updateField("address", e.target.value)}
-                onBlur={(e) => handleSave("address", e.target.value)} className="form-control" />
+              <input value={settings.address || ""} onChange={(e) => updateField("address", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Çalışma Saatleri</label>
-              <input value={settings.hours || ""} onChange={(e) => updateField("hours", e.target.value)}
-                onBlur={(e) => handleSave("hours", e.target.value)} className="form-control" />
+              <input value={settings.hours || ""} onChange={(e) => updateField("hours", e.target.value)} className="form-control" />
             </div>
           </div>
         </div>
@@ -135,23 +124,19 @@ export default function AdminSettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
-              <input value={settings.instagram || ""} onChange={(e) => updateField("instagram", e.target.value)}
-                onBlur={(e) => handleSave("instagram", e.target.value)} className="form-control" />
+              <input value={settings.instagram || ""} onChange={(e) => updateField("instagram", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-              <input value={settings.linkedin || ""} onChange={(e) => updateField("linkedin", e.target.value)}
-                onBlur={(e) => handleSave("linkedin", e.target.value)} className="form-control" />
+              <input value={settings.linkedin || ""} onChange={(e) => updateField("linkedin", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">YouTube</label>
-              <input value={settings.youtube || ""} onChange={(e) => updateField("youtube", e.target.value)}
-                onBlur={(e) => handleSave("youtube", e.target.value)} className="form-control" />
+              <input value={settings.youtube || ""} onChange={(e) => updateField("youtube", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Twitter / X</label>
-              <input value={settings.twitter || ""} onChange={(e) => updateField("twitter", e.target.value)}
-                onBlur={(e) => handleSave("twitter", e.target.value)} className="form-control" />
+              <input value={settings.twitter || ""} onChange={(e) => updateField("twitter", e.target.value)} className="form-control" />
             </div>
           </div>
         </div>
@@ -163,38 +148,44 @@ export default function AdminSettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Site Başlığı</label>
-              <input value={settings.siteTitle || ""} onChange={(e) => updateField("siteTitle", e.target.value)}
-                onBlur={(e) => handleSave("siteTitle", e.target.value)} className="form-control" />
+              <input value={settings.siteTitle || ""} onChange={(e) => updateField("siteTitle", e.target.value)} className="form-control" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Site Açıklaması</label>
-              <textarea value={settings.siteDescription || ""} onChange={(e) => updateField("siteDescription", e.target.value)}
-                onBlur={(e) => handleSave("siteDescription", e.target.value)} className="form-control" rows={3} />
+              <textarea value={settings.siteDescription || ""} onChange={(e) => updateField("siteDescription", e.target.value)} className="form-control" rows={3} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Anahtar Kelimeler</label>
-              <input value={settings.siteKeywords || ""} onChange={(e) => updateField("siteKeywords", e.target.value)}
-                onBlur={(e) => handleSave("siteKeywords", e.target.value)} className="form-control" />
+              <input value={settings.siteKeywords || ""} onChange={(e) => updateField("siteKeywords", e.target.value)} className="form-control" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Tek ve açık kayıt eylemi; sayfa altına yapışır ki uzun formda kaybolmasın. */}
+      <div className="sticky bottom-[68px] lg:bottom-0 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 bg-[#f5f7fa]/95 backdrop-blur border-t border-gray-200 flex flex-wrap items-center gap-3">
         <button
           onClick={handleSaveAll}
-          disabled={saving}
+          disabled={saving || !dirty}
           style={{ backgroundColor: "#1e3a8a", color: "#ffffff" }}
-          className="px-6 py-3 rounded-xl text-sm font-semibold shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+          className="px-6 py-3 min-h-[44px] rounded-xl text-sm font-semibold shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
         >
-          {saving ? "Kaydediliyor..." : "Tüm Değişiklikleri Kaydet"}
+          {saving ? "Kaydediliyor…" : "Değişiklikleri kaydet"}
         </button>
-        <span className="text-xs text-gray-400">Alanlardan çıkınca otomatik kaydedilir; emin olmak için bu butonu kullanabilirsiniz.</span>
+        {dirty && !saving && (
+          <button
+            onClick={handleReset}
+            className="px-4 py-3 min-h-[44px] rounded-xl text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-white transition-colors"
+          >
+            Değişiklikleri geri al
+          </button>
+        )}
+        <span className="text-xs text-gray-500" role="status" aria-live="polite">
+          {saving ? "Kaydediliyor…" : dirty ? "Kaydedilmemiş değişiklikleriniz var." : "Tüm değişiklikler kayıtlı."}
+        </span>
       </div>
 
       <PasswordChangeCard />
-
-      {saving && <div className="text-center text-sm text-gray-400">Kaydediliyor...</div>}
     </div>
   );
 }

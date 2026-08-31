@@ -1,25 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
-import { GraduationCap, MapPin, MessageCircleHeart, FlaskConical } from "lucide-react";
+import { GraduationCap, MapPin, MessageCircleHeart } from "lucide-react";
 import PsiMark from "@/components/PsiMark";
-import { getDailyStudy } from "@/lib/dailyResearch";
-
-// Sunucuda false, istemcide (hydration sonrası) true döner. Günün araştırması
-// tarihe bağlı olduğundan SSR/istemci uyuşmazlığını böyle önleriz (ArticlesSection deseni).
-const emptySubscribe = () => () => {};
-function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
-}
 
 export default function HeroSection() {
   const { dict, locale } = useLocale();
   const t = dict.hero;
-  // Günün araştırması istemcide tarihe göre hesaplanır; mount olana kadar
-  // şerit render edilmez (hydration uyuşmazlığını önlemek için).
-  const mounted = useMounted();
-  const daily = mounted ? getDailyStudy().study : null;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -31,7 +19,7 @@ export default function HeroSection() {
       : ["PGR-based coaching", "Çanakkale + Online", "Free first session"];
 
   return (
-    <section id="hero" aria-label="Ana başlık">
+    <section id="hero" aria-label={locale === "tr" ? "Ana başlık" : "Hero"}>
       <PsiMark className="psi-mark psi-hero" />
       <div className="container">
         <div className="hero-inner">
@@ -42,19 +30,13 @@ export default function HeroSection() {
                 {t.badge}
               </div>
 
-              {/* Kompakt Günün Araştırması — ilk ekranda okunabilsin diye başlığın üstünde */}
-              {mounted && daily && (
-                <a href="#articles" className="hero-daily">
-                  <FlaskConical strokeWidth={1.8} aria-hidden="true" />
-                  <span className="hero-daily-label">{dict.articles.daily.badge}</span>
-                  <span className="hero-daily-title">{daily.t}</span>
-                  <span className="hero-daily-cta">{t.dailyCta} →</span>
-                </a>
-              )}
-
+              {/* H1 doğrudan hizmeti ve yeri söyler; şiirsel alıntı altta,
+                  başlığın anlamını gölgelemeden durur (NN/g: bilgi kokusu). */}
               <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t.title }} />
 
               <p className="hero-sub">{t.subtitle}</p>
+
+              <blockquote className="hero-quote">{t.quote}</blockquote>
 
               <div className="hero-cta">
                 <button onClick={() => scrollTo("contact")} className="btn btn-primary">
@@ -63,14 +45,9 @@ export default function HeroSection() {
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 </button>
-                <a
-                  href="https://wa.me/905432500417?text=Merhaba,%20bilgi%20almak%20istiyorum."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-ghost"
-                >
-                  {t.cta.whatsapp}
-                </a>
+                <Link href="/paketler" className="btn btn-ghost">
+                  {t.cta.packages}
+                </Link>
               </div>
 
               <div className="hero-trust">
@@ -85,6 +62,7 @@ export default function HeroSection() {
 
             <div className="hero-portrait">
               <div className="hero-portrait-frame">
+                {/* Görsel yüklenmezse gizlenir; çerçevedeki "OY" yer tutucu görünür kalır. */}
                 <img
                   src="/orhan.jpg"
                   alt="Orhan Yaşlı"
