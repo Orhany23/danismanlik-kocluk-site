@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ServicesSection from "@/components/ServicesSection";
+import PackagesSection from "@/components/PackagesSection";
 import ProcessSection from "@/components/ProcessSection";
 import WhoForSection from "@/components/WhoForSection";
 import DailySpark from "@/components/DailySpark";
@@ -31,6 +32,7 @@ export default function HomePage() {
       <HeroSection />
       <AboutSection />
       <ServicesSection />
+      <PackagesSection />
       <ArticlesSection />
       <ProcessSection />
       <WhoForSection />
