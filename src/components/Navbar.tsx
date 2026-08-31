@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLocale } from "@/components/LocaleProvider";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -51,9 +52,15 @@ export default function Navbar() {
         <ul className="hidden lg:flex items-center gap-1.5">
           {(["about","services","exams","articles","contact"] as const).map((key) => (
             <li key={key}>
-              <button onClick={() => scrollTo(key)} className="nav-link">
-                {t[key]}
-              </button>
+              {key === "articles" ? (
+                <Link href="/makaleler" className="nav-link">
+                  {t[key]}
+                </Link>
+              ) : (
+                <button onClick={() => scrollTo(key)} className="nav-link">
+                  {t[key]}
+                </button>
+              )}
             </li>
           ))}
         </ul>
@@ -109,11 +116,22 @@ export default function Navbar() {
       </div>
       {menuOpen && (
         <div className="mobile-menu-panel lg:hidden">
-          {(["about","services","exams","articles","contact"] as const).map((key) => (
-            <button key={key} onClick={() => scrollTo(key)} className="mobile-menu-link">
-              {t[key]}
-            </button>
-          ))}
+          {(["about","services","exams","articles","contact"] as const).map((key) =>
+            key === "articles" ? (
+              <Link
+                key={key}
+                href="/makaleler"
+                onClick={() => setMenuOpen(false)}
+                className="mobile-menu-link block"
+              >
+                {t[key]}
+              </Link>
+            ) : (
+              <button key={key} onClick={() => scrollTo(key)} className="mobile-menu-link">
+                {t[key]}
+              </button>
+            )
+          )}
           <div className="mobile-menu-link flex items-center justify-between">
             <span>{t.theme}</span>
             <ThemeToggle className="p-1.5 rounded-lg border border-[var(--clr-border)] text-[var(--clr-text2)] hover:border-[var(--clr-primary)] hover:text-[var(--clr-primary)] transition-colors" />
