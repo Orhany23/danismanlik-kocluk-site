@@ -44,3 +44,6 @@ next-env.d.ts
 dev.db
 
 .vercel
+
+# graphify analiz ciktisi
+/graphify-out
