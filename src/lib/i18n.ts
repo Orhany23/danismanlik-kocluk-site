@@ -48,6 +48,28 @@ export type Dictionary = {
       items: Array<{ title: string; desc: string; tag?: string }>;
     }>;
   };
+  packages: {
+    label: string;
+    title: string;
+    subtitle: string;
+    note: string;
+    includesLabel: string;
+    infoCta: string;
+    detailCta: string;
+    compareCta: string;
+    items: Array<{
+      key: string;
+      badge: string;
+      title: string;
+      desc: string;
+      meta: string[];
+      includes: string[];
+      price?: string;
+      priceUnit?: string;
+      priceNote?: string;
+      waText: string;
+    }>;
+  };
   process: {
     label: string;
     title: string;
@@ -290,6 +312,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
       ],
     },
+      packages: {
+        label: "Paketler",
+        title: "İki paket, <em>tek bütüncül yaklaşım.</em>",
+        subtitle: "Akademik destek ve psikolojik danışmanlık ayrı yürütülür ama birbirini besler. Hangisiyle başlarsanız başlayın, ilk görüşme ücretsizdir.",
+        note: "Kontenjan sınırlıdır; her danışanla düzenli çalışabilmek için aynı anda alınan danışan sayısı kısıtlı tutulur.",
+        includesLabel: "Pakete dahil",
+        infoCta: "Bilgi al",
+        detailCta: "Paket detayı",
+        compareCta: "İki paketi karşılaştır",
+        items: [
+          {
+            key: "kocluk",
+            badge: "Koçluk",
+            title: "Koçluk Paketi",
+            desc: "Hedefi olan öğrenciye plan, yöntem ve düzenli takip sağlar. Ders anlatmaz; nasıl çalışılacağını öğretir ve süreci baştan sona yönetir.",
+            meta: ["Öğrenciler için", "Yüz yüze + Online", "İlk görüşme ücretsiz"],
+            includes: [
+              "Hedef belirlenir, kişiye özel çalışma programı hazırlanır.",
+              "Denemeler analiz edilir, ilerleme haftalık olarak takip edilir.",
+              "Zaman yönetimi ve verimli çalışma teknikleri öğretilir.",
+              "Sınav kaygısı psikolojik destekle birlikte ele alınır.",
+              "Bölüm ve meslek seçiminde yol gösterilir.",
+            ],
+            price: "7.000 ₺",
+            priceUnit: "aylık",
+            waText: "Merhaba, Koçluk Paketi hakkında bilgi almak istiyorum.",
+          },
+          {
+            key: "danismanlik",
+            badge: "Danışmanlık",
+            title: "Danışmanlık Paketi",
+            desc: "RPD altyapısıyla yürütülen birebir danışmanlık ve terapi çalışmalarını kapsar. Kapsam ve sıklık, ihtiyaca göre ilk görüşmede birlikte belirlenir.",
+            meta: ["Çocuk, genç ve yetişkin", "Yüz yüze + Online", "İlk görüşme ücretsiz"],
+            includes: [
+              "İlk görüşmede ihtiyaç birlikte değerlendirilir.",
+              "Kaygı, stres yönetimi ve özgüven üzerine birebir çalışılır.",
+              "Bilişsel davranışçı yaklaşımla (BDT) yapılandırılmış görüşmeler yürütülür.",
+              "Çocuklarla oyun terapisi yöntemiyle çalışılır.",
+              "Aile ve çift görüşmeleri yapılır.",
+            ],
+            priceNote: "Ücret, ihtiyaca göre görüşmede belirlenir.",
+            waText: "Merhaba, Danışmanlık Paketi hakkında bilgi almak istiyorum.",
+          },
+        ],
+      },
     process: {
       label: "Çalışma Süreci",
       title: "Koçluk ve Danışmanlık Süreci<br>Nasıl İşler?",
@@ -680,6 +747,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
       ],
     },
+      packages: {
+        label: "Packages",
+        title: "Two packages, <em>one integrated approach.</em>",
+        subtitle: "Academic support and psychological counseling run separately but feed into each other. Whichever you start with, the first session is free.",
+        note: "Places are limited: the number of clients taken on at any one time is kept small so that everyone gets consistent attention.",
+        includesLabel: "What is included",
+        infoCta: "Get information",
+        detailCta: "Package details",
+        compareCta: "Compare both packages",
+        items: [
+          {
+            key: "kocluk",
+            badge: "Coaching",
+            title: "Coaching Package",
+            desc: "Gives a goal-driven student a plan, a method and steady follow-up. It does not teach the syllabus; it teaches how to study and manages the whole process.",
+            meta: ["For students", "In person + Online", "First session free"],
+            includes: [
+              "Goals are set and a personal study programme is prepared.",
+              "Practice exams are analysed and progress is tracked weekly.",
+              "Time management and effective study techniques are taught.",
+              "Exam anxiety is addressed together with psychological support.",
+              "Guidance is given on choosing a field and a career.",
+            ],
+            price: "7.000 TL",
+            priceUnit: "per month",
+            waText: "Hello, I would like information about the Coaching Package.",
+          },
+          {
+            key: "danismanlik",
+            badge: "Counseling",
+            title: "Counseling Package",
+            desc: "Covers one-to-one counseling and therapy work grounded in guidance and psychological counseling training. Scope and frequency are agreed together in the first session.",
+            meta: ["Children, teens and adults", "In person + Online", "First session free"],
+            includes: [
+              "Needs are assessed together in the first session.",
+              "Anxiety, stress management and self-confidence are worked on one to one.",
+              "Structured sessions are run using cognitive behavioural therapy (CBT).",
+              "Children are worked with through play therapy.",
+              "Family and couple sessions are held.",
+            ],
+            priceNote: "The fee is agreed in the first session, based on need.",
+            waText: "Hello, I would like information about the Counseling Package.",
+          },
+        ],
+      },
     process: {
       label: "Our Process",
       title: "How Does the<br>Process Work?",
