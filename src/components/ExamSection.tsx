@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { GraduationCap, School, Landmark, Globe2, CalendarDays, Lightbulb, ListChecks } from "lucide-react";
+import { GraduationCap, School, Landmark, Globe2, CalendarDays, Lightbulb, ListChecks, Info, Minus, Plus } from "lucide-react";
 
 const examIcons = [
   <GraduationCap key="0" strokeWidth={1.6} />,
@@ -26,6 +26,10 @@ export default function ExamSection() {
           <span className="section-label">{t.label}</span>
           <h2 className="section-title" id="exams-title" style={{ maxWidth: 720 }} dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="section-sub" style={{ maxWidth: 560 }}>{t.subtitle}</p>
+          <p className="exam-disclaimer">
+            <Info strokeWidth={1.8} aria-hidden="true" />
+            <span>{t.disclaimer}</span>
+          </p>
         </div>
         <div className="exam-list reveal">
           {t.cards.map((card, i) => {
@@ -40,7 +44,9 @@ export default function ExamSection() {
                 >
                   <span className="exam-trigger-icon" aria-hidden="true">{examIcons[i]}</span>
                   <span className="exam-trigger-title">{card.title}</span>
-                  <span className="exam-trigger-plus" aria-hidden="true">{open ? "−" : "+"}</span>
+                  <span className="exam-trigger-plus" aria-hidden="true">
+                    {open ? <Minus strokeWidth={2.2} /> : <Plus strokeWidth={2.2} />}
+                  </span>
                 </button>
                 <div
                   id={`exam-panel-${i}`}

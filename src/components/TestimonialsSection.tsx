@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { Star } from "lucide-react";
+import { ShieldCheck, Star } from "lucide-react";
 
 type Item = {
   name: string;
@@ -38,8 +38,10 @@ export default function TestimonialsSection() {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- load async; state güncellemesi fetch sonrası
   useEffect(() => { void load(); }, [load]);
 
-  // Onaylı yorum yokken bölüm tamamen gizli — sitede hiçbir iz bırakmaz.
-  if (items.length === 0) return null;
+  // Onaylı yorum yoksa bölüm gizlenmez: sosyal kanıtın nasıl göründüğünü
+  // gösteren, açıkça "Örnek" etiketli iki alıntı ve onay notu gösterilir
+  // (Baymard: boş bölüm yerine dürüst beklenti yönetimi).
+  const isSample = items.length === 0;
 
   return (
     <section id="testimonials" className="section" aria-labelledby="testimonials-title">
@@ -51,29 +53,50 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="testimonial-grid">
-          {items.map((item, i) => (
-            <article key={i} className="testimonial-card">
-              <div className="testimonial-stars" aria-label={`${item.rating} / 5`}>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <Star
-                    key={n}
-                    strokeWidth={1.6}
-                    className={n <= item.rating ? "is-on" : ""}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-              <p className="testimonial-text">{item.text}</p>
-              <div className="testimonial-who">
-                <span className="testimonial-avatar" aria-hidden="true">{avatarInitials(item.name)}</span>
-                <span className="testimonial-who-meta">
-                  <strong>{item.name}</strong>
-                  {item.gradeLevel && <span>{item.gradeLevel}</span>}
-                </span>
-              </div>
-            </article>
-          ))}
+          {isSample
+            ? t.samples.map((sample, i) => (
+                <article key={i} className="testimonial-card testimonial-card--sample">
+                  <span className="testimonial-sample-badge">{t.sampleBadge}</span>
+                  <p className="testimonial-text">{sample.text}</p>
+                  <div className="testimonial-who">
+                    <span className="testimonial-avatar" aria-hidden="true">
+                      {sample.initials.replace(/\./g, "")}
+                    </span>
+                    <span className="testimonial-who-meta">
+                      <strong>{sample.initials}</strong>
+                      <span>{sample.meta}</span>
+                    </span>
+                  </div>
+                </article>
+              ))
+            : items.map((item, i) => (
+                <article key={i} className="testimonial-card">
+                  <div className="testimonial-stars" aria-label={`${item.rating} / 5`}>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        strokeWidth={1.6}
+                        className={n <= item.rating ? "is-on" : ""}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </div>
+                  <p className="testimonial-text">{item.text}</p>
+                  <div className="testimonial-who">
+                    <span className="testimonial-avatar" aria-hidden="true">{avatarInitials(item.name)}</span>
+                    <span className="testimonial-who-meta">
+                      <strong>{item.name}</strong>
+                      {item.gradeLevel && <span>{item.gradeLevel}</span>}
+                    </span>
+                  </div>
+                </article>
+              ))}
         </div>
+
+        <p className="testimonial-note">
+          <ShieldCheck strokeWidth={1.8} aria-hidden="true" />
+          <span>{t.moderationNote}</span>
+        </p>
       </div>
     </section>
   );

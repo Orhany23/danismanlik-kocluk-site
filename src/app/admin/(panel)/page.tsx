@@ -4,6 +4,7 @@ import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Inbox, Mail, Star, GraduationCap, Users, CalendarDays, ClipboardList } from "lucide-react";
 
 // Bekleyen yorum sayısı — tablo üretimde henüz oluşmamışsa dashboard çökmesin
 // diye güvenli şekilde alınır (hata halinde 0 döner).
@@ -67,13 +68,13 @@ export default async function AdminDashboardPage() {
 
   // Önce günlük bakılan işler (bekleyen çalışma/mesaj), sonra genel sayılar.
   const statCards = [
-    { label: "Bekleyen Çalışma", value: studentStats.pendingWork, color: "bg-teal-500", icon: "📥", href: "/admin/work" },
-    { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", icon: "✉", href: "/admin/messages" },
-    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", icon: "⭐", href: "/admin/testimonials" },
-    { label: "Aktif Öğrenci", value: studentStats.students, color: "bg-indigo-500", icon: "🎓", href: "/admin/students" },
-    { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", icon: "👥", href: "/admin/clients" },
-    { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", icon: "📅", href: "/admin/appointments" },
-    { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", icon: "📋", href: "/admin/sessions" },
+    { label: "Bekleyen Çalışma", value: studentStats.pendingWork, color: "bg-teal-500", Icon: Inbox, href: "/admin/work" },
+    { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", Icon: Mail, href: "/admin/messages" },
+    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", Icon: Star, href: "/admin/testimonials" },
+    { label: "Aktif Öğrenci", value: studentStats.students, color: "bg-indigo-500", Icon: GraduationCap, href: "/admin/students" },
+    { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", Icon: Users, href: "/admin/clients" },
+    { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", Icon: CalendarDays, href: "/admin/appointments" },
+    { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", Icon: ClipboardList, href: "/admin/sessions" },
   ];
 
   return (
@@ -92,8 +93,10 @@ export default async function AdminDashboardPage() {
             className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm transition-shadow hover:shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-2xl">{card.icon}</span>
-              <span className={`w-2 h-2 rounded-full ${card.color}`} />
+              <span className="w-10 h-10 rounded-xl bg-gray-50 text-gray-600 flex items-center justify-center" aria-hidden="true">
+                <card.Icon size={20} strokeWidth={1.8} />
+              </span>
+              <span className={`w-2 h-2 rounded-full ${card.color}`} aria-hidden="true" />
             </div>
             <div className="text-3xl font-bold text-gray-800 mb-1">{card.value}</div>
             <div className="text-sm text-gray-500">{card.label}</div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { CalendarDays, Mail, Phone } from "lucide-react";
 
 type Message = {
   id: string;
@@ -19,6 +21,7 @@ async function fetchMessages(): Promise<Message[]> {
 }
 
 export default function AdminMessagesPage() {
+  const { confirm } = useAdminDialog();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Message | null>(null);
@@ -40,7 +43,13 @@ export default function AdminMessagesPage() {
   };
 
   const deleteMessage = async (id: string) => {
-    if (!confirm("Bu mesajı silmek istediğinize emin misiniz?")) return;
+    const ok = await confirm({
+      title: "Mesaj silinsin mi?",
+      description: "Bu işlem geri alınamaz.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     await fetch(`/api/messages/${id}`, { method: "DELETE" });
     setMessages((prev) => prev.filter((m) => m.id !== id));
     if (selected?.id === id) setSelected(null);
@@ -89,10 +98,21 @@ export default function AdminMessagesPage() {
                 <h3 className="text-lg font-semibold text-gray-800">{selected.name}</h3>
                 <button onClick={() => deleteMessage(selected.id)} className="text-xs text-red-500 hover:underline">Sil</button>
               </div>
-              <div className="flex gap-4 text-xs text-gray-500">
-                <span>📧 {selected.email}</span>
-                {selected.phone && <span>📞 {selected.phone}</span>}
-                <span>📅 {new Date(selected.createdAt).toLocaleString("tr-TR")}</span>
+              <div className="flex gap-4 text-xs text-gray-500 flex-wrap">
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail size={14} strokeWidth={1.8} aria-hidden="true" />
+                  {selected.email}
+                </span>
+                {selected.phone && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Phone size={14} strokeWidth={1.8} aria-hidden="true" />
+                    {selected.phone}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1.5">
+                  <CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" />
+                  {new Date(selected.createdAt).toLocaleString("tr-TR")}
+                </span>
               </div>
               <div className="pt-3 border-t border-gray-100">
                 <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{selected.message}</p>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { FileText, Image as ImageIcon, Link2, NotebookPen } from "lucide-react";
 
 type WorkType = "NOTE" | "LINK" | "FILE" | "PHOTO";
 type Work = {
@@ -19,11 +21,11 @@ type Work = {
   student: { id: string; name: string; gradeLevel: string | null };
 };
 
-const TYPE_BADGE: Record<WorkType, { label: string; cls: string; emoji: string }> = {
-  NOTE: { label: "Not", cls: "bg-amber-50 text-amber-700", emoji: "📝" },
-  LINK: { label: "Bağlantı", cls: "bg-sky-50 text-sky-700", emoji: "🔗" },
-  FILE: { label: "PDF", cls: "bg-rose-50 text-rose-700", emoji: "📄" },
-  PHOTO: { label: "Fotoğraf", cls: "bg-emerald-50 text-emerald-700", emoji: "📷" },
+const TYPE_BADGE: Record<WorkType, { label: string; cls: string; Icon: typeof FileText }> = {
+  NOTE: { label: "Not", cls: "bg-amber-50 text-amber-700", Icon: NotebookPen },
+  LINK: { label: "Bağlantı", cls: "bg-sky-50 text-sky-700", Icon: Link2 },
+  FILE: { label: "PDF", cls: "bg-rose-50 text-rose-700", Icon: FileText },
+  PHOTO: { label: "Fotoğraf", cls: "bg-emerald-50 text-emerald-700", Icon: ImageIcon },
 };
 
 function fmtDate(iso: string) {
@@ -31,6 +33,7 @@ function fmtDate(iso: string) {
 }
 
 export default function AdminWorkPage() {
+  const { confirm } = useAdminDialog();
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<"all" | "unseen" | "seen">("all");
@@ -72,7 +75,13 @@ export default function AdminWorkPage() {
   const toggleSeen = (w: Work) => setSeen(w, !w.seen);
 
   const remove = async (w: Work) => {
-    if (!confirm("Bu çalışmayı silmek istediğinize emin misiniz? (Dosyaysa depodan da silinir)")) return;
+    const ok = await confirm({
+      title: "Çalışma silinsin mi?",
+      description: "Dosya içeriyorsa depodan da silinir. Bu işlem geri alınamaz.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     setWorks((prev) => prev.filter((x) => x.id !== w.id));
     await fetch(`/api/admin/work/${w.id}`, { method: "DELETE" }).catch(() => load());
   };
@@ -142,7 +151,7 @@ export default function AdminWorkPage() {
                     </div>
                   </div>
                   <span className={`shrink-0 inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1 ${badge.cls}`}>
-                    <span aria-hidden="true">{badge.emoji}</span> {badge.label}
+                    <badge.Icon size={13} strokeWidth={1.9} aria-hidden="true" /> {badge.label}
                   </span>
                 </div>
 
@@ -164,7 +173,8 @@ export default function AdminWorkPage() {
                     onClick={() => setSeen(w, true)}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit"
                   >
-                    📄 PDF&apos;i aç
+                    <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+                    PDF&apos;i aç
                   </a>
                 )}
 
@@ -175,7 +185,8 @@ export default function AdminWorkPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--clr-primary)] hover:underline w-fit break-all"
                   >
-                    🔗 Bağlantıyı aç
+                    <Link2 size={16} strokeWidth={1.8} aria-hidden="true" />
+                    Bağlantıyı aç
                   </a>
                 )}
 

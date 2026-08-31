@@ -1,36 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useLocale } from "@/components/LocaleProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 
+// Menü sırası ziyaretçinin karar sırasına göre: önce ne aldığı (Paketler),
+// sonra kapsam (Hizmetler), sonra kim olduğum (Hakkımda), içerik ve iletişim.
+// (NN/g: gezinme etiketleri kullanıcının diliyle ve karar sırasıyla eşleşmeli.)
+type NavItem =
+  | { key: "packages" | "articles"; kind: "page"; href: string }
+  | { key: "services" | "about" | "contact"; kind: "section"; id: string };
+
+const NAV_ITEMS: NavItem[] = [
+  { key: "packages", kind: "page", href: "/paketler" },
+  { key: "services", kind: "section", id: "services" },
+  { key: "about", kind: "section", id: "about" },
+  { key: "articles", kind: "page", href: "/makaleler" },
+  { key: "contact", kind: "section", id: "contact" },
+];
+
 export default function Navbar() {
   const { dict, toggleLocale } = useLocale();
   const t = dict.nav;
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   // Oturum varsa Giriş Yap / Kayıt Ol yerine "Panelim" gösterilir.
-  // Oturum durumu NextAuth SessionProvider üzerinden okunur (elle fetch yerine
-  // güvenilir; tarayıcı önbelleğine takılmaz, girişten sonra otomatik güncellenir).
   const { data: session } = useSession();
   const role = session?.user?.role;
   const panelHref =
     role === "STUDENT" ? "/ogrenci" : role === "ADMIN" ? "/admin" : null;
 
-  const sectionIds: Record<string, string> = { whoFor: "who-for" };
-
-  const scrollTo = (key: string) => {
-    const id = sectionIds[key] ?? key;
+  const scrollTo = useCallback((id: string) => {
     setMenuOpen(false);
-    // Alt sayfadaysak (ör. /ogrenci) ana sayfadaki bölüme yönlendir
+    // Alt sayfadaysak (ör. /paketler) ana sayfadaki bölüme yönlendir
     if (typeof window !== "undefined" && window.location.pathname !== "/") {
       window.location.href = `/#${id}`;
       return;
     }
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
+
+  // WCAG 2.2 / NN/g: açılır menü Escape ile kapanmalı ve odak tetikleyiciye dönmeli.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   return (
     <nav id="navbar" className="fixed top-0 left-0 right-0 z-50 h-[var(--navbar-h)] flex items-center bg-[var(--clr-bg2)]/90 backdrop-blur-md shadow-[0_2px_20px_var(--clr-shadow)] transition-all duration-300">
@@ -50,15 +74,15 @@ export default function Navbar() {
         </button>
 
         <ul className="hidden lg:flex items-center gap-1.5">
-          {(["about","services","exams","articles","contact"] as const).map((key) => (
-            <li key={key}>
-              {key === "articles" ? (
-                <Link href="/makaleler" className="nav-link">
-                  {t[key]}
+          {NAV_ITEMS.map((item) => (
+            <li key={item.key}>
+              {item.kind === "page" ? (
+                <Link href={item.href} className="nav-link">
+                  {t[item.key]}
                 </Link>
               ) : (
-                <button onClick={() => scrollTo(key)} className="nav-link">
-                  {t[key]}
+                <button onClick={() => scrollTo(item.id)} className="nav-link">
+                  {t[item.key]}
                 </button>
               )}
             </li>
@@ -82,31 +106,25 @@ export default function Navbar() {
               Panelim
             </a>
           ) : (
-            <>
-              <a
-                href="/ogrenci/giris"
-                className="nav-link text-[0.82rem] !font-semibold hidden lg:inline-flex items-center"
-              >
-                Giriş Yap
-              </a>
-              <a
-                href="/ogrenci/kayit"
-                className="btn btn-ghost !py-2.5 !px-5 !text-[0.85rem] !hidden lg:!inline-flex"
-              >
-                Kayıt Ol
-              </a>
-            </>
+            <a
+              href="/ogrenci/giris"
+              className="nav-link text-[0.82rem] !font-semibold hidden lg:inline-flex items-center"
+            >
+              Giriş Yap
+            </a>
           )}
           <button onClick={() => scrollTo("contact")} className="btn btn-primary !py-2.5 !px-5 !text-[0.85rem] !hidden lg:!inline-flex">
             {t.appointment}
           </button>
           <button
+            ref={menuButtonRef}
             onClick={() => setMenuOpen((o) => !o)}
-            aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-label={menuOpen ? t.menuClose : t.menuOpen}
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
             className="lg:hidden p-2 rounded-lg text-[var(--clr-text)] hover:bg-[var(--clr-accent-tint)]"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               {menuOpen
                 ? <path d="M6 6l12 12M18 6L6 18" />
                 : <path d="M4 7h16M4 12h16M4 17h16" />}
@@ -115,20 +133,20 @@ export default function Navbar() {
         </div>
       </div>
       {menuOpen && (
-        <div className="mobile-menu-panel lg:hidden">
-          {(["about","services","exams","articles","contact"] as const).map((key) =>
-            key === "articles" ? (
+        <div id="mobile-menu" className="mobile-menu-panel lg:hidden">
+          {NAV_ITEMS.map((item) =>
+            item.kind === "page" ? (
               <Link
-                key={key}
-                href="/makaleler"
+                key={item.key}
+                href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="mobile-menu-link block"
               >
-                {t[key]}
+                {t[item.key]}
               </Link>
             ) : (
-              <button key={key} onClick={() => scrollTo(key)} className="mobile-menu-link">
-                {t[key]}
+              <button key={item.key} onClick={() => scrollTo(item.id)} className="mobile-menu-link">
+                {t[item.key]}
               </button>
             )
           )}

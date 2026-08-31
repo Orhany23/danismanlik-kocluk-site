@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type Student = { id: string; name: string; email: string; gradeLevel: string | null };
 type Testimonial = {
@@ -29,6 +30,7 @@ function Stars({ n }: { n: number }) {
 }
 
 export default function AdminTestimonialsPage() {
+  const { confirm } = useAdminDialog();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +55,13 @@ export default function AdminTestimonialsPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Bu yorumu silmek istediğine emin misin?")) return;
+    const ok = await confirm({
+      title: "Yorum silinsin mi?",
+      description: "Bu işlem geri alınamaz.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     await fetch(`/api/admin/testimonials/${id}`, { method: "DELETE" });
     load();
   };

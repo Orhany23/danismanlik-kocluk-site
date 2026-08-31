@@ -82,6 +82,8 @@ export type AuthedStudent = {
   email: string;
   name: string;
   gradeLevel: string | null;
+  /** Bağlı danışan kaydı (randevu/seans bu kimliğe yazılır); yoksa null. */
+  clientId: string | null;
 };
 
 /**
@@ -95,7 +97,7 @@ export async function requireStudent(): Promise<AuthedStudent | null> {
   try {
     const student = await prisma.student.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, active: true, gradeLevel: true },
+      select: { id: true, email: true, name: true, active: true, gradeLevel: true, clientId: true },
     });
     if (!student?.active) return null;
     return {
@@ -103,6 +105,7 @@ export async function requireStudent(): Promise<AuthedStudent | null> {
       email: student.email,
       name: student.name,
       gradeLevel: student.gradeLevel,
+      clientId: student.clientId ?? null,
     };
   } catch {
     return null;

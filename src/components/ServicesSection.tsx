@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   Target, CalendarCheck, School, Compass, BookOpen,
   UserRound, Wind, Brain, Puzzle, Home, HeartHandshake, Video,
+  ChevronDown,
 } from "lucide-react";
 import PsiMark from "@/components/PsiMark";
 
@@ -26,9 +28,14 @@ const groupIcons: Record<string, React.ReactNode[]> = {
   ],
 };
 
+// Her grupta önce 3 kart görünür; gerisi istek üzerine açılır
+// (NN/g progressive disclosure — 12 kartlık duvar tarama yükünü artırıyordu).
+const PREVIEW_COUNT = 3;
+
 export default function ServicesSection() {
   const { dict } = useLocale();
   const t = dict.services;
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   return (
     <section id="services" aria-labelledby="services-title">
@@ -48,6 +55,9 @@ export default function ServicesSection() {
 
       {t.groups.map((group) => {
         const inverted = group.key === "counseling";
+        const isOpen = !!expanded[group.key];
+        const visible = isOpen ? group.items : group.items.slice(0, PREVIEW_COUNT);
+        const hidden = group.items.length - PREVIEW_COUNT;
         return (
           <div
             key={group.key}
@@ -61,8 +71,8 @@ export default function ServicesSection() {
                 <p className="domain-blurb">{group.blurb}</p>
               </div>
 
-              <div className="domain-grid">
-                {group.items.map((item, i) => (
+              <div className="domain-grid" id={`domain-grid-${group.key}`}>
+                {visible.map((item, i) => (
                   <article key={i} className={`domain-card reveal delay-${(i % 3) + 1}`}>
                     <div className="domain-card-top">
                       <span className="domain-card-icon">{groupIcons[group.key]?.[i]}</span>
@@ -73,6 +83,23 @@ export default function ServicesSection() {
                   </article>
                 ))}
               </div>
+
+              {hidden > 0 && (
+                <button
+                  type="button"
+                  className="domain-more"
+                  aria-expanded={isOpen}
+                  aria-controls={`domain-grid-${group.key}`}
+                  onClick={() => setExpanded((prev) => ({ ...prev, [group.key]: !prev[group.key] }))}
+                >
+                  <span>{isOpen ? t.showLess : `${t.showAll} (${group.items.length})`}</span>
+                  <ChevronDown
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className={isOpen ? "domain-more-icon is-open" : "domain-more-icon"}
+                  />
+                </button>
+              )}
             </div>
           </div>
         );

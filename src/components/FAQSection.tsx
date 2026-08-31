@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { ChevronDown } from "lucide-react";
 
 export default function FAQSection() {
   const { dict } = useLocale();
@@ -28,7 +29,9 @@ export default function FAQSection() {
                   aria-controls={`faq-panel-${i}`}
                 >
                   <span>{item.q}</span>
-                  <span className="faq-icon" aria-hidden="true">+</span>
+                  <span className="faq-icon" aria-hidden="true">
+                    <ChevronDown strokeWidth={2.2} />
+                  </span>
                 </button>
                 <div
                   id={`faq-panel-${i}`}

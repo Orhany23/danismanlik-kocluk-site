@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type Student = {
   id: string;
@@ -15,6 +16,7 @@ type Student = {
 };
 
 export default function AdminStudentsPage() {
+  const { confirm, alert } = useAdminDialog();
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [resetFor, setResetFor] = useState<Student | null>(null);
@@ -33,7 +35,12 @@ export default function AdminStudentsPage() {
   // Öğrenciye bir danışan kaydı oluşturup bağlar. Böylece bu kişiye randevu/seans
   // yazılabilir ve tüm geçmişi danışan detay sayfasında tek ekranda görünür.
   const linkStudent = async (s: Student) => {
-    if (!confirm(`${s.name} için bir danışan kaydı oluşturulup bağlansın mı?\n\nBöylece bu öğrenciye randevu ve seans yazabilirsin.`)) return;
+    const ok = await confirm({
+      title: `${s.name} için danışan kaydı oluşturulsun mu?`,
+      description: "Böylece bu öğrenciye randevu ve seans yazabilirsin.",
+      confirmLabel: "Oluştur ve bağla",
+    });
+    if (!ok) return;
     setLinking(s.id);
     try {
       const res = await fetch(`/api/admin/students/${s.id}/link`, {
@@ -43,7 +50,7 @@ export default function AdminStudentsPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) load();
-      else alert(data.error || "Bağlantı kurulamadı.");
+      else await alert({ title: "Bağlantı kurulamadı", description: data.error || "Lütfen tekrar deneyin." });
     } finally {
       setLinking(null);
     }
@@ -51,7 +58,15 @@ export default function AdminStudentsPage() {
 
   const toggleActive = async (s: Student) => {
     const active = !s.active;
-    if (!active && !confirm(`${s.name} askıya alınsın mı? Giriş yapamayacak.`)) return;
+    if (!active) {
+      const ok = await confirm({
+        title: `${s.name} askıya alınsın mı?`,
+        description: "Öğrenci hesabıyla giriş yapamaz. İstediğin zaman geri açabilirsin.",
+        confirmLabel: "Askıya al",
+        tone: "danger",
+      });
+      if (!ok) return;
+    }
     setStudents((prev) => prev.map((x) => (x.id === s.id ? { ...x, active } : x)));
     await fetch(`/api/admin/students/${s.id}`, {
       method: "PATCH",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
 
 type Student = { id: string; name: string; email: string };
 type Resource = {
@@ -20,10 +21,10 @@ type Resource = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  LINK: "🔗 Bağlantı",
-  VIDEO: "▶️ Video",
-  FILE: "📄 Dosya",
-  NOTE: "📝 Not",
+  LINK: "Bağlantı",
+  VIDEO: "Video",
+  FILE: "Dosya",
+  NOTE: "Not",
 };
 
 const empty = {
@@ -39,6 +40,7 @@ const empty = {
 };
 
 export default function AdminResourcesPage() {
+  const { confirm } = useAdminDialog();
   const [resources, setResources] = useState<Resource[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [form, setForm] = useState({ ...empty });
@@ -110,7 +112,13 @@ export default function AdminResourcesPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Bu kaynağı silmek istediğine emin misin?")) return;
+    const ok = await confirm({
+      title: "Kaynak silinsin mi?",
+      description: "Kaynak öğrenci panelinden de kaldırılır.",
+      confirmLabel: "Sil",
+      tone: "danger",
+    });
+    if (!ok) return;
     await fetch(`/api/admin/resources/${id}`, { method: "DELETE" });
     load();
   };
@@ -178,7 +186,7 @@ export default function AdminResourcesPage() {
 
           <label className="text-sm font-medium text-gray-700">
             Seviye (opsiyonel)
-            <span className="block text-xs font-normal text-gray-500">Seviye yalnızca etiket/filtreleme içindir; kaynağın kimlere görüneceğini etkilemez. Görünürlüğü "Kime?" alanı belirler.</span>
+            <span className="block text-xs font-normal text-gray-500">Seviye yalnızca etiket/filtreleme içindir; kaynağın kimlere görüneceğini etkilemez. Görünürlüğü &quot;Kime?&quot; alanı belirler.</span>
             <select className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" value={form.gradeLevel}
               onChange={(e) => setForm({ ...form, gradeLevel: e.target.value })}>
               <option value="">Tüm sınıflar (herkes görür)</option>

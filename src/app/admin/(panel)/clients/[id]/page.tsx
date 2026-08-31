@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { GraduationCap } from "lucide-react";
 
 type Appointment = { id: string; title: string; date: string; duration: number; status: string; notes: string | null };
 type SessionRow = { id: string; title: string; date: string; duration: number; status: string; notes: string | null };
@@ -29,6 +31,7 @@ function fmt(iso: string) {
 }
 
 export default function ClientDetailPage() {
+  const { confirm, alert } = useAdminDialog();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [client, setClient] = useState<Client | null>(null);
@@ -99,7 +102,8 @@ export default function ClientDetailPage() {
           <div className="flex items-center gap-2">
             {client.student ? (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--clr-accent-tint)] text-[var(--clr-primary)] text-xs font-medium px-3 py-1.5">
-                🎓 Portal hesabı bağlı
+                <GraduationCap size={14} strokeWidth={1.8} aria-hidden="true" />
+                Portal hesabı bağlı
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium px-3 py-1.5">
@@ -209,10 +213,16 @@ export default function ClientDetailPage() {
 
       <button
         onClick={async () => {
-          if (!confirm(`${client.name} silinsin mi? Randevu ve seansları varsa silme başarısız olur.`)) return;
+          const ok = await confirm({
+            title: `${client.name} silinsin mi?`,
+            description: "Danışanın randevu veya seans kaydı varsa silme işlemi başarısız olur.",
+            confirmLabel: "Sil",
+            tone: "danger",
+          });
+          if (!ok) return;
           const res = await fetch(`/api/clients/${client.id}`, { method: "DELETE" });
           if (res.ok) router.push("/admin/clients");
-          else alert("Silinemedi. Önce randevu/seans kayıtlarını silmelisin.");
+          else await alert({ title: "Silinemedi", description: "Önce randevu ve seans kayıtlarını silmelisin." });
         }}
         className="text-xs text-red-500 hover:underline"
       >

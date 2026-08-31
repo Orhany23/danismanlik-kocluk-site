@@ -8,10 +8,17 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import LegalModals from "@/components/LegalModals";
 import CookieBanner from "@/components/CookieBanner";
 
-// Site menüsü, footer ve WhatsApp butonu admin panelinde görünmemeli.
+// Panel sayfalarının (admin + öğrenci) kendi başlığı ve gezinmesi var;
+// kamu navbarı, footer ve WhatsApp butonu oralarda görünmemeli.
+const PANEL_PREFIXES = ["/admin", "/ogrenci"];
+
+function isPanel(pathname: string): boolean {
+  return PANEL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
+  if (isPanel(pathname)) return null;
   return (
     <>
       <Navbar />
@@ -22,7 +29,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
+  if (isPanel(pathname)) return null;
   return (
     <>
       <Footer />
