@@ -11,11 +11,11 @@
      mum ışığı/vurgu için amber (sage token'ı), sakin nötr kağıt zemin. */
   --clr-bg:        #F2F4F1;
   --clr-bg2:       #FAFBF9;
-  --clr-card:      #FFFFFF;
+  --clr-card:      #FCFDFB;
   --clr-ink:       #1B2A22;
   --clr-text:      #22322A;
   --clr-text2:     #56635A;
-  --clr-text3:     #889389;
+  --clr-text3:     #66726B;
   --clr-border:    #E0E5DF;
   --clr-shadow:    rgba(27,42,34,0.08);
   --clr-shadow-lg: rgba(27,42,34,0.14);
@@ -25,8 +25,8 @@
   --clr-accent:         #2F6A4A;
   --clr-accent-dark:    #234E37;
   --clr-accent-tint:    #E4EDE7;
-  --clr-sage:       #BE7B25;
-  --clr-sage-dark:  #966018;
+  --clr-sage:       #9A6318;
+  --clr-sage-dark:  #7E5214;
   --clr-sage-tint:  #F5EAD7;
   --clr-navy: var(--clr-ink);
   --navbar-h: 76px;
@@ -42,9 +42,9 @@
   --clr-bg:    #121A15;
   --clr-bg2:   #16211A;
   --clr-card:  #1B261F;
-  --clr-text:  #E8EDE9;
+  --clr-text:  #E0E7E2;
   --clr-text2: #A6B2AA;
-  --clr-text3: #78857D;
+  --clr-text3: #8A968F;
   --clr-border:#2A362F;
   --clr-shadow: rgba(0,0,0,0.4);
   --clr-shadow-lg: rgba(0,0,0,0.5);
@@ -481,7 +481,8 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 @media (max-width: 720px) { .about-features { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 460px) { .about-features { grid-template-columns: 1fr; } }
 
-.about-split { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 56px; align-items: center; }
+.about-split { display: grid; grid-template-columns: 1fr; }
+.about-content { max-width: 860px; margin: 0 auto; width: 100%; }
 .about-portrait { position: relative; }
 .about-portrait-frame {
   position: relative;
@@ -490,7 +491,7 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   box-shadow: 0 26px 60px -30px var(--clr-shadow-lg);
 }
 .about-portrait-frame img { width: 100%; height: 100%; object-fit: cover; }
-@media (max-width: 860px) { .about-split { grid-template-columns: 1fr; gap: 34px; } .about-portrait { max-width: 360px; margin: 0 auto; } }
+
 
 .faq-list { display: flex; flex-direction: column; gap: 12px; }
 .faq-item { background: var(--clr-card); border: 1px solid var(--clr-border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s; }
