@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   },
   other: {
     "twitter:card": "summary_large_image",
+    "google-adsense-account": "ca-pub-5270775518993386",
   },
 };
 
