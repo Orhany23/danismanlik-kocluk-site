@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, ArrowLeft, ArrowRight, FlaskConical } from "lucide-react";
 import { getAllStudies, getStudyBySlug } from "@/lib/dailyResearch";
+import ShareButtons from "@/components/ShareButtons";
 
 const SITE = "https://psdorhanyasli.com.tr";
 
@@ -116,6 +117,8 @@ export default async function StudyPage({
             <span>Kaynağı görüntüle</span>
             <ArrowUpRight strokeWidth={2} aria-hidden="true" />
           </a>
+
+          <ShareButtons url={`${SITE}/makaleler/${study.slug}`} title={study.t} />
 
           <nav className="mak-pager" aria-label="Diğer araştırmalar">
             <Link href={`/makaleler/${prev.slug}`} className="mak-pager-link">

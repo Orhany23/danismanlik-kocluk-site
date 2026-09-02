@@ -1278,6 +1278,25 @@ footer > .container { position: relative; z-index: 1; }
 .mak-source:hover { gap: 11px; }
 .mak-source svg { width: 17px; height: 17px; }
 
+.share-buttons {
+  display: flex; align-items: center; gap: 14px;
+  margin: 28px 0 4px;
+}
+.share-label {
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.03em; text-transform: uppercase; color: var(--clr-text3);
+}
+.share-icons { display: flex; align-items: center; gap: 8px; }
+.share-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 999px;
+  border: 1px solid var(--clr-border); background: var(--clr-card);
+  color: var(--clr-text2); cursor: pointer;
+  transition: border-color 0.25s var(--transition), color 0.25s var(--transition), transform 0.25s var(--transition);
+}
+.share-icon-btn svg { width: 16px; height: 16px; }
+.share-icon-btn:hover { border-color: var(--clr-primary); color: var(--clr-primary); transform: translateY(-2px); }
+
 .mak-pager {
   display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
   margin: 46px 0 30px; padding-top: 30px; border-top: 1px solid var(--clr-border);
