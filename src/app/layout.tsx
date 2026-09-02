@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
@@ -31,6 +32,12 @@ export default function RootLayout({
   return (
     <html lang="tr" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5270775518993386"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Hydration öncesi tema + js sınıfı — FOUC ve tema yanıp sönmesini önler */}
