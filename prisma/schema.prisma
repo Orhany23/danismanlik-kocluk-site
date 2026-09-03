@@ -74,6 +74,19 @@ model Message {
   createdAt DateTime @default(now())
 }
 
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userType  String    // "ADMIN" | "STUDENT"
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
 model Setting {
   id    String @id @default("main")
   key   String @unique

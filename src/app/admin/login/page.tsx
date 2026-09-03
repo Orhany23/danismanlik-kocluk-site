@@ -70,6 +70,11 @@ export default function AdminLoginPage() {
           {error && (
             <p className="text-red-400 text-sm text-center">{error}</p>
           )}
+          <div className="text-right">
+            <Link href="/sifremi-unuttum" className="text-sm text-white/60 hover:text-white transition-colors">
+              Şifremi unuttum
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={loading}

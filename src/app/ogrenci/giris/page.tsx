@@ -80,6 +80,9 @@ export default function StudentLoginPage() {
         </p>
 
         <p className="auth-foot">
+          <Link href="/sifremi-unuttum" className="auth-link">Şifremi unuttum</Link>
+        </p>
+        <p className="auth-foot">
           Hesabın yok mu?{" "}
           <Link href="/ogrenci/kayit" className="auth-link">Kayıt ol</Link>
         </p>
