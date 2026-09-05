@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
@@ -81,6 +82,7 @@ export default function RootLayout({
           </AuthProvider>
         </LocaleProvider>
         <ConsentAnalytics />
+        <SpeedInsights />
       </body>
     </html>
   );
