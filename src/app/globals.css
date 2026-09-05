@@ -1641,3 +1641,75 @@ footer > .container { position: relative; z-index: 1; }
 .student-summary-meta svg { width: 15px; height: 15px; flex: none; color: var(--clr-sage); }
 .student-summary-empty { font-size: 0.9rem; line-height: 1.6; color: var(--clr-text3); margin: 0; }
 @media (max-width: 720px) { .student-summary { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   CINEMATIC LUXURY LAYER
+   Sinematik derinlik: nefes alan aura, doku (grain), 3D tilt kartlar,
+   portre float animasyonu. Mevcut renk token'larını kullanır,
+   tema (light/dark) ve i18n yapısını bozmaz.
+   ============================================================ */
+
+/* Sayfa geneli ince film grain dokusu — lüks/sinematik his */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 2000; pointer-events: none;
+  opacity: 0.025; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hero: nefes alan ışık aurası (breathing aura) */
+#hero::before {
+  content: "";
+  position: absolute; inset: -15%;
+  z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 28% 24%, color-mix(in srgb, var(--clr-sage) 22%, transparent) 0%, transparent 46%),
+    radial-gradient(circle at 76% 70%, color-mix(in srgb, var(--clr-primary) 16%, transparent) 0%, transparent 50%);
+  filter: blur(60px);
+  animation: heroBreathe 16s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes heroBreathe {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50%      { transform: scale(1.14) translate(2%, -2%); }
+}
+
+/* Portre: çok hafif yüzen (levitating) hareket — dikkat çekmeden canlılık katar */
+.hero-portrait-frame { animation: portraitFloat 7s ease-in-out infinite; }
+@keyframes portraitFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* Hizmet kartları: 3D tilt + imleci takip eden ışık parıltısı (glint) */
+.domain-grid { perspective: 1400px; }
+.domain-card {
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.22,0.61,0.36,1),
+              box-shadow 0.5s var(--transition),
+              border-color 0.5s var(--transition);
+  will-change: transform;
+  position: relative;
+  overflow: hidden;
+}
+.domain-card::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle 180px at var(--mx, 50%) var(--my, 50%),
+              color-mix(in srgb, var(--clr-sage) 16%, transparent), transparent 60%);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.domain-card:hover::after { opacity: 1; }
+.domain-card:hover {
+  box-shadow: 0 34px 70px -30px var(--clr-shadow-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero::before, .hero-portrait-frame { animation: none !important; }
+  .domain-card { transition: box-shadow 0.3s ease, border-color 0.3s ease !important; }
+}
+
+/* Dokunmatik cihazlarda tilt/hover devre dışı bırakılır (hover yok) */
+@media (hover: none) {
+  .domain-card { transform: none !important; }
+}

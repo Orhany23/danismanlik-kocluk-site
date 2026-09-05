@@ -32,6 +32,25 @@ const groupIcons: Record<string, React.ReactNode[]> = {
 // (NN/g progressive disclosure — 12 kartlık duvar tarama yükünü artırıyordu).
 const PREVIEW_COUNT = 3;
 
+// Lüks/sinematik his: kart üzerinde imlecin konumuna göre hafif 3D tilt
+// ve ışık parıltısı (glint). Dokunmatik cihazlarda CSS ile devre dışı kalır.
+function handleCardTilt(e: React.MouseEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+  const cx = r.width / 2;
+  const cy = r.height / 2;
+  const rx = ((y - cy) / cy) * -4;
+  const ry = ((x - cx) / cx) * 4;
+  el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+  el.style.setProperty("--mx", `${x}px`);
+  el.style.setProperty("--my", `${y}px`);
+}
+function resetCardTilt(e: React.MouseEvent<HTMLElement>) {
+  e.currentTarget.style.transform = "rotateX(0) rotateY(0) translateY(0)";
+}
+
 export default function ServicesSection() {
   const { dict } = useLocale();
   const t = dict.services;
@@ -73,7 +92,12 @@ export default function ServicesSection() {
 
               <div className="domain-grid" id={`domain-grid-${group.key}`}>
                 {visible.map((item, i) => (
-                  <article key={i} className={`domain-card reveal delay-${(i % 3) + 1}`}>
+                  <article
+                    key={i}
+                    className={`domain-card reveal delay-${(i % 3) + 1}`}
+                    onMouseMove={handleCardTilt}
+                    onMouseLeave={resetCardTilt}
+                  >
                     <div className="domain-card-top">
                       <span className="domain-card-icon">{groupIcons[group.key]?.[i]}</span>
                       {item.tag && <span className="domain-tag">{item.tag}</span>}
