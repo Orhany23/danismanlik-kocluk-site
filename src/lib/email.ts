@@ -11,7 +11,7 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string, name:
     throw new Error("E-posta servisi yapılandırılmamış.");
   }
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: FROM,
     to,
     subject: "Şifre Sıfırlama Talebi",
@@ -29,6 +29,16 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string, name:
       </div>
     `,
   });
+
+  // ÖNEMLİ: Resend SDK'sı API hatalarında (geçersiz anahtar, doğrulanmamış
+  // domain, limit aşımı vb.) İSTİSNA FIRLATMAZ — hatayı sessizce `error`
+  // alanında döner. Bu kontrol olmadan gönderim gerçekte başarısız olsa
+  // bile kod hiçbir zaman hata görmüyor ve çağıran taraf (KVKK/enumeration
+  // önleme amacıyla) her zaman "gönderildi" mesajı gösteriyordu.
+  if (error) {
+    console.error("Resend gönderim hatası:", error);
+    throw new Error(`E-posta gönderilemedi: ${error.message}`);
+  }
 }
 
 function escapeHtml(str: string): string {
