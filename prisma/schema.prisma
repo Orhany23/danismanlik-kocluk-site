@@ -128,7 +128,7 @@ model TestSubmission {
   // Ham cevaplar (soru id -> seçilen değer). Danışman gerektiğinde madde
   // bazında geri dönüp inceleyebilsin diye saklanır.
   answers     Json
-  score       Int?     // likert testlerde toplam puan; kategori testlerinde null
+  score       Float?   // likert testlerde toplam/ortalama puan; kategori testlerinde null
   maxScore    Int?
   resultLabel String   // likert: puan bandı başlığı; kategori: baskın kategori başlığı
   createdAt   DateTime @default(now())
