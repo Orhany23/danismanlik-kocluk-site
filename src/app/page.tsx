@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import TodayHighlights from "@/components/TodayHighlights";
-import GatewaySection from "@/components/GatewaySection";
 import PackagesSection from "@/components/PackagesSection";
 import ProcessSection from "@/components/ProcessSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -28,15 +27,20 @@ export default function HomePage() {
   }, []);
 
   // Sıra ziyaretçinin karar akışına göre: hemen günün içeriği (her gün yeni
-  // bir sebeple geri gelinsin), sonra ne sunuluyor (kapılar + paketler),
-  // nasıl işliyor (süreç), güven (yorumlar, hakkımda, kimler), kapsam
-  // (hizmetler), sonra keşif içerikleri ve iletişim. Makalelerin tamamı
-  // /makaleler sayfasında.
+  // bir sebeple geri gelinsin), sonra ne sunuluyor (paketler), nasıl işliyor
+  // (süreç), güven (yorumlar, hakkımda, kimler), kapsam (hizmetler), sonra
+  // keşif içerikleri ve iletişim. Makalelerin tamamı /makaleler sayfasında.
+  //
+  // NOT: Eskiden Paketler'den önce ayrı bir "İki kapı" (Gateway) bölümü
+  // vardı — aynı iki seçeneği (Koçluk/Danışmanlık) neredeyse birebir aynı
+  // başlıkla ("İki X, tek bütüncül yaklaşım.") tekrar ediyordu; puan
+  // listesindeki her madde zaten Paketler'in "dahil" listesinde vardı.
+  // Kaldırıldı, tek eksik bilgisi (danışmanlık gizliliği notu) Paketler
+  // kartına taşındı.
   return (
     <>
       <HeroSection />
       <TodayHighlights />
-      <GatewaySection />
       <PackagesSection />
       <ProcessSection />
       <TestimonialsSection />

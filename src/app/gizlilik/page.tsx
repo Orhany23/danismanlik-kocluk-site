@@ -63,6 +63,7 @@ export default function GizlilikPage() {
               <li><strong>PostgreSQL veritabanı</strong> — kayıtların saklanması</li>
               <li><strong>Telegram</strong> — iletişim formu bildirimlerinin koça iletilmesi</li>
               <li><strong>WhatsApp</strong> — tercih etmeniz hâlinde mesajlaşma</li>
+              <li><strong>Google Gemini API</strong> — sohbet asistanının yanıt üretmesi (bkz. madde 7)</li>
             </ul>
             <p className="mt-2">
               Yasal yükümlülük hâlinde yetkili mercilere aktarım yapılabilir.
@@ -102,7 +103,22 @@ export default function GizlilikPage() {
             </p>
           </Section>
 
-          <Section id="cerezler" title="7. Çerezler ve Ziyaret İstatistikleri">
+          <Section title="7. Yapay Zekâ Sohbet Asistanı">
+            <p className="mb-2">
+              Sitedeki sohbet balonu, mesajınızı yanıtlamak için <strong>Google Gemini API</strong>&apos;sine
+              gönderir. Bu asistan Orhan Yaşlı&apos;nın kendisi değildir, tanı veya tedavi önerisi
+              vermez; yalnızca paketler, fiyatlar ve randevu süreci gibi bilgilendirme sorularını
+              yanıtlar.
+            </p>
+            <p>
+              API&apos;nin <strong>ücretsiz katmanı</strong> kullanıldığından, Google bu mesajları
+              kendi yapay zekâ modellerini geliştirmek için kullanabilir. Bu nedenle sohbet kutusuna
+              isim, sağlık bilgisi gibi hassas veya kişisel içerik yazmamanızı öneririz; mesajlar
+              sitemizde ayrıca saklanmaz.
+            </p>
+          </Section>
+
+          <Section id="cerezler" title="8. Çerezler ve Ziyaret İstatistikleri">
             <p className="mb-2">
               Oturum yönetimi için <strong>zorunlu çerezler</strong> kullanılır; bunlar olmadan
               giriş yapılamaz.
@@ -113,7 +129,7 @@ export default function GizlilikPage() {
             </p>
           </Section>
 
-          <Section title="8. Haklarınız (KVKK m. 11)">
+          <Section title="9. Haklarınız (KVKK m. 11)">
             <p className="mb-2">
               Verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini veya
               silinmesini isteme, işlemeye itiraz etme ve veri taşınabilirliği haklarına sahipsiniz.

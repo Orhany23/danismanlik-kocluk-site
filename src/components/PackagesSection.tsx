@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
-import { Check, ArrowRight, MessageCircle, Users, Monitor, Gift } from "lucide-react";
+import { Check, ArrowRight, MessageCircle, Users, Monitor, Gift, Lock } from "lucide-react";
 
 const WA_NUMBER = "905432500417";
 
@@ -55,6 +55,13 @@ export default function PackagesSection() {
                   </li>
                 ))}
               </ul>
+
+              {p.confidentialityNote && (
+                <p className="pkg-confidentiality">
+                  <Lock strokeWidth={1.8} aria-hidden="true" />
+                  <span>{p.confidentialityNote}</span>
+                </p>
+              )}
 
               <div className="pkg-foot">
                 {p.price ? (
