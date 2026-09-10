@@ -1,31 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ClipboardList, RotateCcw, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
-import type { PsychTest, LikertTest, CategoryTest, LikertBand, CategoryResult } from "@/lib/psychTests";
+import { ClipboardList, RotateCcw, CheckCircle2, Loader2 } from "lucide-react";
+import type { PsychTest, LikertTest, CategoryTest, CategoryResult } from "@/lib/psychTests";
 
-type LikertApiResult = {
-  kind: "likert";
-  crisisFlag: boolean;
-  score?: number;
-  maxScore?: number;
-  band?: LikertBand;
-};
+type LikertApiResult = { kind: "likert"; score: number; maxScore: number };
 type CategoryApiResult = { kind: "category"; result: CategoryResult };
-
-function CrisisBanner() {
-  return (
-    <div className="test-crisis-banner">
-      <AlertTriangle strokeWidth={1.8} aria-hidden="true" />
-      <div>
-        <strong>Yalnız değilsin.</strong> Cevaplarından biri, zor bir dönemden geçtiğini
-        gösteriyor olabilir. Kendine zarar verme düşüncen varsa şimdi <strong>112</strong>&apos;yi
-        ara ya da yanında güvendiğin biriyle konuş. Orhan Yaşlı da bu konuşmayı seninle yapmak
-        üzere bilgilendirildi.
-      </div>
-    </div>
-  );
-}
 
 async function submitTest(testSlug: string, answers: Record<string, string>) {
   const res = await fetch("/api/student/test-submission", {
@@ -132,24 +112,16 @@ function LikertTestForm({ test }: { test: LikertTest }) {
     return (
       <div>
         <TestHead test={test} />
-        {result.crisisFlag && <CrisisBanner />}
-        {result.band ? (
-          <div className={`test-result test-result--${result.band.tone}`}>
-            <span className="test-result-score">
-              {result.score} / {result.maxScore}
-            </span>
-            <h2 className="test-result-label">{result.band.label}</h2>
-            <p className="test-result-desc">{result.band.description}</p>
-          </div>
-        ) : (
-          <div className="test-result">
-            <h2 className="test-result-label">Cevapların kaydedildi</h2>
-            <p className="test-result-desc">
-              Bu testin sonucu ekranda gösterilmiyor; cevapların, bir sonraki görüşmede Orhan
-              Yaşlı ile birlikte değerlendirilmek üzere hesabına kaydedildi.
-            </p>
-          </div>
-        )}
+        <div className="test-result">
+          <span className="test-result-score">
+            {result.score} / {result.maxScore}
+          </span>
+          <h2 className="test-result-label">Puanın kaydedildi</h2>
+          <p className="test-result-desc">
+            Bu puanın ne anlama geldiğini yorumlamıyoruz; bir sonraki görüşmede Orhan Yaşlı
+            ile birlikte değerlendireceksiniz.
+          </p>
+        </div>
         <p className="support-disclaimer">{test.disclaimer}</p>
         <ResultActions onReset={handleReset} />
       </div>
