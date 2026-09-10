@@ -1,11 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { ClipboardList, RotateCcw, CheckCircle2, Loader2 } from "lucide-react";
+import { ClipboardList, RotateCcw, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
 import type { PsychTest, LikertTest, CategoryTest, CategoryResult } from "@/lib/psychTests";
 
-type LikertApiResult = { kind: "likert"; score: number; maxScore: number };
+type LikertApiResult = { kind: "likert"; score: number; maxScore: number; crisisFlag: boolean };
 type CategoryApiResult = { kind: "category"; result: CategoryResult };
+
+function CrisisBanner() {
+  return (
+    <div className="test-crisis-banner">
+      <AlertTriangle strokeWidth={1.8} aria-hidden="true" />
+      <div>
+        <strong>Yalnız değilsin.</strong> Cevaplarından biri, zor bir dönemden geçtiğini
+        gösteriyor olabilir. Kendine zarar verme düşüncen varsa şimdi <strong>112</strong>&apos;yi
+        ara ya da yanında güvendiğin biriyle konuş. Orhan Yaşlı da bu konuşmayı seninle yapmak
+        üzere bilgilendirildi.
+      </div>
+    </div>
+  );
+}
 
 async function submitTest(testSlug: string, answers: Record<string, string>) {
   const res = await fetch("/api/student/test-submission", {
@@ -112,6 +126,7 @@ function LikertTestForm({ test }: { test: LikertTest }) {
     return (
       <div>
         <TestHead test={test} />
+        {result.crisisFlag && <CrisisBanner />}
         <div className="test-result">
           <span className="test-result-score">
             {result.score} / {result.maxScore}
@@ -134,33 +149,36 @@ function LikertTestForm({ test }: { test: LikertTest }) {
       <ProgressBar answered={answeredCount} total={total} />
       <form onSubmit={handleSubmit}>
         <ol className="test-question-list">
-          {test.questions.map((q, i) => (
-            <li key={q.id} className="test-question">
-              <p className="test-question-text">
-                <span className="test-question-index">{i + 1}</span>
-                {q.text}
-              </p>
-              <div className="test-options" role="radiogroup" aria-label={q.text}>
-                {test.options.map((opt, oi) => {
-                  const value = String(opt.value);
-                  const inputId = `${q.id}-${oi}`;
-                  const checked = answers[q.id] === value;
-                  return (
-                    <label key={inputId} htmlFor={inputId} className={`test-option${checked ? " test-option--checked" : ""}`}>
-                      <input
-                        type="radio"
-                        id={inputId}
-                        name={q.id}
-                        checked={checked}
-                        onChange={() => setAnswers((prev) => ({ ...prev, [q.id]: value }))}
-                      />
-                      {opt.label}
-                    </label>
-                  );
-                })}
-              </div>
-            </li>
-          ))}
+          {test.questions.map((q, i) => {
+            const options = q.options ?? test.options;
+            return (
+              <li key={q.id} className="test-question">
+                <p className="test-question-text">
+                  <span className="test-question-index">{i + 1}</span>
+                  {q.text}
+                </p>
+                <div className="test-options" role="radiogroup" aria-label={q.text || `Soru ${i + 1}`}>
+                  {options.map((opt, oi) => {
+                    const value = String(opt.value);
+                    const inputId = `${q.id}-${oi}`;
+                    const checked = answers[q.id] === value;
+                    return (
+                      <label key={inputId} htmlFor={inputId} className={`test-option${checked ? " test-option--checked" : ""}`}>
+                        <input
+                          type="radio"
+                          id={inputId}
+                          name={q.id}
+                          checked={checked}
+                          onChange={() => setAnswers((prev) => ({ ...prev, [q.id]: value }))}
+                        />
+                        {opt.label}
+                      </label>
+                    );
+                  })}
+                </div>
+              </li>
+            );
+          })}
         </ol>
         {error && <p className="test-error">{error}</p>}
         <div className="test-actions">

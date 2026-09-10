@@ -13,12 +13,16 @@ export async function ensureTestSubmissionTable(): Promise<void> {
     "testSlug" TEXT NOT NULL,
     "testTitle" TEXT NOT NULL,
     "answers" JSONB NOT NULL,
-    "score" INTEGER,
+    "score" DOUBLE PRECISION,
     "maxScore" INTEGER,
     "resultLabel" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "TestSubmission_pkey" PRIMARY KEY ("id")
   )`);
+  // Tablo daha önce (ortalama puanlı testlerden önce) "score" INTEGER olarak
+  // oluşturulmuş olabilir — Agorafobik Bilişler Ölçeği gibi ondalıklı
+  // ortalama puan üreten testler için DOUBLE PRECISION'a yükseltilir.
+  await prisma.$executeRawUnsafe(`ALTER TABLE "TestSubmission" ALTER COLUMN "score" TYPE DOUBLE PRECISION`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TestSubmission_studentId_idx" ON "TestSubmission"("studentId")`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TestSubmission_testSlug_idx" ON "TestSubmission"("testSlug")`);
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TestSubmission_createdAt_idx" ON "TestSubmission"("createdAt")`);

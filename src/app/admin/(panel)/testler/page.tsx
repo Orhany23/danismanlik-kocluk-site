@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import { CardListSkeleton } from "@/components/admin/Skeleton";
 import { getTestBySlug } from "@/lib/psychTests";
 
@@ -32,6 +32,17 @@ function getBandDescription(testSlug: string, resultLabel: string): string | nul
 function getTestSource(testSlug: string): string | null {
   const test = getTestBySlug(testSlug);
   return test?.kind === "likert" ? test.source ?? null : null;
+}
+
+// Telegram bildirimi kaçırılmış/gecikmiş olabilir — geçmişte gönderilmiş bir
+// sonucun kriz koşulunu (kendine zarar verme maddesi ya da yüksek riskli
+// bant eşiği) karşılayıp karşılamadığını burada da hesaplayıp gösterir.
+function isCrisisFlagged(s: Submission): boolean {
+  const test = getTestBySlug(s.testSlug);
+  if (!test || test.kind !== "likert") return false;
+  if (test.crisisItemId && Number(s.answers[test.crisisItemId]) > 0) return true;
+  if (test.crisisThreshold !== undefined && s.score !== null && s.score >= test.crisisThreshold) return true;
+  return false;
 }
 
 export default function AdminTestSubmissionsPage() {
@@ -110,21 +121,23 @@ export default function AdminTestSubmissionsPage() {
         <div className="grid grid-cols-1 gap-3">
           {filtered.map((s) => {
             const open = openId === s.id;
+            const flagged = isCrisisFlagged(s);
             return (
-              <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div key={s.id} className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${flagged ? "border-red-300 ring-1 ring-red-100" : "border-gray-100"}`}>
                 <button
                   onClick={() => setOpenId(open ? null : s.id)}
                   className="w-full flex items-center justify-between gap-4 p-5 text-left"
                 >
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-gray-800 truncate">
+                    <div className="text-sm font-semibold text-gray-800 truncate flex items-center gap-2">
+                      {flagged && <AlertTriangle size={15} className="text-red-500 shrink-0" aria-label="Güvenlik uyarısı" />}
                       {s.student.name}
                       {s.student.gradeLevel && <span className="text-gray-400 font-normal"> · {s.student.gradeLevel}</span>}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">{s.testTitle} · {fmtDate(s.createdAt)}</div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1 bg-[var(--clr-accent-tint)] text-[var(--clr-primary)]">
+                    <span className={`inline-flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1 ${flagged ? "bg-red-50 text-red-600" : "bg-[var(--clr-accent-tint)] text-[var(--clr-primary)]"}`}>
                       {s.score !== null ? `${s.score} / ${s.maxScore}` : s.resultLabel}
                     </span>
                     {open ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
