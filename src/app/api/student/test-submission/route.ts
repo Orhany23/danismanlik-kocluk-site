@@ -5,6 +5,28 @@ import { ensureTestSubmissionTable } from "@/lib/ensureTestSubmissionTable";
 import { clientIp, rateLimited } from "@/lib/rateLimit";
 import { getTestBySlug, scoreLikertTest, scoreCategoryTest } from "@/lib/psychTests";
 
+// İletişim formuyla aynı Telegram botu (bkz. api/contact/route.ts) — kendine
+// zarar verme maddesi işaretlendiğinde danışmana anında ulaşması için.
+async function notifyCrisisFlag(studentName: string, testTitle: string) {
+  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+  if (!BOT_TOKEN || !CHAT_ID) {
+    console.error("Kriz uyarısı gönderilemedi: Telegram yapılandırılmamış.");
+    return;
+  }
+  const text = `⚠️ ACİL: Test Güvenlik Uyarısı\n\nÖğrenci: ${studentName}\nTest: ${testTitle}\n\nBu öğrenci, kendine zarar verme/ölüm düşüncesiyle ilgili maddeyi olumlu işaretledi. Lütfen en kısa sürede öğrenciye ulaş ve admin panelindeki test sonuçlarını incele.`;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: CHAT_ID, text }),
+    });
+    if (!res.ok) console.error("Telegram kriz uyarısı hatası:", res.status, await res.text());
+  } catch (e) {
+    console.error("Telegram kriz uyarısı gönderilemedi:", e);
+  }
+}
+
 // Cevaplar istemciden geliyor ama puan burada, sunucuda hesaplanır — bir
 // ziyaretçi istemci tarafındaki hesaplamayı değiştirip sahte bir puanı
 // admin paneline düşüremesin diye (bu puanlar gerçek klinik değerlendirmede
@@ -60,12 +82,21 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // Kritik güvenlik maddesi (ör. PHQ-9'un kendine zarar verme maddesi)
+      // olumlu işaretlendiyse, sonucu ekranda saklasak bile danışmana anında
+      // haber verilir — pasif admin panelinin bunu görmesini beklemek riskli.
+      const crisisFlag = Boolean(test.crisisItemId && numericAnswers[test.crisisItemId] > 0);
+      if (crisisFlag) {
+        await notifyCrisisFlag(student.name, test.title);
+      }
+
       return NextResponse.json({
         ok: true,
         kind: "likert",
-        score: total,
-        maxScore,
-        band: { label: band.label, description: band.description, tone: band.tone },
+        crisisFlag,
+        ...(test.hideResultFromUser
+          ? {}
+          : { score: total, maxScore, band: { label: band.label, description: band.description, tone: band.tone } }),
       });
     }
 
