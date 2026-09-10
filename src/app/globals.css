@@ -1827,10 +1827,22 @@ body::after {
   padding-top: 32px;
   margin-top: 32px;
 }
+/* İkon + başlık satırı — sayfanın geri kalanındaki kart başlıklarıyla
+   (ör. .article-card-head) aynı dilde: düz metin yerine küçük renkli bir
+   ikon kutusu, bölümün ne olduğunu bir bakışta okunur kılar. */
+.support-block-head { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
+.support-block-icon {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--clr-accent-tint); color: var(--clr-primary);
+}
+.support-block-icon svg { width: 20px; height: 20px; }
+.support-block-icon--emergency { background: var(--clr-sage-tint); color: var(--clr-sage-dark); }
 .support-block-title {
   font-family: var(--font-display);
   font-size: 1.4rem;
   color: var(--clr-text);
+  margin: 0;
 }
 .support-block-subtitle {
   font-size: 0.95rem;
@@ -1847,11 +1859,13 @@ body::after {
   border-radius: var(--radius);
   padding: 24px 26px;
   margin-top: 8px;
+  box-shadow: 0 14px 34px -26px var(--clr-shadow-lg);
 }
 .support-emergency-title {
   font-family: var(--font-display);
   font-size: 1.15rem;
   color: var(--clr-sage-dark);
+  margin: 0;
 }
 .support-emergency-text { margin-top: 8px; font-size: 0.95rem; color: var(--clr-text); }
 .support-emergency-list { margin-top: 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
@@ -1875,8 +1889,8 @@ body::after {
   cursor: pointer;
   transition: border-color 0.2s var(--transition), transform 0.2s var(--transition), background 0.2s var(--transition);
 }
-.support-mood-btn:hover { border-color: var(--clr-primary); transform: translateY(-2px); }
-.support-mood-btn--active { border-color: var(--clr-primary); background: var(--clr-accent-tint); }
+.support-mood-btn:hover { border-color: var(--clr-primary); transform: translateY(-2px); box-shadow: 0 14px 30px -22px var(--clr-shadow); }
+.support-mood-btn--active { border-color: var(--clr-primary); background: var(--clr-accent-tint); box-shadow: 0 14px 30px -22px var(--clr-shadow); }
 .support-mood-emoji { font-size: 1.6rem; line-height: 1; }
 .support-mood-suggestion {
   margin-top: 18px;
@@ -1886,7 +1900,13 @@ body::after {
 }
 .support-mood-suggestion p { font-size: 0.95rem; color: var(--clr-text); line-height: 1.7; }
 
-/* Oturumluk günlük */
+/* Oturumluk günlük — editör alanı bir kart içinde, sayfanın diğer
+   bölümlerindeki (Günün Notu, paket kartları) yükseltilmiş yüzey diliyle. */
+.support-journal-editor {
+  background: var(--clr-card); border: 1px solid var(--clr-border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: 0 20px 44px -32px var(--clr-shadow-lg);
+}
 .support-journal-textarea {
   font-family: inherit; font-size: 0.96rem; line-height: 1.6;
   padding: 14px 16px; min-height: 120px; resize: vertical;
@@ -1918,7 +1938,7 @@ body::after {
   background: transparent; border: none; cursor: pointer; padding: 4px 6px;
   transition: color 0.2s;
 }
-.support-journal-delete:hover { color: #C0392B; }
+.support-journal-delete:hover { color: var(--clr-danger-text); }
 .support-journal-privacy { margin-top: 16px; font-size: 0.8rem; color: var(--clr-text3); line-height: 1.6; }
 
 /* 5-4-3-2-1 egzersizi */
@@ -1929,14 +1949,30 @@ body::after {
   padding: 28px 26px;
   text-align: center;
   background: var(--clr-card);
+  box-shadow: 0 20px 44px -32px var(--clr-shadow-lg);
+}
+/* İlerleme çubuğu: "5. adım" hissi yerine bitene ne kadar kaldığını
+   gösterir — Günün Makalesi kartındaki aynı desen (.article-daily-progress). */
+.support-progress {
+  height: 3px; border-radius: 3px; background: var(--clr-border);
+  overflow: hidden; margin-bottom: 14px;
+}
+.support-progress i { display: block; height: 100%; border-radius: 3px; background: var(--clr-sage); transition: width 0.4s var(--transition); }
+.support-grounding-step-label {
+  font-family: var(--font-mono-label);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--clr-text3);
 }
 .support-grounding-count {
+  display: block;
   font-family: var(--font-display);
   font-size: 2.4rem; color: var(--clr-primary); line-height: 1;
+  margin-top: 10px;
 }
 .support-grounding-sense { font-family: var(--font-display); font-size: 1.2rem; margin-top: 8px; }
 .support-grounding-prompt { font-size: 0.95rem; color: var(--clr-text2); margin-top: 8px; }
 .support-grounding-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.support-grounding-done-icon { width: 34px; height: 34px; color: var(--clr-primary); margin: 0 auto; }
 .support-grounding-card--done { border-color: var(--clr-primary); }
 
 .support-disclaimer {

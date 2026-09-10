@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { AlertCircle, Smile, NotebookPen, Wind, Stethoscope, CircleCheck } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const JOURNAL_MAX_CHARS = 3000;
 
@@ -51,6 +53,12 @@ export default function SupportPageClient() {
   const restartGrounding = () => setGroundingStep(0);
   const stopGrounding = () => setGroundingStep(null);
 
+  // Adım göstergesi: "5. adımdayım" hissi yerine ilerlemeyi görünür kılar
+  // (bkz. Günün Makalesi'ndeki aynı desen — .support-progress).
+  const groundingTotal = t.grounding.steps.length;
+  const groundingProgressPct =
+    groundingStep === null ? 0 : ((groundingStep + (groundingDone ? 0 : 1)) / groundingTotal) * 100;
+
   return (
     <div className="section support-page">
       <div className="container support-container">
@@ -66,9 +74,14 @@ export default function SupportPageClient() {
 
         {/* Acil durum bölümü — her zaman görünür ve en üstte, kolayca ulaşılabilir. */}
         <section className="support-emergency" aria-labelledby="support-emergency-title">
-          <h2 id="support-emergency-title" className="support-emergency-title">
-            {t.emergency.title}
-          </h2>
+          <div className="support-block-head">
+            <span className="support-block-icon support-block-icon--emergency">
+              <AlertCircle strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <h2 id="support-emergency-title" className="support-emergency-title">
+              {t.emergency.title}
+            </h2>
+          </div>
           <p className="support-emergency-text">{t.emergency.text}</p>
           <ul className="support-emergency-list">
             <li>{t.emergency.trText}</li>
@@ -79,10 +92,15 @@ export default function SupportPageClient() {
         </section>
 
         {/* 1) Duygu durumu seçimi */}
-        <section className="support-block" aria-labelledby="support-moods-title">
-          <h2 id="support-moods-title" className="support-block-title">
-            {t.moods.title}
-          </h2>
+        <section className="support-block reveal" aria-labelledby="support-moods-title">
+          <div className="support-block-head">
+            <span className="support-block-icon">
+              <Smile strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <h2 id="support-moods-title" className="support-block-title">
+              {t.moods.title}
+            </h2>
+          </div>
           <p className="support-block-subtitle">{t.moods.subtitle}</p>
 
           <div className="support-mood-grid" role="group" aria-label={t.moods.title}>
@@ -108,10 +126,15 @@ export default function SupportPageClient() {
         </section>
 
         {/* 2) Oturumluk günlük */}
-        <section className="support-block" aria-labelledby="support-journal-title">
-          <h2 id="support-journal-title" className="support-block-title">
-            {t.journal.title}
-          </h2>
+        <section className="support-block reveal" aria-labelledby="support-journal-title">
+          <div className="support-block-head">
+            <span className="support-block-icon">
+              <NotebookPen strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <h2 id="support-journal-title" className="support-block-title">
+              {t.journal.title}
+            </h2>
+          </div>
           <p className="support-block-subtitle">{t.journal.subtitle}</p>
 
           <div className="support-journal-editor">
@@ -169,10 +192,15 @@ export default function SupportPageClient() {
         </section>
 
         {/* 3) 5-4-3-2-1 farkındalık egzersizi */}
-        <section className="support-block" aria-labelledby="support-grounding-title">
-          <h2 id="support-grounding-title" className="support-block-title">
-            {t.grounding.title}
-          </h2>
+        <section className="support-block reveal" aria-labelledby="support-grounding-title">
+          <div className="support-block-head">
+            <span className="support-block-icon">
+              <Wind strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <h2 id="support-grounding-title" className="support-block-title">
+              {t.grounding.title}
+            </h2>
+          </div>
           <p className="support-block-subtitle">{t.grounding.subtitle}</p>
 
           {!groundingStarted && (
@@ -183,6 +211,12 @@ export default function SupportPageClient() {
 
           {groundingStarted && !groundingDone && groundingStep !== null && (
             <div className="support-grounding-card">
+              <div className="support-progress" aria-hidden="true">
+                <i style={{ width: `${groundingProgressPct}%` }} />
+              </div>
+              <span className="support-grounding-step-label">
+                {groundingStep + 1} / {groundingTotal}
+              </span>
               <span className="support-grounding-count">{t.grounding.steps[groundingStep].count}</span>
               <h3 className="support-grounding-sense">{t.grounding.steps[groundingStep].sense}</h3>
               <p className="support-grounding-prompt">{t.grounding.steps[groundingStep].prompt}</p>
@@ -199,6 +233,7 @@ export default function SupportPageClient() {
 
           {groundingDone && (
             <div className="support-grounding-card support-grounding-card--done">
+              <CircleCheck className="support-grounding-done-icon" strokeWidth={1.6} aria-hidden="true" />
               <h3 className="support-grounding-sense">{t.grounding.doneTitle}</h3>
               <p className="support-grounding-prompt">{t.grounding.doneText}</p>
               <div className="support-grounding-actions">
@@ -211,10 +246,15 @@ export default function SupportPageClient() {
         </section>
 
         {/* 4) Profesyonel destek */}
-        <section className="support-block" aria-labelledby="support-professional-title">
-          <h2 id="support-professional-title" className="support-block-title">
-            {t.professional.title}
-          </h2>
+        <section className="support-block reveal" aria-labelledby="support-professional-title">
+          <div className="support-block-head">
+            <span className="support-block-icon">
+              <Stethoscope strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <h2 id="support-professional-title" className="support-block-title">
+              {t.professional.title}
+            </h2>
+          </div>
           <p className="support-block-subtitle">{t.professional.text}</p>
           <a
             href={t.professional.linkHref}
@@ -228,6 +268,7 @@ export default function SupportPageClient() {
 
         <p className="support-disclaimer">{t.disclaimer}</p>
       </div>
+      <ScrollReveal />
     </div>
   );
 }
