@@ -462,13 +462,34 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 }
 .domain-blurb { color: var(--clr-text2); line-height: 1.74; margin: 0; font-size: 1.02rem; }
 .domain-band--ink .domain-blurb { color: #C9BFAD; }
-.domain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+/* 3 eşit sütun yerine 2 sütunlu bir düzen: ilk kart (her grupta en önemli
+   hizmet — "Öne Çıkan" gibi) tam genişliğe yayılıp yatay bir öne çıkan
+   satır oluşturur, geri kalanlar altında ikişerli sıralanır. Tekdüze
+   "3 eşit kart" duvarı yerine gerçek bir hiyerarşi. */
+.domain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .domain-card {
   padding: 28px 26px 30px;
   border: 1px solid var(--clr-border);
   border-radius: var(--radius);
   background: var(--clr-card);
   transition: transform 0.35s var(--transition), box-shadow 0.35s var(--transition), border-color 0.35s var(--transition);
+}
+.domain-card:first-child {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 26px;
+  align-items: start;
+}
+.domain-card:first-child .domain-card-top {
+  flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 0;
+}
+.domain-card:first-child .domain-card-title { grid-column: 2; font-size: 1.32rem; }
+.domain-card:first-child .domain-card-desc { grid-column: 2; }
+@media (max-width: 620px) {
+  .domain-card:first-child { grid-template-columns: 1fr; }
+  .domain-card:first-child .domain-card-title,
+  .domain-card:first-child .domain-card-desc { grid-column: 1; }
 }
 .domain-card:hover { transform: translateY(-4px); box-shadow: 0 22px 46px -24px var(--clr-shadow-lg); border-color: var(--clr-primary-light); }
 .domain-band--ink .domain-card { background: rgba(255,255,255,0.03); border-color: rgba(242,234,220,0.12); }
@@ -493,7 +514,6 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 .domain-card-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 10px; }
 .domain-card-desc { font-size: 0.93rem; line-height: 1.72; color: var(--clr-text2); margin: 0; max-width: 58ch; }
 .domain-band--ink .domain-card-desc { color: #C9BFAD; }
-@media (max-width: 980px) { .domain-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .domain-grid { grid-template-columns: 1fr; } }
 
 .process-track { position: relative; }
@@ -1827,10 +1847,22 @@ body::after {
   padding-top: 32px;
   margin-top: 32px;
 }
+/* İkon + başlık satırı — sayfanın geri kalanındaki kart başlıklarıyla
+   (ör. .article-card-head) aynı dilde: düz metin yerine küçük renkli bir
+   ikon kutusu, bölümün ne olduğunu bir bakışta okunur kılar. */
+.support-block-head { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
+.support-block-icon {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--clr-accent-tint); color: var(--clr-primary);
+}
+.support-block-icon svg { width: 20px; height: 20px; }
+.support-block-icon--emergency { background: var(--clr-sage-tint); color: var(--clr-sage-dark); }
 .support-block-title {
   font-family: var(--font-display);
   font-size: 1.4rem;
   color: var(--clr-text);
+  margin: 0;
 }
 .support-block-subtitle {
   font-size: 0.95rem;
@@ -1839,6 +1871,7 @@ body::after {
   margin-bottom: 20px;
   line-height: 1.6;
 }
+.support-block-note { margin-top: 14px; font-size: 0.82rem; color: var(--clr-text3); line-height: 1.6; }
 
 /* Acil durum kutusu — her zaman görünür, en üstte */
 .support-emergency {
@@ -1847,11 +1880,13 @@ body::after {
   border-radius: var(--radius);
   padding: 24px 26px;
   margin-top: 8px;
+  box-shadow: 0 14px 34px -26px var(--clr-shadow-lg);
 }
 .support-emergency-title {
   font-family: var(--font-display);
   font-size: 1.15rem;
   color: var(--clr-sage-dark);
+  margin: 0;
 }
 .support-emergency-text { margin-top: 8px; font-size: 0.95rem; color: var(--clr-text); }
 .support-emergency-list { margin-top: 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
@@ -1875,8 +1910,8 @@ body::after {
   cursor: pointer;
   transition: border-color 0.2s var(--transition), transform 0.2s var(--transition), background 0.2s var(--transition);
 }
-.support-mood-btn:hover { border-color: var(--clr-primary); transform: translateY(-2px); }
-.support-mood-btn--active { border-color: var(--clr-primary); background: var(--clr-accent-tint); }
+.support-mood-btn:hover { border-color: var(--clr-primary); transform: translateY(-2px); box-shadow: 0 14px 30px -22px var(--clr-shadow); }
+.support-mood-btn--active { border-color: var(--clr-primary); background: var(--clr-accent-tint); box-shadow: 0 14px 30px -22px var(--clr-shadow); }
 .support-mood-emoji { font-size: 1.6rem; line-height: 1; }
 .support-mood-suggestion {
   margin-top: 18px;
@@ -1886,7 +1921,13 @@ body::after {
 }
 .support-mood-suggestion p { font-size: 0.95rem; color: var(--clr-text); line-height: 1.7; }
 
-/* Oturumluk günlük */
+/* Oturumluk günlük — editör alanı bir kart içinde, sayfanın diğer
+   bölümlerindeki (Günün Notu, paket kartları) yükseltilmiş yüzey diliyle. */
+.support-journal-editor {
+  background: var(--clr-card); border: 1px solid var(--clr-border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: 0 20px 44px -32px var(--clr-shadow-lg);
+}
 .support-journal-textarea {
   font-family: inherit; font-size: 0.96rem; line-height: 1.6;
   padding: 14px 16px; min-height: 120px; resize: vertical;
@@ -1918,8 +1959,67 @@ body::after {
   background: transparent; border: none; cursor: pointer; padding: 4px 6px;
   transition: color 0.2s;
 }
-.support-journal-delete:hover { color: #C0392B; }
+.support-journal-delete:hover { color: var(--clr-danger-text); }
 .support-journal-privacy { margin-top: 16px; font-size: 0.8rem; color: var(--clr-text3); line-height: 1.6; }
+
+/* Nefes egzersizi (kutu nefesi) — daire, faz süresine göre büyüyüp küçülür.
+   transform+transitionDuration React'ten satır içi geliyor (bkz. bileşen);
+   burada sadece taban görünüm ve geçiş eğrisi tanımlı. */
+.support-breathing-card {
+  margin-top: 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  padding: 36px 26px;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--clr-card);
+  box-shadow: 0 20px 44px -32px var(--clr-shadow-lg);
+}
+.support-breathing-circle {
+  width: 160px; height: 160px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 32% 28%, var(--clr-accent-tint) 0%, var(--clr-sage-tint) 100%);
+  border: 1.5px solid var(--clr-border);
+  transition-property: transform;
+  transition-timing-function: linear;
+  will-change: transform;
+}
+.support-breathing-phase {
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+  color: var(--clr-primary); text-align: center; padding: 0 12px;
+}
+.support-breathing-cycle {
+  font-family: var(--font-mono-label); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.04em; color: var(--clr-text3);
+}
+@media (prefers-reduced-motion: reduce) {
+  .support-breathing-circle { transition: none !important; }
+}
+
+/* Şükran notu — üç kısa satır, günlükle aynı gizlilik dili */
+.support-gratitude-list { display: flex; flex-direction: column; gap: 10px; }
+.support-gratitude-item {
+  display: flex; align-items: center; gap: 12px;
+  border: 1.5px solid var(--clr-border); border-radius: var(--radius-sm);
+  background: var(--clr-card); padding: 4px 6px 4px 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.support-gratitude-item:focus-within { border-color: var(--clr-primary); box-shadow: 0 0 0 4px var(--clr-accent-tint); }
+.support-gratitude-index {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: var(--clr-accent-tint); color: var(--clr-primary);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.95rem;
+}
+.support-gratitude-input {
+  flex: 1; min-width: 0; border: none; background: transparent; color: var(--clr-text);
+  font-family: inherit; font-size: 0.95rem; padding: 10px 8px;
+}
+.support-gratitude-input:focus { outline: none; }
+.support-gratitude-reset {
+  margin-top: 10px; background: transparent; border: none; cursor: pointer;
+  font-size: 0.82rem; font-weight: 600; color: var(--clr-primary); padding: 0;
+}
+.support-gratitude-reset:hover { text-decoration: underline; }
 
 /* 5-4-3-2-1 egzersizi */
 .support-grounding-card {
@@ -1929,14 +2029,30 @@ body::after {
   padding: 28px 26px;
   text-align: center;
   background: var(--clr-card);
+  box-shadow: 0 20px 44px -32px var(--clr-shadow-lg);
+}
+/* İlerleme çubuğu: "5. adım" hissi yerine bitene ne kadar kaldığını
+   gösterir — Günün Makalesi kartındaki aynı desen (.article-daily-progress). */
+.support-progress {
+  height: 3px; border-radius: 3px; background: var(--clr-border);
+  overflow: hidden; margin-bottom: 14px;
+}
+.support-progress i { display: block; height: 100%; border-radius: 3px; background: var(--clr-sage); transition: width 0.4s var(--transition); }
+.support-grounding-step-label {
+  font-family: var(--font-mono-label);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--clr-text3);
 }
 .support-grounding-count {
+  display: block;
   font-family: var(--font-display);
   font-size: 2.4rem; color: var(--clr-primary); line-height: 1;
+  margin-top: 10px;
 }
 .support-grounding-sense { font-family: var(--font-display); font-size: 1.2rem; margin-top: 8px; }
 .support-grounding-prompt { font-size: 0.95rem; color: var(--clr-text2); margin-top: 8px; }
 .support-grounding-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.support-grounding-done-icon { width: 34px; height: 34px; color: var(--clr-primary); margin: 0 auto; }
 .support-grounding-card--done { border-color: var(--clr-primary); }
 
 .support-disclaimer {
