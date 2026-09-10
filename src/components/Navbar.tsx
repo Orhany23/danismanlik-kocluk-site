@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useLocale } from "@/components/LocaleProvider";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -27,6 +28,8 @@ export default function Navbar() {
   const t = dict.nav;
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  // Ziyaretçi hangi sayfada olduğunu görebilsin diye aktif bağlantı işaretlenir.
+  const pathname = usePathname();
   // Oturum varsa Giriş Yap / Kayıt Ol yerine "Panelim" gösterilir.
   const { data: session } = useSession();
   const role = session?.user?.role;
@@ -78,7 +81,11 @@ export default function Navbar() {
           {NAV_ITEMS.map((item) => (
             <li key={item.key}>
               {item.kind === "page" ? (
-                <Link href={item.href} className="nav-link">
+                <Link
+                  href={item.href}
+                  className="nav-link"
+                  aria-current={pathname === item.href ? "page" : undefined}
+                >
                   {t[item.key]}
                 </Link>
               ) : (
@@ -142,6 +149,7 @@ export default function Navbar() {
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="mobile-menu-link block"
+                aria-current={pathname === item.href ? "page" : undefined}
               >
                 {t[item.key]}
               </Link>
