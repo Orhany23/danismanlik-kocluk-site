@@ -243,6 +243,15 @@ export type Dictionary = {
       subtitle: string;
       items: Array<{ key: string; label: string; emoji: string; suggestion: string }>;
     };
+    breathing: {
+      title: string;
+      subtitle: string;
+      startLabel: string;
+      stopLabel: string;
+      cycleLabel: string;
+      note: string;
+      phases: Array<{ label: string; seconds: number }>;
+    };
     journal: {
       title: string;
       subtitle: string;
@@ -264,6 +273,15 @@ export type Dictionary = {
       doneTitle: string;
       doneText: string;
       steps: Array<{ count: string; sense: string; prompt: string }>;
+    };
+    gratitude: {
+      title: string;
+      subtitle: string;
+      placeholders: [string, string, string];
+      doneTitle: string;
+      doneText: string;
+      resetLabel: string;
+      privacyNote: string;
     };
     professional: {
       title: string;
@@ -883,6 +901,21 @@ export const dictionaries: Record<Locale, Dictionary> = {
           },
         ],
       },
+      breathing: {
+        title: "Nefes Egzersizi",
+        subtitle:
+          "Kutu nefesi (4-4-4-4): sinir sistemini sakinleştirmeye yardımcı olabilecek basit bir ritim. Rahat bir pozisyon al, dairenin büyüyüp küçülmesini takip et.",
+        startLabel: "Nefese başla",
+        stopLabel: "Durdur",
+        cycleLabel: "tur",
+        note: "İstediğin an durdurabilirsin. Nefesini zorlama; rahat geldiği kadarıyla devam et.",
+        phases: [
+          { label: "Nefes al", seconds: 4 },
+          { label: "Tut", seconds: 4 },
+          { label: "Nefes ver", seconds: 4 },
+          { label: "Tut", seconds: 4 },
+        ],
+      },
       journal: {
         title: "Özel not alanı",
         subtitle: "Aklından geçenleri buraya bırak. Kaydedilmiyor, sadece bu an için.",
@@ -912,6 +945,20 @@ export const dictionaries: Record<Locale, Dictionary> = {
           { count: "2", sense: "Koklama", prompt: "Koklayabildiğin 2 şeyi fark et." },
           { count: "1", sense: "Tatma", prompt: "Tadabildiğin 1 şeyi fark et." },
         ],
+      },
+      gratitude: {
+        title: "Şükran Notu",
+        subtitle:
+          "Bugün minnettar olduğun üç küçük şeyi yaz. Büyük olması gerekmiyor — sıcak bir çay, bitirdiğin bir iş, gülümseten bir mesaj da olabilir.",
+        placeholders: [
+          "Bugün minnettar olduğun bir şey...",
+          "Bir tane daha...",
+          "Son bir tane...",
+        ],
+        doneTitle: "Güzel.",
+        doneText: "Küçük anları fark ettin — bu da bir çeşit pratik.",
+        resetLabel: "Yeniden yaz",
+        privacyNote: "Bunlar da kaydedilmiyor; sadece bu an için buradalar.",
       },
       professional: {
         title: "Profesyonel destek",
@@ -1503,6 +1550,21 @@ export const dictionaries: Record<Locale, Dictionary> = {
           },
         ],
       },
+      breathing: {
+        title: "Breathing Exercise",
+        subtitle:
+          "Box breathing (4-4-4-4): a simple rhythm that can help calm the nervous system. Get comfortable and follow the circle as it grows and shrinks.",
+        startLabel: "Start breathing",
+        stopLabel: "Stop",
+        cycleLabel: "cycle",
+        note: "You can stop anytime. Don't force your breath — go at whatever pace feels comfortable.",
+        phases: [
+          { label: "Breathe in", seconds: 4 },
+          { label: "Hold", seconds: 4 },
+          { label: "Breathe out", seconds: 4 },
+          { label: "Hold", seconds: 4 },
+        ],
+      },
       journal: {
         title: "Private notes",
         subtitle: "Leave what's on your mind here. Nothing is saved — this is just for now.",
@@ -1532,6 +1594,20 @@ export const dictionaries: Record<Locale, Dictionary> = {
           { count: "2", sense: "Smell", prompt: "Notice 2 things you can smell." },
           { count: "1", sense: "Taste", prompt: "Notice 1 thing you can taste." },
         ],
+      },
+      gratitude: {
+        title: "Gratitude Note",
+        subtitle:
+          "Write down three small things you're grateful for today. They don't need to be big — a warm cup of tea, a finished task, a message that made you smile all count.",
+        placeholders: [
+          "Something you're grateful for today...",
+          "One more...",
+          "One last one...",
+        ],
+        doneTitle: "Nice.",
+        doneText: "You noticed the small moments — that's a practice in itself.",
+        resetLabel: "Write again",
+        privacyNote: "These aren't saved either — they're just for right now.",
       },
       professional: {
         title: "Professional support",
