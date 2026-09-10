@@ -2203,6 +2203,44 @@ body::after {
 .test-result-tips { margin: 16px 0 0; padding-left: 20px; color: var(--clr-text2); font-size: 0.92rem; line-height: 1.8; }
 
 /* ============================================================
+   /ogrenci/mufredat — konu takibi
+   ============================================================ */
+
+.mufredat-grade-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 20px; }
+.mufredat-grade-tab {
+  font-size: 0.86rem; font-weight: 600; padding: 8px 16px;
+  border: 1.5px solid var(--clr-border); border-radius: 999px;
+  color: var(--clr-text2); background: var(--clr-card);
+  transition: all 0.2s;
+}
+.mufredat-grade-tab:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+.mufredat-grade-tab--active { background: var(--clr-primary); border-color: var(--clr-primary); color: #fff; }
+
+.mufredat-summary { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+
+.mufredat-subject-list { display: flex; flex-direction: column; gap: 10px; }
+.mufredat-subject { border: 1.5px solid var(--clr-border); border-radius: var(--radius); background: var(--clr-card); overflow: hidden; }
+.mufredat-subject-head {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px; text-align: left; color: var(--clr-text);
+}
+.mufredat-subject-title { font-family: var(--font-display); font-weight: 600; flex: 1; }
+.mufredat-subject-count { font-size: 0.8rem; color: var(--clr-text3); font-family: var(--font-mono-label); }
+.mufredat-subject-head svg { color: var(--clr-text3); flex: none; }
+
+.mufredat-topic-list { list-style: none; margin: 0; padding: 0 18px 16px; display: flex; flex-direction: column; gap: 4px; }
+.mufredat-topic { border-top: 1px solid var(--clr-border); padding: 10px 0; }
+.mufredat-topic:first-child { border-top: none; }
+.mufredat-topic-label { display: flex; align-items: flex-start; gap: 10px; font-size: 0.92rem; color: var(--clr-text2); cursor: pointer; }
+.mufredat-topic-label input { margin-top: 3px; width: 17px; height: 17px; accent-color: var(--clr-primary); flex: none; }
+.mufredat-topic-feedback {
+  display: flex; gap: 8px; align-items: flex-start;
+  margin: 8px 0 0 27px; padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--clr-accent-tint); color: var(--clr-text); font-size: 0.85rem; line-height: 1.6;
+}
+.mufredat-topic-feedback svg { flex: none; margin-top: 2px; color: var(--clr-primary); }
+
+/* ============================================================
    404 ve hata sayfaları
    ============================================================ */
 
