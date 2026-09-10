@@ -838,6 +838,16 @@ footer > .container { position: relative; z-index: 1; }
 @media (max-width: 560px) {
   .spark-card { padding: 26px 22px 24px; border-radius: 18px; }
 }
+
+/* Bugün İçin — hero'nun hemen altında Günün Makalesi + Günün Notu, yan yana.
+   İki kart da kendi max-width'ini taşıyor (780-960px); grid hücresi container
+   yarısından dar olduğu için bu üst sınırlar burada devreye girmez. */
+.today-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.today-card { max-width: none; margin: 0; height: 100%; }
+@media (max-width: 900px) {
+  .today-grid { grid-template-columns: 1fr; }
+}
+
 /* Günün araştırması — detaylı bölüm (yapılandırılmış içerik) */
 .article-daily-toggle {
   display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
