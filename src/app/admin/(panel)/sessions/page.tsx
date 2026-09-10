@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { TableSkeleton } from "@/components/admin/Skeleton";
 
 type CoachingSession = {
   id: string;
@@ -77,7 +78,7 @@ export default function AdminSessionsPage() {
     fetchSessionsData().then(setSessions);
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <TableSkeleton cols={5} />;
 
   return (
     <div className="space-y-6">

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
 import { CalendarDays, Mail, Phone } from "lucide-react";
+import { CardListSkeleton } from "@/components/admin/Skeleton";
 
 type Message = {
   id: string;
@@ -60,7 +61,7 @@ export default function AdminMessagesPage() {
     if (!msg.read) markAsRead(msg.id);
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <CardListSkeleton rows={4} />;
 
   return (
     <div className="space-y-6">

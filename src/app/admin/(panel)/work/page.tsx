@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
 import { FileText, Image as ImageIcon, Link2, NotebookPen } from "lucide-react";
+import { CardListSkeleton } from "@/components/admin/Skeleton";
 
 type WorkType = "NOTE" | "LINK" | "FILE" | "PHOTO";
 type Work = {
@@ -86,7 +87,7 @@ export default function AdminWorkPage() {
     await fetch(`/api/admin/work/${w.id}`, { method: "DELETE" }).catch(() => load());
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <CardListSkeleton rows={4} />;
 
   return (
     <div className="space-y-6">

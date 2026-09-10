@@ -67,7 +67,7 @@ export function AdminDialogProvider({ children }: { children: React.ReactNode })
     <DialogContext.Provider value={{ confirm, alert }}>
       {children}
       {pending && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4">
           <button
             type="button"
             aria-label="Kapat"
