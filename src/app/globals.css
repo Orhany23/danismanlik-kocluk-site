@@ -63,8 +63,8 @@
   --clr-border:#3B2C2A;
   --clr-shadow: rgba(0,0,0,0.4);
   --clr-shadow-lg: rgba(0,0,0,0.5);
-  --clr-primary:#CD7891; --clr-primary-light:#DDA0B2; --clr-accent:#CD7891;
-  --clr-accent-tint:#3D212A;
+  --clr-primary:#B06239; --clr-primary-light:#D5905F; --clr-accent:#B06239;
+  --clr-accent-tint:#3A241A;
   --clr-sage:#DBA84E; --clr-sage-tint:#3A2C18;
 }
 
@@ -73,7 +73,7 @@
 .dark { color-scheme: dark; }
 
 /* Karanlık temada okunabilirlik boşluk düzeltmeleri */
-.dark { --clr-primary-dark: #DDA0B2; --clr-sage-dark: #EBC57E; }
+.dark { --clr-primary-dark: #D5905F; --clr-sage-dark: #EBC57E; }
 .dark ::selection { color: var(--clr-text); }
 .dark body::before { background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); }
 
