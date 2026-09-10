@@ -130,9 +130,14 @@ export default function GizlilikPage() {
               değerlendirilmek üzere hesabına bağlı olarak veritabanında saklanır ve yalnızca
               Orhan Yaşlı tarafından görüntülenebilir.
             </p>
-            <p>
+            <p className="mb-2">
               Bu testler klinik tanı aracı değildir; sonuçların yorumu, bir danışmanlık görüşmesinde
               seninle birlikte yapılır. Test geçmişinin silinmesini talep edebilirsin.
+            </p>
+            <p>
+              Bazı testlerdeki kendine zarar verme/ölüm düşüncesiyle ilgili bir maddeye olumlu cevap
+              verilmesi durumunda, güvenliğin için Orhan Yaşlı&apos;ya anında bildirim gönderilir.
+              Bu, mesleki gizliliğin istisnası olan can güvenliği riski kapsamındadır (bkz. madde 5).
             </p>
           </Section>
 
