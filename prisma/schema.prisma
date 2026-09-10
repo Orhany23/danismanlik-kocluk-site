@@ -120,6 +120,23 @@ model Student {
   testimonial     Testimonial?
   works           StudentWork[]
   testSubmissions TestSubmission[]
+  topicProgress   TopicProgress[]
+}
+
+model TopicProgress {
+  id         String    @id @default(cuid())
+  studentId  String
+  student    Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  // src/lib/curriculum.ts içindeki sabit konu kimliği (ör. "8-matematik-1")
+  topicId    String
+  checkedAt  DateTime?
+  // Koçun bu konuya özel yazdığı değerlendirme (öğrenciye görünür).
+  feedback   String?
+  feedbackAt DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([studentId, topicId])
+  @@index([studentId])
 }
 
 model TestSubmission {

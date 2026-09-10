@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { CalendarClock, ClipboardList, FileText, Link2, MapPin, MessageSquareQuote, NotebookPen, PlayCircle, Video, ArrowRight } from "lucide-react";
+import { CalendarClock, ClipboardList, FileText, Link2, MapPin, MessageSquareQuote, NotebookPen, PlayCircle, Video, ArrowRight, ListChecks } from "lucide-react";
 import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
@@ -284,6 +284,20 @@ export default async function StudentDashboard() {
           </span>
           <span className="discover-card-cta">
             Testleri gör
+            <ArrowRight strokeWidth={2} aria-hidden="true" />
+          </span>
+        </Link>
+
+        <Link href="/ogrenci/mufredat" className="discover-card student-tests-card">
+          <span className="discover-icon">
+            <ListChecks strokeWidth={1.7} aria-hidden="true" />
+          </span>
+          <span className="discover-card-title">Konu Takibi</span>
+          <span className="discover-card-desc">
+            Sınıfına göre ders konularını işaretle; Orhan konu bazında sana özel yorum bırakabilir.
+          </span>
+          <span className="discover-card-cta">
+            Konuları gör
             <ArrowRight strokeWidth={2} aria-hidden="true" />
           </span>
         </Link>
