@@ -69,6 +69,8 @@ export type LikertTest = {
   crisisItemId?: string;
   /** Toplam/ortalama puan bu değere ulaşır/geçerse kriz bildirimi tetiklenir. */
   crisisThreshold?: number;
+  /** true ise yüksek puan iyiye işaret eder (ör. İyi Oluş Endeksi). Varsayılan: yüksek puan kötüye işaret eder. Admin panelindeki puan trendinin yönünü (iyileşiyor/kötüleşiyor) belirlemek için kullanılır. */
+  higherIsBetter?: boolean;
 };
 
 export type CategoryOption = { label: string; category: string };
@@ -241,6 +243,7 @@ export const who5Test: LikertTest = {
     },
   ],
   disclaimer: CRISIS_NOTE,
+  higherIsBetter: true,
 };
 
 export const learningStyleTest: CategoryTest = {
