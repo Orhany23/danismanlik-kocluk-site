@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -7,27 +7,28 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Palet konuya oturur: rehberlik/büyüme için koyu yeşil (primary),
-     mum ışığı/vurgu için amber (sage token'ı), sakin nötr kağıt zemin. */
-  --clr-bg:        #F2F4F1;
-  --clr-bg2:       #FAFBF9;
-  --clr-card:      #FCFDFB;
-  --clr-ink:       #1B2A22;
-  --clr-text:      #22322A;
-  --clr-text2:     #56635A;
-  --clr-text3:     #66726B;
-  --clr-border:    #E0E5DF;
-  --clr-shadow:    rgba(27,42,34,0.08);
-  --clr-shadow-lg: rgba(27,42,34,0.14);
-  --clr-primary:        #2F6A4A;
-  --clr-primary-dark:   #234E37;
-  --clr-primary-light:  #3E8560;
-  --clr-accent:         #2F6A4A;
-  --clr-accent-dark:    #234E37;
-  --clr-accent-tint:    #E4EDE7;
-  --clr-sage:       #9A6318;
-  --clr-sage-dark:  #7E5214;
-  --clr-sage-tint:  #F5EAD7;
+  /* Palet: rehberlik/güven için koyu şarap kırmızısı (primary — akademik
+     danışmanlığın ciddiyeti + sıcaklığı), başarı/altın vurgusu için
+     kehribar (sage token'ı), sıcak taş-kağıt zemin (yeşil değil kum tonu). */
+  --clr-bg:        #F5F1EA;
+  --clr-bg2:       #FBF8F3;
+  --clr-card:      #FDFBF8;
+  --clr-ink:       #241A1C;
+  --clr-text:      #2C2220;
+  --clr-text2:     #6B5C57;
+  --clr-text3:     #7E706B;
+  --clr-border:    #E7DCD3;
+  --clr-shadow:    rgba(50,25,28,0.08);
+  --clr-shadow-lg: rgba(50,25,28,0.15);
+  --clr-primary:        #7A2740;
+  --clr-primary-dark:   #591C2F;
+  --clr-primary-light:  #9E3B57;
+  --clr-accent:         #7A2740;
+  --clr-accent-dark:    #591C2F;
+  --clr-accent-tint:    #F3E3E7;
+  --clr-sage:       #A8721F;
+  --clr-sage-dark:  #85591A;
+  --clr-sage-tint:  #F6E9D2;
   --clr-navy: var(--clr-ink);
   --navbar-h: 76px;
   /* Katman ölçeği. Daha önce z-index değerleri elle serpiştirilmişti
@@ -47,24 +48,24 @@
   --radius:    16px;
   --radius-sm: 12px;
   --transition: cubic-bezier(0.22,0.61,0.36,1);
-  --font-display:    'Fraunces', Georgia, serif;
+  --font-display:    'Petrona', Georgia, serif;
   --font-body:       'Figtree', system-ui, sans-serif;
   --font-mono-label: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 .dark {
-  --clr-bg:    #121A15;
-  --clr-bg2:   #16211A;
-  --clr-card:  #1B261F;
-  --clr-text:  #E0E7E2;
-  --clr-text2: #A6B2AA;
-  --clr-text3: #8A968F;
-  --clr-border:#2A362F;
+  --clr-bg:    #1A1414;
+  --clr-bg2:   #201818;
+  --clr-card:  #271D1D;
+  --clr-text:  #EDE2DD;
+  --clr-text2: #BFA69F;
+  --clr-text3: #9C8781;
+  --clr-border:#3B2C2A;
   --clr-shadow: rgba(0,0,0,0.4);
   --clr-shadow-lg: rgba(0,0,0,0.5);
-  --clr-primary:#5FB185; --clr-primary-light:#7EC49E; --clr-accent:#5FB185;
-  --clr-accent-tint:#1E3A2B;
-  --clr-sage:#E0A64A; --clr-sage-tint:#3A2E18;
+  --clr-primary:#CD7891; --clr-primary-light:#DDA0B2; --clr-accent:#CD7891;
+  --clr-accent-tint:#3D212A;
+  --clr-sage:#DBA84E; --clr-sage-tint:#3A2C18;
 }
 
 /* Tarayıcıya aktif renk şemasını bildir (form kontrolleri, scrollbar vb.) */
@@ -72,7 +73,7 @@
 .dark { color-scheme: dark; }
 
 /* Karanlık temada okunabilirlik boşluk düzeltmeleri */
-.dark { --clr-primary-dark: #7EC49E; --clr-sage-dark: #E9BE73; }
+.dark { --clr-primary-dark: #DDA0B2; --clr-sage-dark: #EBC57E; }
 .dark ::selection { color: var(--clr-text); }
 .dark body::before { background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); }
 
@@ -82,17 +83,17 @@
    seviyeleri korunarak (kontrast oranları değişmesin diye) yeşile boyandı —
    335 kullanımın hiçbirine dokunmadan tüm panel palete oturuyor. */
 @theme inline {
-  --color-gray-50:  #F7FAF8;
-  --color-gray-100: #EEF3F0;
-  --color-gray-200: #E0E7E2;
-  --color-gray-300: #C8D3CC;
-  --color-gray-400: #97A69D;
-  --color-gray-500: #667A6F;
-  --color-gray-600: #4C5F55;
-  --color-gray-700: #3A4A42;
-  --color-gray-800: #24312A;
-  --color-gray-900: #16211A;
-  --color-gray-950: #0B110D;
+  --color-gray-50:  #F8F4F1;
+  --color-gray-100: #F0E7E1;
+  --color-gray-200: #E2D3CB;
+  --color-gray-300: #CBB4A9;
+  --color-gray-400: #9C8178;
+  --color-gray-500: #705A54;
+  --color-gray-600: #57453F;
+  --color-gray-700: #43342F;
+  --color-gray-800: #2B211E;
+  --color-gray-900: #1B1413;
+  --color-gray-950: #0F0A09;
   --color-background: var(--clr-bg);
   --color-foreground: var(--clr-text);
   --font-sans:  var(--font-body);
@@ -116,7 +117,7 @@ body {
 body::before {
   content: "";
   position: fixed; inset: 0; z-index: var(--z-behind); pointer-events: none;
-  background-image: radial-gradient(rgba(47,106,74,0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(122,39,64,0.05) 1px, transparent 1px);
   background-size: 4px 4px;
   opacity: 0.6;
 }
@@ -182,7 +183,6 @@ section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
   font-family: var(--font-display);
   font-size: clamp(2rem, 4.2vw, 3.2rem);
   font-weight: 620;
-  font-variation-settings: "opsz" 90;
   letter-spacing: -0.012em;
   line-height: 1.1;
   margin-bottom: 22px;
@@ -257,9 +257,12 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 .hero-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 60px; align-items: center;
+  gap: 60px; align-items: start;
 }
-.hero-copy { min-width: 0; }
+/* Kopya ve portre aynı hizada değil: portre biraz yukarı taşar (bkz.
+   .hero-portrait margin-top negatif) — simetrik iki-sütun görünümü kırıp
+   elle yerleştirilmiş bir kolaj hissi verir. */
+.hero-copy { min-width: 0; padding-top: 34px; }
 .hero-copy > * { animation: rise 0.9s var(--transition) both; }
 .hero-copy > *:nth-child(1) { animation-delay: 0.05s; }
 .hero-copy > *:nth-child(2) { animation-delay: 0.15s; }
@@ -310,7 +313,6 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   font-family: var(--font-display);
   font-size: clamp(2.6rem, 5.6vw, 4.4rem);
   font-weight: 590;
-  font-variation-settings: "opsz" 130;
   letter-spacing: -0.015em;
   line-height: 1.06;
   color: var(--clr-text);
@@ -334,10 +336,29 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 }
 .hero-trust-item svg { width: 17px; height: 17px; color: var(--clr-sage); flex: none; }
 
+/* .hero-copy'nin padding-top'uyla birlikte iki sütunu kasıtlı olarak
+   hizasız bırakır (bkz. .hero-grid yorumu) — portre üstte sabit kalır,
+   kopya biraz aşağıdan başlar. (Not: portreyi yukarı çekmek yerine bunu
+   tercih ettik — negatif margin sabit navbar'ın altına giriyor ve üstteki
+   rozet kartı kırpıyordu.) */
 .hero-portrait { position: relative; animation: rise 1s var(--transition) 0.3s both; }
+/* Portrenin arkasında, üst-sağdan taşan tek renkli bir panel: derinliği
+   bulanık ışık lekeleri yerine gerçek bir katmanla veriyor, markanın rengini
+   de taşıyor. */
+.hero-portrait::before {
+  content: "";
+  position: absolute; top: -22px; right: -22px;
+  width: 72%; height: 58%;
+  background: var(--clr-sage);
+  border-radius: 28px;
+  transform: rotate(4deg);
+  z-index: 0;
+}
 .hero-portrait-frame {
-  position: relative;
-  border-radius: 22px; overflow: hidden;
+  position: relative; z-index: 1;
+  /* Tek düze köşe yerine bir köşesi keskin: elle kesilmiş bir fotoğraf
+     kartı hissi — dört köşesi de aynı olan "kurumsal kart" görünümünü kırar. */
+  border-radius: 32px 32px 32px 6px; overflow: hidden;
   border: 1px solid var(--clr-border);
   box-shadow: 0 30px 70px -28px var(--clr-shadow-lg);
   aspect-ratio: 4 / 5;
@@ -349,9 +370,13 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   background: linear-gradient(180deg, transparent 55%, rgba(43,38,32,0.28) 100%);
 }
 .hero-portrait-tag {
-  position: absolute; left: -18px; bottom: 26px;
-  background: var(--clr-card);
-  border: 1px solid var(--clr-border);
+  position: absolute; z-index: 2; left: auto; right: -16px; top: -18px; bottom: auto;
+  /* Cam efekti (glassmorphism): düz kart yerine bulanık, yarı saydam zemin
+     + ince iç kenarlık — ışığı kıran bir cam köşesi hissi. */
+  background: color-mix(in srgb, var(--clr-card) 72%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, white 35%, var(--clr-border));
   border-radius: 14px;
   box-shadow: 0 16px 40px -16px var(--clr-shadow-lg);
   padding: 13px 18px; display: flex; align-items: center; gap: 12px;
@@ -368,7 +393,10 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  /* Tek sütuna inince portre kopyanın altına düşer; masaüstündeki negatif
+     üst boşluk burada metnin üstüne biner, o yüzden sıfırlanır. */
   .hero-portrait { max-width: 380px; }
+  .hero-copy { padding-top: 0; }
   .hero-title { max-width: 18ch; }
 }
 
@@ -380,6 +408,7 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   .hero-inner { padding: calc(var(--navbar-h) + 28px) 0 52px; }
   .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: start; }
   .hero-portrait { max-width: 340px; }
+  .hero-copy { padding-top: 0; }
   .hero-title { max-width: 22ch; }
 }
 
@@ -1936,7 +1965,6 @@ body::after {
   font-family: var(--font-display);
   font-size: clamp(1.9rem, 5vw, 2.9rem);
   font-weight: 620;
-  font-variation-settings: "opsz" 90;
   letter-spacing: -0.02em; line-height: 1.12;
   color: var(--clr-text);
   margin-bottom: 14px;
