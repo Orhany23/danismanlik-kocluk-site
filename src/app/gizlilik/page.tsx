@@ -44,6 +44,11 @@ export default function GizlilikPage() {
               PDF ve fotoğraflar ile koçun bu çalışmalara yazdığı değerlendirmeler.
             </p>
             <p className="mb-2">
+              <strong>Test sonuçları:</strong> Öğrenci hesabıyla doldurulan psikolojik testlerin
+              cevapları ve hesaplanan sonucu; danışmanlık sürecinde değerlendirilmek amacıyla
+              işlenir (bkz. madde 8).
+            </p>
+            <p className="mb-2">
               <strong>Danışan kayıtları:</strong> Randevu, seans ve süreç notları; hizmetin
               yürütülmesi ve takibi amacıyla işlenir.
             </p>
@@ -118,7 +123,20 @@ export default function GizlilikPage() {
             </p>
           </Section>
 
-          <Section id="cerezler" title="8. Çerezler ve Ziyaret İstatistikleri">
+          <Section title="8. Psikolojik Testler">
+            <p className="mb-2">
+              Sitedeki testler (<em>/testler</em>) yalnızca öğrenci hesabınla giriş yaptıktan sonra
+              doldurulabilir. Verdiğin cevaplar ve hesaplanan sonuç, danışmanlık sürecinde birlikte
+              değerlendirilmek üzere hesabına bağlı olarak veritabanında saklanır ve yalnızca
+              Orhan Yaşlı tarafından görüntülenebilir.
+            </p>
+            <p>
+              Bu testler klinik tanı aracı değildir; sonuçların yorumu, bir danışmanlık görüşmesinde
+              seninle birlikte yapılır. Test geçmişinin silinmesini talep edebilirsin.
+            </p>
+          </Section>
+
+          <Section id="cerezler" title="9. Çerezler ve Ziyaret İstatistikleri">
             <p className="mb-2">
               Oturum yönetimi için <strong>zorunlu çerezler</strong> kullanılır; bunlar olmadan
               giriş yapılamaz.
@@ -129,7 +147,7 @@ export default function GizlilikPage() {
             </p>
           </Section>
 
-          <Section title="9. Haklarınız (KVKK m. 11)">
+          <Section title="10. Haklarınız (KVKK m. 11)">
             <p className="mb-2">
               Verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini veya
               silinmesini isteme, işlemeye itiraz etme ve veri taşınabilirliği haklarına sahipsiniz.

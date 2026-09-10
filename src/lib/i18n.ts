@@ -11,6 +11,7 @@ export type Dictionary = {
     whoFor: string;
     exams: string;
     articles: string;
+    tests: string;
     faq: string;
     contact: string;
     appointment: string;
@@ -309,6 +310,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       whoFor: "Kimler?",
       exams: "Sınavlar",
       articles: "Makaleler",
+      tests: "Testler",
       faq: "S.S.S.",
       contact: "İletişim",
       appointment: "Ücretsiz görüşme",
@@ -965,6 +967,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       whoFor: "Who?",
       exams: "Exams",
       articles: "Articles",
+      tests: "Tests",
       faq: "FAQ",
       contact: "Contact",
       appointment: "Free consultation",
