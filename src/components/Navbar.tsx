@@ -10,7 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 // sonra kapsam (Hizmetler), sonra kim olduğum (Hakkımda), içerik ve iletişim.
 // (NN/g: gezinme etiketleri kullanıcının diliyle ve karar sırasıyla eşleşmeli.)
 type NavItem =
-  | { key: "packages" | "articles" | "support"; kind: "page"; href: string }
+  | { key: "packages" | "articles" | "support" | "tests"; kind: "page"; href: string }
   | { key: "services" | "about" | "contact"; kind: "section"; id: string };
 
 const NAV_ITEMS: NavItem[] = [
@@ -19,6 +19,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "about", kind: "section", id: "about" },
   { key: "articles", kind: "page", href: "/makaleler" },
   { key: "support", kind: "page", href: "/psikolojik-destek" },
+  { key: "tests", kind: "page", href: "/testler" },
   { key: "contact", kind: "section", id: "contact" },
 ];
 

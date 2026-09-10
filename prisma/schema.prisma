@@ -116,6 +116,26 @@ model Student {
   resources       Resource[]
   testimonial     Testimonial?
   works           StudentWork[]
+  testSubmissions TestSubmission[]
+}
+
+model TestSubmission {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  testSlug    String
+  testTitle   String
+  // Ham cevaplar (soru id -> seçilen değer). Danışman gerektiğinde madde
+  // bazında geri dönüp inceleyebilsin diye saklanır.
+  answers     Json
+  score       Int?     // likert testlerde toplam puan; kategori testlerinde null
+  maxScore    Int?
+  resultLabel String   // likert: puan bandı başlığı; kategori: baskın kategori başlığı
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([testSlug])
+  @@index([createdAt])
 }
 
 model Testimonial {

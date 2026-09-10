@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, CalendarDays, Users, ClipboardList, Mail, GraduationCap,
-  Inbox, BookOpen, Star, Settings, LogOut, Menu, X, ExternalLink,
+  Inbox, BookOpen, Star, Settings, LogOut, Menu, X, ExternalLink, BarChart3,
 } from "lucide-react";
 import { AdminDialogProvider } from "@/components/admin/DialogProvider";
 
@@ -27,6 +27,7 @@ const sidebarLinks = [
   { href: "/admin/messages", label: "Mesajlar", icon: Mail },
   { href: "/admin/students", label: "Öğrenciler", icon: GraduationCap },
   { href: "/admin/work", label: "Öğrenci Çalışmaları", icon: Inbox },
+  { href: "/admin/testler", label: "Test Sonuçları", icon: BarChart3 },
   { href: "/admin/resources", label: "Kaynaklar", icon: BookOpen },
   { href: "/admin/testimonials", label: "Yorumlar", icon: Star },
   { href: "/admin/settings", label: "Ayarlar", icon: Settings },
