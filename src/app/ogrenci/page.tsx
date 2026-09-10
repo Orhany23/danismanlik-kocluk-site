@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { CalendarClock, FileText, Link2, MapPin, MessageSquareQuote, NotebookPen, PlayCircle, Video } from "lucide-react";
+import Link from "next/link";
+import { CalendarClock, ClipboardList, FileText, Link2, MapPin, MessageSquareQuote, NotebookPen, PlayCircle, Video, ArrowRight } from "lucide-react";
 import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
@@ -190,14 +191,22 @@ export default async function StudentDashboard() {
             </svg>
             <span>Öğrenci Paneli</span>
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/" });
-            }}
-          >
-            <button type="submit" className="student-logout">Çıkış Yap</button>
-          </form>
+          <div className="student-top-actions">
+            {/* Panel kendi başlığını kullanır (bkz. SiteChrome.tsx isPanel), yani
+                genel navbar burada görünmüyor — öğrenci diğer sayfalara gitmek
+                için çıkış yapmak zorunda kalmasın diye açık bir bağlantı gerekli.
+                Oturum çerezi genel sayfalarda da geçerli olduğundan tıklayınca
+                oturum kapanmaz. */}
+            <Link href="/" className="student-back-link">← Siteye dön</Link>
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/" });
+              }}
+            >
+              <button type="submit" className="student-logout">Çıkış Yap</button>
+            </form>
+          </div>
         </div>
       </header>
 
@@ -261,6 +270,23 @@ export default async function StudentDashboard() {
             )}
           </section>
         </div>
+
+        {/* Testler — navbar bu panelde görünmediği için (bkz. SiteChrome
+            isPanel) doğrudan bir giriş noktası gerekiyor. */}
+        <Link href="/testler" className="discover-card student-tests-card">
+          <span className="discover-icon">
+            <ClipboardList strokeWidth={1.7} aria-hidden="true" />
+          </span>
+          <span className="discover-card-title">Psikolojik Testler</span>
+          <span className="discover-card-desc">
+            Sınav kaygısı, benlik saygısı, iyi oluş ve daha fazlası için kısa öz-değerlendirme
+            testleri. Sonuçların danışmanlık sürecinde birlikte değerlendirilir.
+          </span>
+          <span className="discover-card-cta">
+            Testleri gör
+            <ArrowRight strokeWidth={2} aria-hidden="true" />
+          </span>
+        </Link>
 
         {/* Bugün Ne Çalıştın? — öğrenci günlük çalışma gönderir */}
         <StudentWorkForm />
