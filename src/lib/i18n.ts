@@ -503,7 +503,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
             includes: [
               "İlk görüşmede ihtiyaç birlikte değerlendirilir.",
               "Kaygı, stres yönetimi ve özgüven üzerine birebir çalışılır.",
-              "Bilişsel davranışçı yaklaşımla (BDT) yapılandırılmış görüşmeler yürütülür.",
               "Çocuklarla oyun terapisi yöntemiyle çalışılır.",
               "Aile ve çift görüşmeleri yapılır.",
             ],
@@ -1153,7 +1152,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
             includes: [
               "Needs are assessed together in the first session.",
               "Anxiety, stress management and self-confidence are worked on one to one.",
-              "Structured sessions are run using cognitive behavioural therapy (CBT).",
               "Children are worked with through play therapy.",
               "Family and couple sessions are held.",
             ],
