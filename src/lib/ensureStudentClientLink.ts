@@ -7,6 +7,10 @@ let ensured = false;
 export async function ensureStudentClientLink(): Promise<void> {
   if (ensured) return;
   await prisma.$executeRawUnsafe(`ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "clientId" TEXT`);
+  // Veli onayı alanları (doğum yılı + veli iletişimi)
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "birthYear" INTEGER`);
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "guardianName" TEXT`);
+  await prisma.$executeRawUnsafe(`ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "guardianPhone" TEXT`);
   await prisma.$executeRawUnsafe(
     `CREATE UNIQUE INDEX IF NOT EXISTS "Student_clientId_key" ON "Student"("clientId")`,
   );

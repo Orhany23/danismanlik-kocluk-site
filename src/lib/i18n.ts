@@ -751,7 +751,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         { label: "Hakkımda", href: "/#about" },
         { label: "S.S.S.", href: "/#faq" },
         { label: "Makaleler", href: "/makaleler" },
-        { label: "Gizlilik Politikası", href: "modal:privacy" },
+        { label: "Gizlilik Politikası", href: "/gizlilik" },
       ],
       contact: "İletişim",
       contactLinks: [
@@ -1395,7 +1395,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         { label: "About Me", href: "/#about" },
         { label: "FAQ", href: "/#faq" },
         { label: "Articles", href: "/makaleler" },
-        { label: "Privacy Policy", href: "modal:privacy" },
+        { label: "Privacy Policy", href: "/gizlilik" },
       ],
       contact: "Contact",
       contactLinks: [

@@ -28,7 +28,12 @@ export async function GET() {
       active: true,
       createdAt: true,
       ...(withLink
-        ? { client: { select: { id: true, name: true } } }
+        ? {
+            client: { select: { id: true, name: true } },
+            birthYear: true,
+            guardianName: true,
+            guardianPhone: true,
+          }
         : {}),
     },
   });

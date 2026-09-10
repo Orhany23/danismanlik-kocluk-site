@@ -5,7 +5,6 @@ const SITE = "https://psdorhanyasli.com.tr";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-
   return [
     {
       url: SITE,
@@ -31,5 +30,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly" as const,
       priority: 0.6,
     })),
+    // Hukuki sayfalar da indekslenebilir olmalı (daha önce sitemap'te yoktu).
+    {
+      url: `${SITE}/gizlilik`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${SITE}/kullanim-kosullari`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
   ];
 }
