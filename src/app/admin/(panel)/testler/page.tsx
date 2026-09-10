@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { CardListSkeleton } from "@/components/admin/Skeleton";
+import { getTestBySlug } from "@/lib/psychTests";
 
 type Submission = {
   id: string;
@@ -18,6 +19,19 @@ type Submission = {
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+// Öğrenciye hiç gösterilmeyen bant açıklamasını (kaynak/kesme puanı bilgisiyle
+// birlikte) yalnızca burada, admin panelinde test tanımından geri getirir.
+function getBandDescription(testSlug: string, resultLabel: string): string | null {
+  const test = getTestBySlug(testSlug);
+  if (!test || test.kind !== "likert") return null;
+  return test.bands.find((b) => b.label === resultLabel)?.description ?? null;
+}
+
+function getTestSource(testSlug: string): string | null {
+  const test = getTestBySlug(testSlug);
+  return test?.kind === "likert" ? test.source ?? null : null;
 }
 
 export default function AdminTestSubmissionsPage() {
@@ -117,16 +131,26 @@ export default function AdminTestSubmissionsPage() {
                   </div>
                 </button>
                 {open && (
-                  <div className="px-5 pb-5 border-t border-gray-50 pt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-3">Sonuç: {s.resultLabel}</p>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Madde bazında cevaplar</p>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      {Object.entries(s.answers).map(([qId, val]) => (
-                        <div key={qId} className="flex items-center gap-2">
-                          <span className="text-gray-400 font-mono text-xs">{qId}</span>
-                          <span>{val}</span>
-                        </div>
-                      ))}
+                  <div className="px-5 pb-5 border-t border-gray-50 pt-4 space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Sonuç: {s.resultLabel}</p>
+                      {getBandDescription(s.testSlug, s.resultLabel) && (
+                        <p className="text-sm text-gray-500 mt-1">{getBandDescription(s.testSlug, s.resultLabel)}</p>
+                      )}
+                    </div>
+                    {getTestSource(s.testSlug) && (
+                      <p className="text-xs text-gray-400 leading-relaxed">{getTestSource(s.testSlug)}</p>
+                    )}
+                    <div>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Madde bazında cevaplar</p>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        {Object.entries(s.answers).map(([qId, val]) => (
+                          <div key={qId} className="flex items-center gap-2">
+                            <span className="text-gray-400 font-mono text-xs">{qId}</span>
+                            <span>{val}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

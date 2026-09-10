@@ -279,8 +279,8 @@ export default async function StudentDashboard() {
           </span>
           <span className="discover-card-title">Psikolojik Testler</span>
           <span className="discover-card-desc">
-            Sınav kaygısı, benlik saygısı, iyi oluş ve daha fazlası için kısa öz-değerlendirme
-            testleri. Sonuçların danışmanlık sürecinde birlikte değerlendirilir.
+            Sınav kaygısı, genel kaygı ve iyi oluş için kısa öz-değerlendirme testleri. Puanların
+            danışmanlık sürecinde birlikte değerlendirilir.
           </span>
           <span className="discover-card-cta">
             Testleri gör

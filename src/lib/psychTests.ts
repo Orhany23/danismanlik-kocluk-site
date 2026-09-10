@@ -3,13 +3,28 @@
 // olarak veritabanında saklanır; admin panelinden Orhan Yaşlı tarafından
 // görüntülenir (bkz. src/app/api/student/test-submission/route.ts).
 //
-// Önemli: Bunlar klinik tanı araçları DEĞİLDİR. Beck Depresyon Envanteri,
-// DASS-21, STAI, Yale-Brown OKB gibi çoğu standart klinik ölçek, izinsiz
-// kullanımı kısıtlayan bir telif/lisans rejimine tabidir. Buradaki testler
-// ya tamamen özgün (Orhan Yaşlı için hazırlanmış) ya da telif hakkı sahibi
-// tarafından ücretsiz/serbest kullanıma açıkça izin verilen, dünya genelinde
-// en yaygın kullanılan ölçeklerden uyarlanmıştır (PHQ-9, Rosenberg Benlik
-// Saygısı Ölçeği, DSÖ-5 İyi Oluş Endeksi, GAD-7).
+// Önemli — kaynak durumu (dürüst envanter):
+// - "Sınav Kaygısı Ölçeği" ve "Öğrenme Stili Testi" tamamen özgündür,
+//   Orhan Yaşlı için hazırlanmıştır; resmî/standart bir ölçek DEĞİLDİR.
+// - "Genel Kaygı Taraması", GAD-7'nin Türkçe uyarlama çalışmasından
+//   (Konkan ve ark., 2013, Nöropsikiyatri Arşivi) alınan, doğrulanmış
+//   kesme puanını (≥8) kullanır. Madde metinleri GAD-7'nin uluslararası
+//   standart İngilizce içeriğinin çevirisidir — Türkçe uyarlama
+//   makalesinin birebir çeviri metni bu ortamdan doğrulanamadı.
+// - "İyi Oluş Endeksi", Dünya Sağlık Örgütü'nün resmî, çok dilli WHO-5
+//   Well-Being Index'inden alınan, uluslararası kabul görmüş tarama
+//   eşiğini (ham puan ≤13) kullanır. DSÖ bu ölçeği Türkçe dahil onlarca
+//   dilde resmî olarak yayınlar (who.int); madde metinleri bu resmî
+//   çevirinin birebir kopyası OLMAYIP uyarlamadır.
+// - Beck Depresyon Envanteri, Rosenberg Benlik Saygısı Ölçeği (Türkçe
+//   uyarlamasının puanlama yöntemi orijinalinden farklı — Guttman tipi),
+//   PHQ-9 gibi ölçekler, madde metni/puanlama yöntemi bu ortamda birebir
+//   doğrulanamadığı için BİLEREK EKLENMEDİ. Resmî kaynağı (PDF/makale)
+//   sağlarsan birebir aktarılabilir.
+//
+// Öğrenciye SADECE ham puan gösterilir (bkz. PsychTestClient.tsx),
+// yorum/bant/klinik değerlendirme gösterilmez — bu, danışmanlık sürecinde
+// Orhan Yaşlı tarafından yapılır (admin panelinde tam bant + açıklama görünür).
 
 export type LikertOption = { label: string; value: number };
 
@@ -17,6 +32,7 @@ export type LikertBand = {
   min: number;
   max: number;
   label: string;
+  /** Yalnızca admin panelinde görünür — öğrenciye asla gösterilmez. */
   description: string;
   tone: "low" | "mid" | "high";
 };
@@ -34,10 +50,6 @@ export type LikertTest = {
   questions: { id: string; text: string; reverse?: boolean }[];
   bands: LikertBand[];
   disclaimer: string;
-  /** true ise öğrenci ham puanı/bandı görmez; yalnızca admin panelinde görünür. */
-  hideResultFromUser?: boolean;
-  /** Bu soruya olumlu (0'dan farklı) cevap verilirse anlık kriz mesajı gösterilir ve danışmana uyarı gönderilir. */
-  crisisItemId?: string;
 };
 
 export type CategoryOption = { label: string; category: string };
@@ -62,6 +74,8 @@ export type PsychTest = LikertTest | CategoryTest;
 const CRISIS_NOTE =
   "Bu test bir tanı aracı değildir, sadece farkındalık amaçlıdır. Kendine ya da başkasına zarar verme düşüncen varsa hemen 112'yi ara ya da bir yakınından yardım iste.";
 
+const HAND_OFF_NOTE = "Sonunda sadece puanını göreceksin; ne anlama geldiğini bir sonraki görüşmede Orhan Yaşlı ile birlikte değerlendireceksiniz.";
+
 const examAnxietyOptions: LikertOption[] = [
   { label: "Hiçbir zaman", value: 0 },
   { label: "Bazen", value: 1 },
@@ -76,9 +90,8 @@ export const examAnxietyTest: LikertTest = {
   shortDesc: "Sınav öncesi ve sırasında yaşadığın kaygının düzeyini gösteren kısa bir öz-değerlendirme.",
   category: "Sınav Koçluğu",
   estimatedMinutes: 3,
-  intro:
-    "Aşağıdaki 10 ifadeyi, son bir ay içindeki sınav deneyimlerini düşünerek yanıtla. Doğru ya da yanlış cevap yok; ne kadar sık hissettiğini işaretlemen yeterli.",
-  source: "Bu ölçek Orhan Yaşlı tarafından sınav koçluğu danışanları için özgün olarak hazırlanmıştır.",
+  intro: `Aşağıdaki 10 ifadeyi, son bir ay içindeki sınav deneyimlerini düşünerek yanıtla. Doğru ya da yanlış cevap yok. ${HAND_OFF_NOTE}`,
+  source: "Bu ölçek Orhan Yaşlı tarafından sınav koçluğu danışanları için özgün olarak hazırlanmıştır; standart/validasyonu yapılmış bir ölçek değildir.",
   options: examAnxietyOptions,
   questions: [
     { id: "q1", text: "Sınav öncesi kalbimin hızlı attığını fark ederim." },
@@ -99,7 +112,7 @@ export const examAnxietyTest: LikertTest = {
       tone: "low",
       label: "Düşük sınav kaygısı",
       description:
-        "Kaygı düzeyin, sınav performansını olumsuz etkileyecek boyutta görünmüyor. Mevcut çalışma ve hazırlık rutinini sürdürebilirsin.",
+        "Kaygı düzeyi, sınav performansını olumsuz etkileyecek boyutta görünmüyor. Mevcut çalışma ve hazırlık rutini sürdürülebilir.",
     },
     {
       min: 10,
@@ -107,7 +120,7 @@ export const examAnxietyTest: LikertTest = {
       tone: "mid",
       label: "Orta düzey sınav kaygısı",
       description:
-        "Sınav dönemlerinde belirgin bir gerginlik yaşıyor olabilirsin. Nefes egzersizleri, düzenli çalışma planı ve deneme sınavlarıyla alışkanlık kazanmak bu düzeyi azaltabilir.",
+        "Sınav dönemlerinde belirgin bir gerginlik yaşıyor olabilir. Nefes egzersizleri, düzenli çalışma planı ve deneme sınavlarıyla alışkanlık kazanmak bu düzeyi azaltabilir.",
     },
     {
       min: 20,
@@ -115,7 +128,7 @@ export const examAnxietyTest: LikertTest = {
       tone: "high",
       label: "Yüksek sınav kaygısı",
       description:
-        "Kaygı düzeyin günlük yaşamını ve sınav performansını etkiliyor olabilir. Bir koç veya psikolojik danışmanla bu konuyu konuşman faydalı olur.",
+        "Kaygı düzeyi günlük yaşamı ve sınav performansını etkiliyor olabilir. Görüşmede bu konu detaylı ele alınmalı.",
     },
   ],
   disclaimer: CRISIS_NOTE,
@@ -131,14 +144,13 @@ const anxietyScreeningOptions: LikertOption[] = [
 export const anxietyScreeningTest: LikertTest = {
   slug: "genel-kaygi-taramasi",
   kind: "likert",
-  title: "Genel Kaygı / Stres Taraması",
+  title: "Genel Kaygı Taraması",
   shortDesc: "Son iki haftadır ne sıklıkla kaygı belirtileri yaşadığını gösteren kısa bir tarama.",
   category: "Psikolojik Destek",
   estimatedMinutes: 2,
-  intro:
-    "Son iki hafta içinde, aşağıdaki durumlardan her biri seni ne sıklıkla rahatsız etti? Bu bir tanı testi değil, farkındalık amaçlı bir taramadır.",
+  intro: `Son iki hafta içinde, aşağıdaki durumlardan her biri seni ne sıklıkla rahatsız etti? ${HAND_OFF_NOTE}`,
   source:
-    "Uluslararası kaygı taramalarında (GAD-7) yaygın kullanılan maddelerden esinlenerek hazırlanmıştır; resmî/klinik ölçek yerine geçmez.",
+    "GAD-7'nin (Generalized Anxiety Disorder-7) uluslararası standart maddelerinden uyarlanmıştır. Kesme puanı, GAD-7'nin Türkçe uyarlama çalışmasından alınmıştır: Konkan ve ark. (2013), \"Yaygın Anksiyete Bozukluğu-7 (YAB-7) Testi Türkçe Uyarlaması, Geçerlik ve Güvenirliği\", Nöropsikiyatri Arşivi — klinik olarak anlamlı kabul edilen kesme puanı: 8.",
   options: anxietyScreeningOptions,
   questions: [
     { id: "q1", text: "Sinirli, endişeli ya da gergin hissetme" },
@@ -152,31 +164,61 @@ export const anxietyScreeningTest: LikertTest = {
   bands: [
     {
       min: 0,
-      max: 4,
+      max: 7,
       tone: "low",
-      label: "Minimal düzey",
-      description: "Belirtilerin günlük yaşamını etkileyecek düzeyde görünmüyor.",
+      label: "Kesme değerinin altında (<8)",
+      description: "Türkçe YAB-7 uyarlamasının (Konkan ve ark., 2013) klinik olarak anlamlı kabul ettiği kesme puanının (8) altında.",
     },
     {
-      min: 5,
-      max: 9,
-      tone: "mid",
-      label: "Hafif düzey",
-      description: "Hafif düzeyde kaygı belirtileri yaşıyor olabilirsin. Uyku, hareket ve mola düzenine dikkat etmek faydalı olabilir.",
-    },
-    {
-      min: 10,
-      max: 14,
-      tone: "mid",
-      label: "Orta düzey",
-      description: "Belirtiler günlük yaşamını etkiliyor olabilir. Bir psikolojik danışmanla konuşman önerilir.",
-    },
-    {
-      min: 15,
+      min: 8,
       max: 21,
       tone: "high",
-      label: "Yüksek düzey",
-      description: "Belirtiler yoğun görünüyor. Bir ruh sağlığı uzmanından destek almanı öneririz.",
+      label: "Kesme değerinde/üzerinde (≥8)",
+      description: "Türkçe YAB-7 uyarlamasının (Konkan ve ark., 2013) klinik olarak anlamlı kabul ettiği kesme puanına (8) ulaşmış ya da üzerinde. Görüşmede değerlendirilmeli.",
+    },
+  ],
+  disclaimer: CRISIS_NOTE,
+};
+
+export const who5Test: LikertTest = {
+  slug: "iyi-olus-endeksi",
+  kind: "likert",
+  title: "İyi Oluş Endeksi",
+  shortDesc: "Dünya Sağlık Örgütü'nün 5 soruluk iyi oluş tarama ölçeği.",
+  category: "Psikolojik Destek",
+  estimatedMinutes: 1,
+  intro: `Son iki hafta için, aşağıdaki ifadelerin senin için ne kadar geçerli olduğunu işaretle. ${HAND_OFF_NOTE}`,
+  source:
+    "Dünya Sağlık Örgütü'nün resmî, çok dilli WHO-5 Well-Being Index'inden (İyi Oluş Endeksi) uyarlanmıştır; DSÖ bu ölçeği Türkçe dahil onlarca dilde ücretsiz/resmî olarak yayınlar (who.int). Tarama eşiği uluslararası kabul görmüş standarttır: ham puan ≤13 (ya da yüzdelik <%50) ek değerlendirme/görüşme önerilir.",
+  options: [
+    { label: "Hiçbir zaman", value: 0 },
+    { label: "Ara sıra", value: 1 },
+    { label: "Zamanın yarısından azında", value: 2 },
+    { label: "Zamanın yarısından fazlasında", value: 3 },
+    { label: "Çoğu zaman", value: 4 },
+    { label: "Her zaman", value: 5 },
+  ],
+  questions: [
+    { id: "q1", text: "Kendimi neşeli ve keyifli hissettim." },
+    { id: "q2", text: "Kendimi sakin ve huzurlu hissettim." },
+    { id: "q3", text: "Kendimi enerjik ve aktif hissettim." },
+    { id: "q4", text: "Uyandığımda kendimi dinlenmiş ve zinde hissettim." },
+    { id: "q5", text: "Günlük hayatım ilgimi çeken şeylerle doluydu." },
+  ],
+  bands: [
+    {
+      min: 0,
+      max: 13,
+      tone: "high",
+      label: "Tarama eşiğinde/altında (≤13)",
+      description: "WHO-5'in uluslararası kabul görmüş tarama eşiğinde ya da altında (ham puan ≤13, yüzdelik <%50). Ek değerlendirme/görüşme önerilir.",
+    },
+    {
+      min: 14,
+      max: 25,
+      tone: "low",
+      label: "Tarama eşiğinin üzerinde (>13)",
+      description: "WHO-5'in uluslararası kabul görmüş tarama eşiğinin üzerinde (ham puan >13, yüzdelik >%50).",
     },
   ],
   disclaimer: CRISIS_NOTE,
@@ -308,128 +350,11 @@ export const learningStyleTest: CategoryTest = {
   disclaimer: CRISIS_NOTE,
 };
 
-const phq9Options: LikertOption[] = [
-  { label: "Hiç", value: 0 },
-  { label: "Birkaç gün", value: 1 },
-  { label: "Günlerin yarısından fazlasında", value: 2 },
-  { label: "Neredeyse her gün", value: 3 },
-];
-
-const SELF_HARM_ITEM_ID = "q9";
-
-export const phq9Test: LikertTest = {
-  slug: "depresyon-taramasi",
-  kind: "likert",
-  title: "Depresyon Taraması",
-  shortDesc: "Dünya genelinde en yaygın kullanılan depresyon tarama ölçeklerinden biri.",
-  category: "Psikolojik Destek",
-  estimatedMinutes: 3,
-  intro:
-    "Son iki hafta içinde, aşağıdaki durumlardan her biri seni ne sıklıkla rahatsız etti? Bu bir tanı testi değildir; cevapların, danışmanlık sürecinde birlikte değerlendirilmek üzere kaydedilir.",
-  source:
-    "PHQ-9 (Patient Health Questionnaire-9) ölçeğinden uyarlanmıştır. Pfizer Inc. tarafından geliştirilen bu ölçek, izin gerektirmeden serbestçe kullanılabilir; resmî/klinik tanı yerine geçmez.",
-  options: phq9Options,
-  questions: [
-    { id: "q1", text: "Bir şeylere karşı ilgi duymamak ya da bir şeylerden keyif alamamak" },
-    { id: "q2", text: "Kendini üzgün, çökkün ya da umutsuz hissetmek" },
-    { id: "q3", text: "Uykuya dalmakta/uykuyu sürdürmekte zorlanmak ya da çok fazla uyumak" },
-    { id: "q4", text: "Yorgun hissetmek ya da enerjisiz olmak" },
-    { id: "q5", text: "İştahsızlık ya da aşırı yemek yeme" },
-    { id: "q6", text: "Kendini kötü hissetmek — kendini başarısız biri olarak görmek ya da kendini/ailesini hayal kırıklığına uğrattığını düşünmek" },
-    { id: "q7", text: "Bir şeye (ders çalışmak, kitap okumak, TV izlemek gibi) odaklanmakta zorlanmak" },
-    { id: "q8", text: "Başkalarının fark edeceği kadar yavaş hareket etmek/konuşmak; ya da tam tersi, her zamankinden çok daha huzursuz ve hareketli olmak" },
-    { id: "q9", text: "Kendine zarar verme ya da ölmüş olmayı dileme türünden düşünceler" },
-  ],
-  bands: [
-    { min: 0, max: 4, tone: "low", label: "Minimal düzey", description: "Belirtilerin günlük yaşamını etkileyecek düzeyde görünmüyor." },
-    { min: 5, max: 9, tone: "mid", label: "Hafif düzey", description: "Hafif düzeyde belirtiler yaşıyor olabilirsin." },
-    { min: 10, max: 14, tone: "mid", label: "Orta düzey", description: "Belirtiler günlük yaşamını etkiliyor olabilir." },
-    { min: 15, max: 19, tone: "high", label: "Orta-yüksek düzey", description: "Belirtiler belirgin görünüyor." },
-    { min: 20, max: 27, tone: "high", label: "Yüksek düzey", description: "Belirtiler yoğun görünüyor." },
-  ],
-  disclaimer: CRISIS_NOTE,
-  hideResultFromUser: true,
-  crisisItemId: SELF_HARM_ITEM_ID,
-};
-
-const rosenbergOptions: LikertOption[] = [
-  { label: "Kesinlikle katılmıyorum", value: 0 },
-  { label: "Katılmıyorum", value: 1 },
-  { label: "Katılıyorum", value: 2 },
-  { label: "Kesinlikle katılıyorum", value: 3 },
-];
-
-export const rosenbergTest: LikertTest = {
-  slug: "benlik-saygisi",
-  kind: "likert",
-  title: "Benlik Saygısı Ölçeği",
-  shortDesc: "Dünya genelinde en çok kullanılan benlik saygısı ölçeklerinden biriyle kendini değerlendir.",
-  category: "Psikolojik Destek",
-  estimatedMinutes: 3,
-  intro: "Aşağıdaki ifadelere ne kadar katıldığını işaretle. Doğru ya da yanlış cevap yok.",
-  source: "Rosenberg Benlik Saygısı Ölçeği'nden (Rosenberg Self-Esteem Scale, 1965) uyarlanmıştır; serbestçe kullanılabilen, dünya genelinde en yaygın kullanılan psikoloji ölçeklerinden biridir.",
-  options: rosenbergOptions,
-  questions: [
-    { id: "q1", text: "Genel olarak kendimden memnunum." },
-    { id: "q2", text: "Bazen hiç iyi olmadığımı düşünürüm.", reverse: true },
-    { id: "q3", text: "Birçok güzel özelliğim olduğunu düşünüyorum." },
-    { id: "q4", text: "Çoğu insan kadar işleri iyi yapabilirim." },
-    { id: "q5", text: "Gurur duyacağım fazla bir şeyim olmadığını düşünüyorum.", reverse: true },
-    { id: "q6", text: "Bazen kesinlikle işe yaramaz olduğumu hissediyorum.", reverse: true },
-    { id: "q7", text: "Kendimin, en az başkaları kadar değerli biri olduğunu düşünüyorum." },
-    { id: "q8", text: "Kendime karşı daha fazla saygı duyabilmeyi isterdim.", reverse: true },
-    { id: "q9", text: "Genel olarak kendimi başarısız biri olarak görme eğilimindeyim.", reverse: true },
-    { id: "q10", text: "Kendime karşı olumlu bir tutumum var." },
-  ],
-  bands: [
-    { min: 0, max: 14, tone: "high", label: "Düşük benlik saygısı", description: "Kendine bakışını zorlayan bir dönemden geçiyor olabilirsin. Bir danışmanla konuşmak bu alanı güçlendirebilir." },
-    { min: 15, max: 25, tone: "mid", label: "Orta düzey benlik saygısı", description: "Çoğu insanın bulunduğu aralıktasın; iniş çıkışlar doğaldır." },
-    { min: 26, max: 30, tone: "low", label: "Yüksek benlik saygısı", description: "Kendine dair genel olarak olumlu ve sağlam bir bakışın var." },
-  ],
-  disclaimer: CRISIS_NOTE,
-};
-
-const who5Options: LikertOption[] = [
-  { label: "Hiçbir zaman", value: 0 },
-  { label: "Ara sıra", value: 1 },
-  { label: "Zamanın yarısından azında", value: 2 },
-  { label: "Zamanın yarısından fazlasında", value: 3 },
-  { label: "Çoğu zaman", value: 4 },
-  { label: "Her zaman", value: 5 },
-];
-
-export const who5Test: LikertTest = {
-  slug: "iyi-olus-endeksi",
-  kind: "likert",
-  title: "İyi Oluş Endeksi",
-  shortDesc: "Dünya Sağlık Örgütü'nün 5 soruluk, dünya genelinde en yaygın kullanılan iyi oluş ölçeği.",
-  category: "Psikolojik Destek",
-  estimatedMinutes: 1,
-  intro: "Son iki hafta için, aşağıdaki ifadelerin senin için ne kadar geçerli olduğunu işaretle.",
-  source: "Dünya Sağlık Örgütü (DSÖ) İyi Oluş Endeksi'nden (WHO-5 Well-Being Index) uyarlanmıştır; DSÖ tarafından izin gerektirmeden serbest kullanıma açılmıştır.",
-  options: who5Options,
-  questions: [
-    { id: "q1", text: "Kendimi neşeli ve keyifli hissettim." },
-    { id: "q2", text: "Kendimi sakin ve huzurlu hissettim." },
-    { id: "q3", text: "Kendimi enerjik ve aktif hissettim." },
-    { id: "q4", text: "Uyandığımda kendimi dinlenmiş ve zinde hissettim." },
-    { id: "q5", text: "Günlük hayatım ilgimi çeken şeylerle doluydu." },
-  ],
-  bands: [
-    { min: 0, max: 12, tone: "high", label: "Düşük iyi oluş", description: "İyi oluş düzeyin düşük görünüyor. Bir danışmanla bu dönemi konuşman faydalı olabilir." },
-    { min: 13, max: 18, tone: "mid", label: "Orta düzey iyi oluş", description: "Genel olarak dengeli bir dönemdesin; küçük destekler faydalı olabilir." },
-    { min: 19, max: 25, tone: "low", label: "Yüksek iyi oluş", description: "Kendini genel olarak iyi ve dengeli hissediyorsun." },
-  ],
-  disclaimer: CRISIS_NOTE,
-};
-
 export const PSYCH_TESTS: PsychTest[] = [
   examAnxietyTest,
   anxietyScreeningTest,
-  learningStyleTest,
-  phq9Test,
-  rosenbergTest,
   who5Test,
+  learningStyleTest,
 ];
 
 export function getTestBySlug(slug: string): PsychTest | undefined {
