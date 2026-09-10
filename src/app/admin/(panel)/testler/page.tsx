@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { CardListSkeleton } from "@/components/admin/Skeleton";
 import { getTestBySlug } from "@/lib/psychTests";
 
@@ -43,6 +43,60 @@ function isCrisisFlagged(s: Submission): boolean {
   if (test.crisisItemId && Number(s.answers[test.crisisItemId]) > 0) return true;
   if (test.crisisThreshold !== undefined && s.score !== null && s.score >= test.crisisThreshold) return true;
   return false;
+}
+
+// Öğrenci aynı testi zaman içinde birden fazla kez çözdüğünde puan trendini
+// gösterir — sadece bir öğrenci VE bir test filtrelendiğinde, sayısal puanlı
+// (kategori testleri hariç) 2+ sonuç varsa görünür.
+function ScoreTrend({ submissions, studentName, testTitle }: { submissions: Submission[]; studentName: string; testTitle: string }) {
+  const sorted = [...submissions]
+    .filter((s) => s.score !== null)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  if (sorted.length < 2) return null;
+
+  const test = getTestBySlug(sorted[0].testSlug);
+  const higherIsBetter = test?.kind === "likert" && test.higherIsBetter === true;
+  const maxScore = sorted[0].maxScore ?? Math.max(...sorted.map((s) => s.score ?? 0));
+  const first = sorted[0].score ?? 0;
+  const last = sorted[sorted.length - 1].score ?? 0;
+  const delta = last - first;
+  const improved = higherIsBetter ? delta > 0 : delta < 0;
+  const worsened = higherIsBetter ? delta < 0 : delta > 0;
+
+  const w = 320, h = 64, pad = 10;
+  const points = sorted.map((s, i) => {
+    const x = pad + (sorted.length === 1 ? 0 : (i / (sorted.length - 1)) * (w - pad * 2));
+    const y = h - pad - ((s.score ?? 0) / (maxScore || 1)) * (h - pad * 2);
+    return { x, y, score: s.score, date: s.createdAt };
+  });
+  const linePoints = points.map((p) => `${p.x},${p.y}`).join(" ");
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
+        <div>
+          <p className="text-sm font-semibold text-gray-800">{studentName} · {testTitle}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{sorted.length} deneme · {fmtDate(sorted[0].createdAt)} → {fmtDate(sorted[sorted.length - 1].createdAt)}</p>
+        </div>
+        <span
+          className={`inline-flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1 ${
+            improved ? "bg-emerald-50 text-emerald-700" : worsened ? "bg-red-50 text-red-600" : "bg-gray-100 text-gray-600"
+          }`}
+        >
+          {improved ? <TrendingUp size={15} /> : worsened ? <TrendingDown size={15} /> : <Minus size={15} />}
+          {first} → {last}
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} role="img" aria-label="Puan trendi">
+        <polyline points={linePoints} fill="none" stroke="var(--clr-primary, #7A2740)" strokeWidth="2" />
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="var(--clr-primary, #7A2740)">
+            <title>{`${fmtDate(p.date)}: ${p.score} / ${maxScore}`}</title>
+          </circle>
+        ))}
+      </svg>
+    </div>
+  );
 }
 
 export default function AdminTestSubmissionsPage() {
@@ -112,6 +166,14 @@ export default function AdminTestSubmissionsPage() {
           </select>
         </div>
       </div>
+
+      {studentFilter && testFilter && (
+        <ScoreTrend
+          submissions={filtered}
+          studentName={students.find((s) => s.id === studentFilter)?.name ?? ""}
+          testTitle={tests.find((t) => t.slug === testFilter)?.title ?? ""}
+        />
+      )}
 
       {filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-16 text-center text-sm text-gray-400">

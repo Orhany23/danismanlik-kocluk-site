@@ -41,6 +41,57 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string, name:
   }
 }
 
+const APPOINTMENT_DATE_FMT = new Intl.DateTimeFormat("tr-TR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Europe/Istanbul",
+});
+
+export async function sendAppointmentReminderEmail(
+  to: string,
+  clientName: string,
+  title: string,
+  date: Date,
+  type: string
+) {
+  if (!resend) {
+    console.error("RESEND_API_KEY tanımlı değil — hatırlatma e-postası gönderilemedi.");
+    return;
+  }
+
+  const dateStr = APPOINTMENT_DATE_FMT.format(date);
+  const locationLine =
+    type === "ONLINE"
+      ? "Görüşme online yapılacaktır; bağlantı ayrıca WhatsApp'tan paylaşılır."
+      : "Görüşme yüz yüze yapılacaktır.";
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject: `Hatırlatma: Yarınki randevunuz — ${dateStr}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2 style="color: #1e293b;">Randevu Hatırlatması</h2>
+        <p>Merhaba ${escapeHtml(clientName)},</p>
+        <p><strong>${escapeHtml(title)}</strong> için randevunuz yaklaşıyor:</p>
+        <p style="background:#f5f1ea;border-radius:8px;padding:14px 18px;font-size:15px;">
+          📅 ${dateStr}
+        </p>
+        <p style="color:#64748b;font-size:13px;">${locationLine}</p>
+        <p style="color:#64748b;font-size:13px;">Değişiklik veya iptal için lütfen WhatsApp'tan bize ulaşın.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Randevu hatırlatma e-postası hatası:", error);
+    throw new Error(`Hatırlatma e-postası gönderilemedi: ${error.message}`);
+  }
+}
+
 function escapeHtml(str: string): string {
   return str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
 }

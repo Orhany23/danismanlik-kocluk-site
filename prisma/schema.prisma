@@ -34,17 +34,20 @@ model Client {
 }
 
 model Appointment {
-  id        String   @id @default(cuid())
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  title     String
-  date      DateTime
-  duration  Int      @default(50)
-  type      String   @default("ONLINE")
-  status    String   @default("PENDING")
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(cuid())
+  clientId       String
+  client         Client    @relation(fields: [clientId], references: [id])
+  title          String
+  date           DateTime
+  duration       Int       @default(50)
+  type           String    @default("ONLINE")
+  status         String    @default("PENDING")
+  notes          String?
+  // Hatırlatma e-postası gönderildiğinde damgalanır; aynı randevu için
+  // birden fazla hatırlatma gönderilmesini önler (bkz. api/cron/appointment-reminders).
+  reminderSentAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Session {
