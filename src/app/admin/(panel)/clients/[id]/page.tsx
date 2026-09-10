@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
 import { GraduationCap } from "lucide-react";
+import { CardListSkeleton } from "@/components/admin/Skeleton";
 
 type Appointment = { id: string; title: string; date: string; duration: number; status: string; notes: string | null };
 type SessionRow = { id: string; title: string; date: string; duration: number; status: string; notes: string | null };
@@ -72,7 +73,7 @@ export default function ClientDetailPage() {
     }
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <CardListSkeleton rows={3} />;
   if (!client) {
     return (
       <div className="space-y-4">

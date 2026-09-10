@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { TableSkeleton } from "@/components/admin/Skeleton";
 
 type Student = {
   id: string;
@@ -88,7 +89,7 @@ export default function AdminStudentsPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-400 text-sm">Yükleniyor...</p>
+        <TableSkeleton cols={7} header={false} />
       ) : students.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">
           Henüz kayıtlı öğrenci yok.
@@ -223,7 +224,7 @@ function PasswordResetModal({ student, onClose }: { student: Student; onClose: (
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-black/40 p-4"
       onClick={onClose}
     >
       <div

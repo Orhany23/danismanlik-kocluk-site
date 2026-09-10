@@ -73,10 +73,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        {/* Klavye kullanıcısı menüdeki onlarca bağlantıyı tek tek geçmek
+            zorunda kalmasın: Tab'a ilk basışta görünür hale gelir. */}
+        <a href="#main" className="skip-link">İçeriğe atla</a>
         <LocaleProvider>
           <AuthProvider>
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+            <main id="main" className="flex-1">{children}</main>
             <SiteFooter />
           </AuthProvider>
         </LocaleProvider>

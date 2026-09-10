@@ -32,7 +32,7 @@ export default function CookieBanner() {
       // env(safe-area-inset-bottom) dolgusu: butonların iOS home indicator /
       // tarayıcı alt çubuğu arkasında kesilmesini önler.
       style={{ paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom))" }}
-      className={`fixed bottom-0 left-0 right-0 z-[9999] bg-[var(--clr-navy)] text-white px-4 pt-3.5 flex flex-col sm:flex-row sm:items-center gap-3 transition-transform duration-[0.4s] ${visible ? "translate-y-0" : "translate-y-full"}`}
+      className={`fixed bottom-0 left-0 right-0 z-[var(--z-banner)] bg-[var(--clr-navy)] text-white px-4 pt-3.5 flex flex-col sm:flex-row sm:items-center gap-3 transition-transform duration-[0.4s] ${visible ? "translate-y-0" : "translate-y-full"}`}
     >
       <p className="flex-1 text-[0.88rem]">
         {dict.cookie.text}{" "}

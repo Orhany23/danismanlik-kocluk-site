@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { CardListSkeleton } from "@/components/admin/Skeleton";
 
 type Student = { id: string; name: string; email: string };
 type Resource = {
@@ -220,7 +221,7 @@ export default function AdminResourcesPage() {
       <div>
         <h3 className="text-base font-semibold text-gray-800 mb-3">Mevcut kaynaklar ({resources.length})</h3>
         {loading ? (
-          <p className="text-sm text-gray-400">Yükleniyor...</p>
+          <CardListSkeleton rows={3} header={false} />
         ) : resources.length === 0 ? (
           <p className="text-sm text-gray-400">Henüz kaynak eklenmedi.</p>
         ) : (

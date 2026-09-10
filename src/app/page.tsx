@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
+import TodayHighlights from "@/components/TodayHighlights";
 import GatewaySection from "@/components/GatewaySection";
 import PackagesSection from "@/components/PackagesSection";
 import ProcessSection from "@/components/ProcessSection";
@@ -11,7 +12,6 @@ import WhoForSection from "@/components/WhoForSection";
 import ServicesSection from "@/components/ServicesSection";
 import DiscoverStrip from "@/components/DiscoverStrip";
 import ExamSection from "@/components/ExamSection";
-import DailySpark from "@/components/DailySpark";
 import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -27,12 +27,15 @@ export default function HomePage() {
     }
   }, []);
 
-  // Sıra ziyaretçinin karar akışına göre: ne sunuluyor (kapılar + paketler),
-  // nasıl işliyor (süreç), güven (yorumlar, hakkımda, kimler), kapsam (hizmetler),
-  // sonra keşif içerikleri ve iletişim. Makalelerin tamamı /makaleler sayfasında.
+  // Sıra ziyaretçinin karar akışına göre: hemen günün içeriği (her gün yeni
+  // bir sebeple geri gelinsin), sonra ne sunuluyor (kapılar + paketler),
+  // nasıl işliyor (süreç), güven (yorumlar, hakkımda, kimler), kapsam
+  // (hizmetler), sonra keşif içerikleri ve iletişim. Makalelerin tamamı
+  // /makaleler sayfasında.
   return (
     <>
       <HeroSection />
+      <TodayHighlights />
       <GatewaySection />
       <PackagesSection />
       <ProcessSection />
@@ -42,7 +45,6 @@ export default function HomePage() {
       <ServicesSection />
       <DiscoverStrip />
       <ExamSection />
-      <DailySpark />
       <FAQSection />
       <ContactSection />
       <ScrollReveal />

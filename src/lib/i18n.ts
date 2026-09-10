@@ -124,6 +124,12 @@ export type Dictionary = {
     disclaimer: string;
     cards: Array<{ title: string; content: string }>;
   };
+  today: {
+    label: string;
+    title: string;
+    subtitle: string;
+    articlePageLink: string;
+  };
   articles: {
     label: string;
     title: string;
@@ -497,7 +503,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
             includes: [
               "İlk görüşmede ihtiyaç birlikte değerlendirilir.",
               "Kaygı, stres yönetimi ve özgüven üzerine birebir çalışılır.",
-              "Bilişsel davranışçı yaklaşımla (BDT) yapılandırılmış görüşmeler yürütülür.",
               "Çocuklarla oyun terapisi yöntemiyle çalışılır.",
               "Aile ve çift görüşmeleri yapılır.",
             ],
@@ -602,6 +607,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p><strong>ALES/1:</strong> 5 Nisan 2026</p><p><strong>ALES/2:</strong> 6 Eylül 2026</p><p><strong>ALES/3:</strong> 15 Kasım 2026</p><p><strong>DGS:</strong> 28 Haziran 2026</p><p style="margin-top:8px;">ALES lisansüstü başvuruları, DGS ise ön lisanstan lisansa geçiş için gereklidir.</p>`,
         },
       ],
+    },
+    today: {
+      label: "Bugün İçin",
+      title: "Günün Makalesi & Günün Notu",
+      subtitle: "Her gün ikisi de yenilenir: psikolojinin klasik bir araştırması ve kısa, uygulanabilir bir not.",
+      articlePageLink: "Bu araştırmanın sayfası",
     },
     articles: {
       label: "Makaleler",
@@ -1141,7 +1152,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
             includes: [
               "Needs are assessed together in the first session.",
               "Anxiety, stress management and self-confidence are worked on one to one.",
-              "Structured sessions are run using cognitive behavioural therapy (CBT).",
               "Children are worked with through play therapy.",
               "Family and couple sessions are held.",
             ],
@@ -1246,6 +1256,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p><strong>ALES/1:</strong> April 5, 2026</p><p><strong>ALES/2:</strong> September 6, 2026</p><p><strong>ALES/3:</strong> November 15, 2026</p><p><strong>DGS:</strong> June 28, 2026</p>`,
         },
       ],
+    },
+    today: {
+      label: "For Today",
+      title: "Article of the Day & Note of the Day",
+      subtitle: "Both refresh daily: a classic study from psychology and a short, practical note.",
+      articlePageLink: "This study's page",
     },
     articles: {
       label: "Articles",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { CardListSkeleton } from "@/components/admin/Skeleton";
 
 type Student = { id: string; name: string; email: string; gradeLevel: string | null };
 type Testimonial = {
@@ -83,7 +84,7 @@ export default function AdminTestimonialsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-gray-400">Yükleniyor...</p>
+        <CardListSkeleton rows={3} header={false} />
       ) : testimonials.length === 0 ? (
         <p className="text-sm text-gray-400">Henüz yorum gönderilmedi.</p>
       ) : (

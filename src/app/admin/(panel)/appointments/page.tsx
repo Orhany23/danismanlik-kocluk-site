@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
+import { TableSkeleton } from "@/components/admin/Skeleton";
 
 type Appointment = {
   id: string;
@@ -90,7 +91,7 @@ export default function AdminAppointmentsPage() {
     return <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${map[s] || ""}`}>{label[s] || s}</span>;
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <TableSkeleton cols={6} />;
 
   return (
     <div className="space-y-6">

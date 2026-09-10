@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { FormSkeleton } from "@/components/admin/Skeleton";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -75,7 +76,7 @@ export default function AdminSettingsPage() {
     });
   };
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Yükleniyor...</div>;
+  if (loading) return <FormSkeleton fields={7} />;
 
   return (
     <div className="space-y-6">
