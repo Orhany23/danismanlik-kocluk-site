@@ -30,21 +30,6 @@ export type Dictionary = {
     scroll: string;
     dailyCta: string;
   };
-  gateway: {
-    label: string;
-    title: string;
-    subtitle: string;
-    doors: Array<{
-      key: string;
-      eyebrow: string;
-      title: string;
-      desc: string;
-      points: string[];
-      note?: string;
-      cta: string;
-      href: string;
-    }>;
-  };
   discover: {
     label: string;
     title: string;
@@ -94,6 +79,7 @@ export type Dictionary = {
       price?: string;
       priceUnit?: string;
       priceNote?: string;
+      confidentialityNote?: string;
       waText: string;
     }>;
   };
@@ -123,6 +109,17 @@ export type Dictionary = {
     subtitle: string;
     disclaimer: string;
     cards: Array<{ title: string; content: string }>;
+  };
+  chat: {
+    openLabel: string;
+    panelTitle: string;
+    panelSubtitle: string;
+    greeting: string;
+    placeholder: string;
+    send: string;
+    disclaimer: string;
+    genericError: string;
+    closeLabel: string;
   };
   today: {
     label: string;
@@ -331,40 +328,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       scroll: "Keşfet",
       dailyCta: "Oku",
     },
-    gateway: {
-      label: "Nereden başlayacaksınız?",
-      title: "İki kapı, <em>tek bütüncül yaklaşım.</em>",
-      subtitle: "İhtiyacınıza en yakın kapıdan girin; hangisiyle başlarsanız başlayın ilk görüşme ücretsizdir.",
-      doors: [
-        {
-          key: "kocluk",
-          eyebrow: "Öğrenciler için",
-          title: "Koçluk",
-          desc: "Hedef, plan ve düzenli takip. Ders anlatılmaz; nasıl çalışılacağı öğretilir ve süreç baştan sona birlikte yönetilir.",
-          points: [
-            "Kişiye özel haftalık çalışma programı",
-            "Deneme analizi ve ilerleme takibi",
-            "Sınav kaygısıyla birlikte çalışma",
-          ],
-          cta: "Koçluk paketine bak",
-          href: "/paketler#kocluk",
-        },
-        {
-          key: "danismanlik",
-          eyebrow: "Çocuk, genç ve yetişkin",
-          title: "Danışmanlık",
-          desc: "RPD altyapısıyla yürütülen birebir görüşmeler. Kapsam ve sıklık ilk görüşmede birlikte belirlenir.",
-          points: [
-            "Kaygı, stres ve özgüven çalışmaları",
-            "Bilişsel davranışçı yaklaşım (BDT)",
-            "Çocuklarla oyun terapisi, aile görüşmeleri",
-          ],
-          note: "Görüşmeler etik kurallar çerçevesinde gizlidir; içerik üçüncü kişilerle paylaşılmaz.",
-          cta: "Danışmanlık paketine bak",
-          href: "/paketler#danismanlik",
-        },
-      ],
-    },
     discover: {
       label: "Keşfet",
       title: "Daha fazlasını mı görmek istiyorsunuz?",
@@ -524,6 +487,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
               "Çocuklarla oyun terapisi yöntemiyle çalışılır.",
               "Aile ve çift görüşmeleri yapılır.",
             ],
+            confidentialityNote: "Görüşmeler etik kurallar çerçevesinde gizlidir; içerik üçüncü kişilerle paylaşılmaz.",
             priceNote: "Ücret, ihtiyaca göre görüşmede belirlenir.",
             waText: "Merhaba, Danışmanlık Paketi hakkında bilgi almak istiyorum.",
           },
@@ -625,6 +589,17 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p><strong>ALES/1:</strong> 5 Nisan 2026</p><p><strong>ALES/2:</strong> 6 Eylül 2026</p><p><strong>ALES/3:</strong> 15 Kasım 2026</p><p><strong>DGS:</strong> 28 Haziran 2026</p><p style="margin-top:8px;">ALES lisansüstü başvuruları, DGS ise ön lisanstan lisansa geçiş için gereklidir.</p>`,
         },
       ],
+    },
+    chat: {
+      openLabel: "Sohbet asistanı",
+      panelTitle: "Bilgi Asistanı",
+      panelSubtitle: "Paketler, fiyatlar ve randevu hakkında sorularını yanıtlar.",
+      greeting: "Merhaba! Koçluk ve danışmanlık paketleri, fiyatlar ya da randevu hakkında ne öğrenmek istersin?",
+      placeholder: "Bir soru yaz...",
+      send: "Gönder",
+      disclaimer: "Bu bir yapay zekâ asistanıdır, Orhan Yaşlı'nın kendisi değildir; tanı/tedavi önerisi vermez. Hassas kişisel bilgi paylaşma. Acil durumda 112'yi ara.",
+      genericError: "Bir hata oluştu, lütfen tekrar dene ya da WhatsApp'tan yaz.",
+      closeLabel: "Kapat",
     },
     today: {
       label: "Bugün İçin",
@@ -1009,40 +984,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       scroll: "Explore",
       dailyCta: "Read",
     },
-    gateway: {
-      label: "Where would you like to start?",
-      title: "Two doors, <em>one integrated approach.</em>",
-      subtitle: "Pick the door closest to your need — whichever you choose, the first meeting is free.",
-      doors: [
-        {
-          key: "kocluk",
-          eyebrow: "For students",
-          title: "Coaching",
-          desc: "Goals, a plan and steady follow-up. No subject teaching; you learn how to study and we run the process together.",
-          points: [
-            "A weekly study plan built for you",
-            "Mock exam analysis and progress tracking",
-            "Exam anxiety addressed alongside academics",
-          ],
-          cta: "View the coaching package",
-          href: "/paketler#kocluk",
-        },
-        {
-          key: "danismanlik",
-          eyebrow: "Children, teens and adults",
-          title: "Counseling",
-          desc: "One-to-one sessions grounded in a PGR background. Scope and frequency are agreed together in the first meeting.",
-          points: [
-            "Anxiety, stress and self-esteem work",
-            "Cognitive behavioural approach (CBT)",
-            "Play therapy for children, family sessions",
-          ],
-          note: "Sessions are confidential within professional ethics; content is never shared with third parties.",
-          cta: "View the counseling package",
-          href: "/paketler#danismanlik",
-        },
-      ],
-    },
     discover: {
       label: "Explore",
       title: "Want to dig deeper?",
@@ -1202,6 +1143,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
               "Children are worked with through play therapy.",
               "Family and couple sessions are held.",
             ],
+            confidentialityNote: "Sessions are confidential within professional ethics; content is never shared with third parties.",
             priceNote: "The fee is agreed in the first session, based on need.",
             waText: "Hello, I would like information about the Counseling Package.",
           },
@@ -1303,6 +1245,17 @@ export const dictionaries: Record<Locale, Dictionary> = {
           content: `<p><strong>ALES/1:</strong> April 5, 2026</p><p><strong>ALES/2:</strong> September 6, 2026</p><p><strong>ALES/3:</strong> November 15, 2026</p><p><strong>DGS:</strong> June 28, 2026</p>`,
         },
       ],
+    },
+    chat: {
+      openLabel: "Chat assistant",
+      panelTitle: "Info Assistant",
+      panelSubtitle: "Answers questions about packages, pricing and booking.",
+      greeting: "Hi! What would you like to know about coaching/counseling packages, pricing, or booking?",
+      placeholder: "Type a question...",
+      send: "Send",
+      disclaimer: "This is an AI assistant, not Orhan Yaşlı himself; it doesn't give diagnosis/treatment advice. Don't share sensitive personal info. In an emergency, call 112.",
+      genericError: "Something went wrong — try again or message on WhatsApp.",
+      closeLabel: "Close",
     },
     today: {
       label: "For Today",

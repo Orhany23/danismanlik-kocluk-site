@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import ScrollProgress from "@/components/ScrollProgress";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ChatWidget from "@/components/ChatWidget";
 import CookieBanner from "@/components/CookieBanner";
 
 // Panel sayfalarının (admin + öğrenci) kendi başlığı ve gezinmesi var;
@@ -33,6 +34,7 @@ export function SiteFooter() {
     <>
       <Footer />
       <WhatsAppButton />
+      <ChatWidget />
       <CookieBanner />
     </>
   );

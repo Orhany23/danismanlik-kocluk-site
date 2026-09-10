@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, MessageCircle, ArrowRight } from "lucide-react";
+import { Check, MessageCircle, ArrowRight, Lock } from "lucide-react";
 import { dictionaries } from "@/lib/i18n";
 
 const SITE = "https://psdorhanyasli.com.tr";
@@ -93,6 +93,13 @@ export default function PaketlerPage() {
                   </li>
                 ))}
               </ul>
+
+              {p.confidentialityNote && (
+                <p className="pkg-confidentiality">
+                  <Lock strokeWidth={1.8} aria-hidden="true" />
+                  <span>{p.confidentialityNote}</span>
+                </p>
+              )}
             </div>
 
             <aside className="pkg-detail-side">
