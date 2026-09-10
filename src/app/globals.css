@@ -36,6 +36,40 @@
   --font-display:    'Fraunces', Georgia, serif;
   --font-body:       'Figtree', system-ui, sans-serif;
   --font-mono-label: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* --- Redesign: kademeli köşe ölçeği --------------------------------
+     Tek radius her yerde aynı görünüyor. İç elemanlar sıkı, konteynerler
+     yumuşak; dışa doğru büyür. Eski --radius / --radius-sm korunur ki
+     mevcut kullanımlar kırılmasın. --- */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 36px;
+
+  /* --- Redesign: isimli z-index ölçeği --------------------------------
+     Öncesinde dağınık magic number'lar vardı (9990, 2000, 998, 51, 49...).
+     Katmanlar artık tek yerden yönetiliyor. --- */
+  --z-base: 0;
+  --z-lift: 1;
+  --z-sticky: 40;
+  --z-nav: 60;
+  --z-menu: 70;
+  --z-overlay: 80;
+  --z-grain: 2000;
+  --z-modal: 3000;
+
+  /* --- Redesign: hareket eğrileri -------------------------------------
+     Linear/default easing yerine yaylı (spring) bitiş. Basınca fiziksel
+     geri bildirim, bırakınca yumuşak oturuma. --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.42, 0.5, 1);
+
+  /* --- Redesign: lüks detaylar ----------------------------------------
+     Kılcal çizgi (hairline) ve paletle aynı tonda gölge. --- */
+  --clr-hairline: color-mix(in srgb, var(--clr-ink) 9%, transparent);
+  --clr-gold: #B8873B;
+  --clr-gold-tint: #F3E9D6;
 }
 
 .dark {
@@ -51,6 +85,8 @@
   --clr-primary:#5FB185; --clr-primary-light:#7EC49E; --clr-accent:#5FB185;
   --clr-accent-tint:#1E3A2B;
   --clr-sage:#E0A64A; --clr-sage-tint:#3A2E18;
+  --clr-hairline: rgba(224,231,226,0.10);
+  --clr-gold:#D9A75B; --clr-gold-tint:#2E2515;
 }
 
 /* Tarayıcıya aktif renk şemasını bildir (form kontrolleri, scrollbar vb.) */
@@ -104,6 +140,42 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 ::selection { background: var(--clr-accent-tint); color: var(--clr-ink); }
 
+/* --- Redesign: global görünür odak halkası ---------------------------
+   Öncesinde 1850 satır CSS'te tek bir :focus-visible tanımı vardı. Klavye
+   ile gezen kullanıcı odağını kaybediyordu. Artık her odaklanabilir öğede
+   tutarlı, paletle uyumlu bir halka var. :focus-visible kullanıldığı için
+   fare ile tıklamada halka görünmez (gürültü yaratmaz). --- */
+:focus-visible {
+  outline: 2.5px solid var(--clr-primary);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+.dark :focus-visible { outline-color: var(--clr-primary-light); }
+/* Form kontrollerinde halka içeri yapışsın, layout kaymasın */
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline-offset: 1px;
+}
+
+/* --- Redesign: skip-link ---------------------------------------------
+   Klavye kullanıcısı her sayfa yüklemesinde navbar'ı Tab ile geçmek
+   zorundaydı. Odaklanınca görünen "İçeriğe geç" bağlantısı eklendi. --- */
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -80px;
+  z-index: var(--z-modal);
+  padding: 12px 20px;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  background: var(--clr-ink);
+  color: #F4F6FB;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 12px 30px -12px var(--clr-shadow-lg);
+  transition: top 0.24s var(--ease-out);
+}
+.skip-link:focus { top: 0; }
+.dark .skip-link { background: var(--clr-primary); color: #08110C; }
+
 ::-webkit-scrollbar { width: 9px; }
 ::-webkit-scrollbar-track { background: var(--clr-bg); }
 ::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 5px; }
@@ -132,35 +204,48 @@ section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
 @media (prefers-reduced-motion: no-preference) {
   .scroll-progress-bar { transition: transform 0.08s linear; }
 }
-.container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-.section { padding: 124px 0; }
-@media (max-width: 768px) { .section { padding: 76px 0; } }
+/* Redesign: konteyner biraz genişledi, yan boşluk arttı — lüks his
+   boşluktan gelir. 1180 → 1200px, 24 → 28px. */
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+@media (max-width: 560px) { .container { padding: 0 20px; } }
 
+/* Redesign: asimetrik dikey ritim. Üst ve alt boşluk eskiden birebir aynıydı
+   (124px 0); göz altta daha fazla boşluk ister. 118 / 150. */
+.section { padding: 118px 0 150px; }
+@media (max-width: 768px) { .section { padding: 74px 0 92px; } }
+
+/* Redesign: bölüm etiketi — nokta yerine kılcal kural + mono yazı.
+   Nokta işareti "madde listesi" hissi veriyordu; kural çizgisi daha editoryal. */
 .section-label {
-  display: inline-flex; align-items: center; gap: 9px;
-  font-family: var(--font-body);
-  font-size: 0.84rem; font-weight: 600;
-  letter-spacing: 0.01em;
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono-label);
+  font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--clr-primary);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .section-label::before {
-  content: ""; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--clr-primary); flex: none;
+  content: ""; width: 26px; height: 1px;
+  background: var(--clr-gold); flex: none;
 }
+
+/* Redesign: başlıklar — daha sıkı tracking, daha büyük opsz, daha ağır.
+   -0.012em → -0.022em. Büyük punto zaten "havalı" görünür; sıkı tracking
+   onu kasıtlı ve pahalı gösterir. */
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4.2vw, 3.2rem);
-  font-weight: 620;
-  font-variation-settings: "opsz" 90;
-  letter-spacing: -0.012em;
-  line-height: 1.1;
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+  font-weight: 610;
+  font-variation-settings: "opsz" 110;
+  letter-spacing: -0.022em;
+  line-height: 1.06;
   margin-bottom: 22px;
   text-wrap: balance;
 }
 .section-title em {
   font-style: italic;
-  font-weight: 600;
+  font-weight: 470;
   color: var(--clr-sage);
 }
 .section-sub {
@@ -170,26 +255,61 @@ section[id], [id] { scroll-margin-top: calc(var(--navbar-h) + 16px); }
   line-height: 1.72;
 }
 
+/* Redesign: butonlar — yaylı easing, belirgin basış geri bildirimi,
+   paletle aynı tonda gölge (siyah değil). */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   padding: 14px 28px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 0.96rem; font-weight: 600;
   font-family: var(--font-body);
-  transition: transform 0.25s var(--transition), background 0.25s var(--transition),
-              color 0.25s var(--transition), box-shadow 0.25s var(--transition), border-color 0.25s var(--transition);
+  position: relative;
+  transition: transform 0.3s var(--ease-spring), background 0.25s var(--transition),
+              color 0.25s var(--transition), box-shadow 0.32s var(--ease-out), border-color 0.25s var(--transition);
 }
-.btn:active { transform: translateY(1px) scale(0.99); }
-.btn svg { transition: transform 0.25s var(--transition); }
-.btn:hover svg { transform: translateX(3px); }
-.btn-primary { background: var(--clr-ink); color: #F4F6FB; }
-.btn-primary:hover { background: var(--clr-primary); box-shadow: 0 10px 26px var(--clr-shadow); transform: translateY(-2px); }
+.btn:active { transform: translateY(1px) scale(0.98); }
+.btn svg { transition: transform 0.32s var(--ease-spring); }
+.btn:hover svg { transform: translateX(4px); }
+.btn-primary {
+  background: var(--clr-ink); color: #F4F6FB;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--clr-ink) 18%, transparent);
+}
+.btn-primary:hover {
+  background: var(--clr-primary); transform: translateY(-3px);
+  box-shadow: 0 16px 34px -14px color-mix(in srgb, var(--clr-primary) 62%, transparent);
+}
 .dark .btn-primary { background: var(--clr-primary); color: #FFFFFF; }
 .dark .btn-primary:hover { background: var(--clr-primary-light); }
 .btn-outline { background: transparent; color: var(--clr-primary); border: 1.5px solid var(--clr-primary); }
-.btn-outline:hover { background: var(--clr-accent-tint); transform: translateY(-2px); }
+.btn-outline:hover { background: var(--clr-accent-tint); transform: translateY(-3px); }
 .btn-ghost { background: transparent; color: var(--clr-text); border: 1.5px solid var(--clr-border); }
-.btn-ghost:hover { border-color: var(--clr-primary); color: var(--clr-primary); transform: translateY(-2px); }
+.btn-ghost:hover {
+  border-color: var(--clr-primary); color: var(--clr-primary); transform: translateY(-3px);
+  background: color-mix(in srgb, var(--clr-accent-tint) 55%, transparent);
+}
+
+/* Redesign: üçüncü seviye eylem. Her yerde "dolu + hayalet" ikilisi
+   görsel gürültü üretiyordu. Altı çizili metin buton, hiyerarşiyi
+   bozmadan üçüncü bir seçenek veriyor. */
+.btn-text {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 2px;
+  font-family: var(--font-body);
+  font-size: 0.95rem; font-weight: 600;
+  color: var(--clr-primary);
+  position: relative;
+  transition: color 0.25s var(--transition);
+}
+.btn-text::after {
+  content: "";
+  position: absolute; left: 2px; right: 2px; bottom: 9px;
+  height: 1.5px; background: currentColor;
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.38s var(--ease-out);
+}
+.btn-text:hover::after { transform: scaleX(1); transform-origin: left; }
+.btn-text svg { transition: transform 0.32s var(--ease-spring); }
+.btn-text:hover svg { transform: translateX(4px); }
 
 /* Reveal — yalnızca JS varken gizle (html.js), aksi halde içerik görünür kalır (SEO/no-JS) */
 html.js .reveal { opacity: 0; transform: translateY(34px); }
@@ -228,6 +348,13 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 60px; align-items: center;
+}
+/* Redesign: portre sağdan hafif taşıyor. Öğeler eskiden düz yan yana
+   duruyordu; negatif margin kompozisyona derinlik katıyor. Taşma marginle
+   yapılıyor (transform ile değil) çünkü portrede zaten float animasyonu var
+   ve transform'u ezer. */
+@media (min-width: 1080px) {
+  .hero-portrait { margin-right: -52px; }
 }
 .hero-copy { min-width: 0; }
 .hero-copy > * { animation: rise 0.9s var(--transition) both; }
@@ -271,23 +398,42 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   color: var(--clr-text2);
   background: var(--clr-card);
   border: 1px solid var(--clr-border);
-  border-radius: 999px;
+  border-radius: var(--r-xs);
   padding: 7px 16px 7px 12px;
   margin-bottom: 28px;
 }
 .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--clr-sage); flex: none; box-shadow: 0 0 0 4px var(--clr-sage-tint); }
+/* Redesign: H1 — daha büyük opsz, daha sıkı tracking, daha koyu mürekkep.
+   -0.015em → -0.028em; 18ch → 15ch ile başlık daha az satıra kırılıyor ve
+   daha "bilboard" duruyor. */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
-  font-weight: 590;
-  font-variation-settings: "opsz" 130;
-  letter-spacing: -0.015em;
-  line-height: 1.06;
-  color: var(--clr-text);
-  margin: 0 0 26px; max-width: 18ch;
+  font-size: clamp(2.7rem, 5.9vw, 4.7rem);
+  font-weight: 580;
+  font-variation-settings: "opsz" 138;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+  color: var(--clr-ink);
+  margin: 0 0 26px; max-width: 15ch;
   text-wrap: balance;
 }
-.hero-title em { font-style: italic; font-weight: 560; color: var(--clr-sage); }
+.hero-title em { font-style: italic; font-weight: 520; color: var(--clr-sage); }
+
+/* Redesign: değişken font animasyonu — H1'deki italic kelime nefes alır gibi
+   ağırlık (460→620) ve tracking interpolasyonu yapıyor. Fraunces zaten
+   değişken font; bu onun bedava gelen yeteneği. prefers-reduced-motion ile
+   tamamen kapanır. */
+.hero-title em {
+  display: inline-block;
+  animation: heroWordBreathe 11s ease-in-out infinite alternate;
+}
+@keyframes heroWordBreathe {
+  from { font-weight: 460; letter-spacing: -0.020em; }
+  to   { font-weight: 620; letter-spacing: -0.036em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-title em { animation: none; font-weight: 520; letter-spacing: -0.028em; }
+}
 .hero-sub {
   font-size: clamp(1.04rem, 1.5vw, 1.18rem);
   color: var(--clr-text2);
@@ -377,7 +523,7 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
 .service-tag {
   display: inline-block; margin-top: 18px;
   font-size: 0.74rem; font-weight: 600; color: var(--clr-primary);
-  background: var(--clr-accent-tint); padding: 4px 13px; border-radius: 999px;
+  background: var(--clr-accent-tint); padding: 4px 13px; border-radius: var(--r-xs);
 }
 
 .domain-band { padding: 88px 0 100px; border-top: 1px solid var(--clr-border); background: var(--clr-bg2); }
@@ -428,7 +574,7 @@ html.js .reveal-scale.visible { transform: scaleX(1); }
   display: inline-block;
   font-family: var(--font-body); font-size: 0.68rem; font-weight: 600;
   letter-spacing: 0.02em; color: var(--clr-primary);
-  background: var(--clr-accent-tint); border-radius: 999px; padding: 4px 11px;
+  background: var(--clr-accent-tint); border-radius: var(--r-xs); padding: 4px 11px;
 }
 .domain-band--ink .domain-tag { color: var(--clr-sage-dark); background: var(--clr-sage-tint); }
 .domain-card-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 10px; }
@@ -559,7 +705,9 @@ textarea.form-control { resize: vertical; min-height: 130px; }
 
 footer { background: var(--clr-ink); color: rgba(242,234,220,0.78); padding: 70px 0 0; position: relative; overflow: hidden; }
 footer > .container { position: relative; z-index: 1; }
-.dark footer { background: #101326; }
+/* Redesign: koyu temada footer eskiden #101326 (mavi-mor) idi; yeşil paletin
+   içinde hue sıçraması yapıyordu. Aynı aileden koyu yeşil-siyaha sabitlendi. */
+.dark footer { background: #0E1611; }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 50px; border-bottom: 1px solid rgba(242,234,220,0.1); }
 .footer-brand .footer-brand-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #F2EADC; }
 .footer-brand p { font-size: 0.9rem; line-height: 1.74; margin-top: 14px; opacity: 0.72; max-width: 38ch; }
@@ -606,6 +754,17 @@ footer > .container { position: relative; z-index: 1; }
 .nav-link { font-size: 0.9rem; font-weight: 500; padding: 8px 14px; border-radius: 10px; color: var(--clr-text2); transition: all 0.25s var(--transition); }
 .nav-link:hover { background: var(--clr-accent-tint); color: var(--clr-primary); }
 .nav-link.active { color: var(--clr-primary); }
+/* Redesign: aktif sayfa göstergesi. `.nav-link.active` sınıfı tanımlıydı ama
+   hiçbir yerde atanmıyordu (ölü CSS). Artık Navbar gerçek pathname'e göre
+   aria-current="page" basıyor; hem ekran okuyucu hem görsel olarak anlaşılır. */
+.nav-link[aria-current="page"] { color: var(--clr-ink); font-weight: 600; }
+.nav-link[aria-current="page"]::after {
+  content: ""; display: block; height: 1.5px; margin-top: 3px;
+  border-radius: 2px; background: var(--clr-gold);
+}
+.mobile-menu-link[aria-current="page"] {
+  background: var(--clr-accent-tint); color: var(--clr-primary); font-weight: 600;
+}
 .mobile-menu-panel { position: fixed; top: var(--navbar-h); left: 0; right: 0; background: var(--clr-bg2); border-bottom: 1px solid var(--clr-border); box-shadow: 0 16px 40px var(--clr-shadow); padding: 12px 20px 20px; z-index: 49; display: flex; flex-direction: column; gap: 2px; animation: rise 0.22s var(--transition); }
 .mobile-menu-link { text-align: left; padding: 13px 12px; border-radius: 12px; font-size: 0.98rem; font-weight: 500; color: var(--clr-text); }
 .mobile-menu-link:active, .mobile-menu-link:hover { background: var(--clr-accent-tint); color: var(--clr-primary); }
@@ -650,7 +809,7 @@ footer > .container { position: relative; z-index: 1; }
 .article-card-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
 .article-card-icon { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex: none; border-radius: 13px; background: var(--clr-accent-tint); color: var(--clr-primary); }
 .article-card-icon svg { width: 22px; height: 22px; }
-.article-tag { font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--clr-primary); background: var(--clr-accent-tint); border-radius: 999px; padding: 5px 13px; }
+.article-tag { font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--clr-primary); background: var(--clr-accent-tint); border-radius: var(--r-xs); padding: 5px 13px; }
 .article-title { font-family: var(--font-display); font-size: 1.28rem; font-weight: 600; letter-spacing: -0.01em; color: var(--clr-text); line-height: 1.3; margin-bottom: 10px; }
 .article-meta { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 500; color: var(--clr-text3); margin-bottom: 14px; }
 .article-meta svg { width: 15px; height: 15px; }
@@ -686,7 +845,7 @@ footer > .container { position: relative; z-index: 1; }
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-body); font-size: 0.72rem; font-weight: 600;
   letter-spacing: 0.04em; text-transform: uppercase; color: var(--clr-primary);
-  background: var(--clr-accent-tint); border-radius: 999px; padding: 6px 14px;
+  background: var(--clr-accent-tint); border-radius: var(--r-xs); padding: 6px 14px;
 }
 .article-daily-badge svg { width: 15px; height: 15px; }
 .article-daily-note { font-size: 0.78rem; font-weight: 500; color: var(--clr-text3); }
@@ -695,7 +854,7 @@ footer > .container { position: relative; z-index: 1; }
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
   color: var(--clr-sage); background: var(--clr-sage-tint, var(--clr-accent-tint));
-  border-radius: 999px; padding: 3px 10px; font-variant-numeric: tabular-nums;
+  border-radius: var(--r-xs); padding: 3px 10px; font-variant-numeric: tabular-nums;
 }
 .article-daily-progress {
   height: 3px; border-radius: 3px; background: var(--clr-border);
@@ -813,7 +972,7 @@ footer > .container { position: relative; z-index: 1; }
   .article-daily-title { font-size: 1.3rem; }
 }
 
-.auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(100% 80% at 50% 0%, var(--clr-accent-tint) 0%, transparent 50%), var(--clr-bg); padding: 40px 20px; }
+.auth-wrap { min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(100% 80% at 50% 0%, var(--clr-accent-tint) 0%, transparent 50%), var(--clr-bg); padding: 40px 20px; }
 .auth-card { width: 100%; max-width: 440px; background: var(--clr-card); border: 1px solid var(--clr-border); border-radius: var(--radius); padding: 42px 36px; box-shadow: 0 24px 60px -34px var(--clr-shadow-lg); }
 .auth-mark { width: 60px; height: 60px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; background: var(--clr-accent-tint); color: var(--clr-primary); margin-bottom: 22px; }
 .auth-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; letter-spacing: -0.02em; color: var(--clr-text); margin-bottom: 6px; }
@@ -832,7 +991,7 @@ footer > .container { position: relative; z-index: 1; }
 .dark .auth-btn { background: var(--clr-primary); color: #FFFFFF; }
 .auth-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .auth-foot { margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--clr-text2); }
-.student-shell { min-height: 100vh; background: var(--clr-bg); padding-top: var(--navbar-h); }
+.student-shell { min-height: 100dvh; background: var(--clr-bg); padding-top: var(--navbar-h); }
 /* Panel üst çubuğu sabit menünün hemen altına yapışsın */
 .student-top { position: sticky; top: var(--navbar-h); z-index: 40; }
 .student-top { background: var(--clr-bg2); border-bottom: 1px solid var(--clr-border); }
@@ -849,7 +1008,7 @@ footer > .container { position: relative; z-index: 1; }
 .student-card:hover { transform: translateY(-4px); box-shadow: 0 22px 46px -26px var(--clr-shadow-lg); }
 .student-card h3 { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; color: var(--clr-text); margin: 12px 0 8px; }
 .student-card p { color: var(--clr-text2); font-size: 0.93rem; line-height: 1.66; }
-.student-card-tag { font-family: var(--font-body); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em; color: var(--clr-primary); background: var(--clr-accent-tint); border-radius: 999px; padding: 4px 11px; }
+.student-card-tag { font-family: var(--font-body); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em; color: var(--clr-primary); background: var(--clr-accent-tint); border-radius: var(--r-xs); padding: 4px 11px; }
 
 @media (max-width: 1024px) {
   .services-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1053,7 +1212,7 @@ footer > .container { position: relative; z-index: 1; }
 .resource-cat {
   display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
   color: var(--clr-primary); background: var(--clr-accent-tint);
-  border-radius: 999px; padding: 3px 10px; margin-bottom: 8px;
+  border-radius: var(--r-xs); padding: 3px 10px; margin-bottom: 8px;
 }
 .resource-title { font-family: var(--font-display); font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; color: var(--clr-text); margin: 0 0 6px; }
 .resource-desc { font-size: 0.92rem; color: var(--clr-text2); line-height: 1.65; margin: 0 0 10px; }
@@ -1109,7 +1268,7 @@ footer > .container { position: relative; z-index: 1; }
 .testimonial-submit { align-self: flex-start; padding-left: 24px; padding-right: 24px; }
 .testimonial-status-badge {
   font-family: var(--font-body); font-size: 0.74rem; font-weight: 600;
-  border-radius: 999px; padding: 4px 12px; line-height: 1.3;
+  border-radius: var(--r-xs); padding: 4px 12px; line-height: 1.3;
 }
 .testimonial-status-badge.is-pending { color: #92660A; background: #FDF1D6; }
 .testimonial-status-badge.is-approved { color: var(--clr-sage-dark); background: var(--clr-sage-tint); }
@@ -1209,7 +1368,7 @@ footer > .container { position: relative; z-index: 1; }
   display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
   font-family: var(--font-body); font-size: 0.68rem; font-weight: 600;
   letter-spacing: 0.04em; text-transform: uppercase; color: var(--clr-primary);
-  background: var(--clr-accent-tint); border-radius: 999px; padding: 5px 12px;
+  background: var(--clr-accent-tint); border-radius: var(--r-xs); padding: 5px 12px;
   margin-bottom: 14px;
 }
 .mak-card-badge svg { width: 14px; height: 14px; }
@@ -1336,34 +1495,43 @@ footer > .container { position: relative; z-index: 1; }
 .pkg-card {
   display: flex; flex-direction: column;
   background: var(--clr-card); border: 1px solid var(--clr-border);
-  border-radius: var(--radius); padding: 32px 32px 26px;
+  border-radius: var(--r-lg); padding: 34px 32px 28px;
   box-shadow: 0 18px 50px -38px var(--clr-shadow-lg);
-  transition: border-color 0.25s var(--transition), transform 0.25s var(--transition),
-              box-shadow 0.25s var(--transition);
+  transition: border-color 0.3s var(--transition), transform 0.42s var(--ease-out),
+              box-shadow 0.42s var(--ease-out);
 }
 .pkg-card:hover {
-  border-color: var(--clr-primary); transform: translateY(-3px);
-  box-shadow: 0 24px 60px -38px var(--clr-shadow-lg);
+  border-color: color-mix(in srgb, var(--clr-primary) 45%, var(--clr-border));
+  transform: translateY(-6px);
+  box-shadow: 0 34px 68px -34px color-mix(in srgb, var(--clr-primary) 30%, transparent);
 }
+/* Redesign: pill badge → mono, köşeli etiket. 999px hap her yerde aynı
+   görünüyor; köşeli + kılcal çerçeve daha "fiyat etiketi" gibi duruyor. */
 .pkg-badge {
   display: inline-flex; align-self: flex-start;
-  font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--clr-primary);
-  background: var(--clr-accent-tint); border-radius: 999px; padding: 6px 14px;
-  margin-bottom: 16px;
+  font-family: var(--font-mono-label); font-size: 0.66rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--clr-gold);
+  background: transparent; border: 1px solid var(--clr-hairline);
+  border-radius: var(--r-xs); padding: 5px 11px;
+  margin-bottom: 18px;
 }
+/* Redesign: başlık ve açıklama bloklarına sabit yükseklik — böylece iki
+   kartta da "Pakete dahil" listesi aynı Y koordinatında başlıyor. Önceden
+   açıklama uzunluğuna göre liste kayıyordu. */
 .pkg-title {
-  font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
-  letter-spacing: -0.015em; color: var(--clr-text); margin-bottom: 10px;
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 640;
+  letter-spacing: -0.024em; color: var(--clr-text); margin-bottom: 10px;
+  min-height: 2em;
 }
 .pkg-desc { font-size: 0.98rem; line-height: 1.72; color: var(--clr-text2); margin-bottom: 20px; }
+@media (min-width: 881px) { .pkg-desc { min-height: 6.9em; } }
 
 .pkg-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 .pkg-meta li {
   display: inline-flex; align-items: center; gap: 7px;
   font-size: 0.8rem; font-weight: 500; color: var(--clr-text2);
   background: var(--clr-bg); border: 1px solid var(--clr-border);
-  border-radius: 999px; padding: 6px 13px;
+  border-radius: var(--r-xs); padding: 6px 13px;
 }
 .pkg-meta li svg { width: 14px; height: 14px; color: var(--clr-primary); flex: none; }
 
@@ -1382,9 +1550,13 @@ footer > .container { position: relative; z-index: 1; }
   padding-top: 22px; border-top: 1px solid var(--clr-border);
 }
 .pkg-price { display: inline-flex; align-items: baseline; gap: 7px; }
+/* Redesign: fiyatta tabular rakamlar. "7.000 ₺" proportional fontta
+   basamakları hizasız duruyordu; tnum ile rakamlar eşit genişliğe oturuyor. */
 .pkg-price strong {
-  font-family: var(--font-display); font-size: 1.75rem; font-weight: 700;
-  letter-spacing: -0.02em; color: var(--clr-text);
+  font-family: var(--font-display); font-size: 1.75rem; font-weight: 660;
+  letter-spacing: -0.028em; color: var(--clr-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 .pkg-price small { font-size: 0.84rem; font-weight: 500; color: var(--clr-text3); }
 .pkg-price--quote {
@@ -1471,17 +1643,26 @@ footer > .container { position: relative; z-index: 1; }
   max-width: 46ch;
 }
 
-/* İki kapı */
-.gateway-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+/* İki kapı — Redesign: eşit iki sütun yerine asimetrik grid. İkinci kart
+   38px aşağı kaydırılıyor; böylece iki dikdörtgen yan yana "tablo" gibi
+   değil, katmanlı bir kompozisyon gibi duruyor. Mobilde sıfırlanır. */
+.gateway-grid { display: grid; grid-template-columns: 1.18fr 0.94fr; gap: 26px; align-items: start; }
 .gateway-card {
   display: flex; flex-direction: column;
   background: var(--clr-card);
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius);
-  padding: 32px 30px 28px;
-  transition: transform 0.25s var(--transition), box-shadow 0.25s var(--transition), border-color 0.25s var(--transition);
+  border-radius: var(--r-lg);
+  padding: 34px 32px 30px;
+  transition: transform 0.42s var(--ease-out), box-shadow 0.42s var(--ease-out), border-color 0.3s var(--transition);
 }
-.gateway-card:hover { transform: translateY(-4px); box-shadow: 0 26px 52px -30px var(--clr-shadow-lg); border-color: var(--clr-primary-light); }
+.gateway-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 32px 64px -32px color-mix(in srgb, var(--clr-primary) 28%, transparent);
+  border-color: color-mix(in srgb, var(--clr-primary) 42%, var(--clr-border));
+}
+@media (min-width: 821px) {
+  .gateway-card:nth-child(2) { margin-top: 38px; }
+}
 .gateway-icon {
   width: 46px; height: 46px; border-radius: 13px; margin-bottom: 18px;
   display: inline-flex; align-items: center; justify-content: center;
@@ -1511,7 +1692,7 @@ footer > .container { position: relative; z-index: 1; }
 .gateway-cta {
   margin-top: auto; align-self: flex-start;
   display: inline-flex; align-items: center; gap: 8px;
-  min-height: 44px; padding: 11px 20px; border-radius: 999px;
+  min-height: 44px; padding: 11px 20px; border-radius: var(--r-sm);
   background: var(--clr-primary); color: #fff;
   font-size: 0.92rem; font-weight: 650;
   transition: background 0.2s var(--transition), transform 0.2s var(--transition);
@@ -1526,7 +1707,7 @@ footer > .container { position: relative; z-index: 1; }
 .domain-more {
   display: inline-flex; align-items: center; gap: 8px;
   margin-top: 22px; min-height: 44px; padding: 10px 20px;
-  border-radius: 999px; border: 1px solid var(--clr-border);
+  border-radius: var(--r-sm); border: 1px solid var(--clr-border);
   background: transparent; color: var(--clr-text);
   font-size: 0.9rem; font-weight: 600; cursor: pointer;
   transition: border-color 0.2s var(--transition), background 0.2s var(--transition);
@@ -1577,7 +1758,7 @@ footer > .container { position: relative; z-index: 1; }
 .testimonial-card--sample { position: relative; border-style: dashed; }
 .testimonial-sample-badge {
   display: inline-flex; align-items: center; align-self: flex-start;
-  padding: 4px 10px; border-radius: 999px;
+  padding: 4px 10px; border-radius: var(--r-xs);
   background: var(--clr-bg2); border: 1px solid var(--clr-border);
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--clr-text3);
@@ -1602,7 +1783,7 @@ footer > .container { position: relative; z-index: 1; }
 .footer-lang {
   display: inline-flex; align-items: center; gap: 8px;
   margin-top: 16px; min-height: 44px; padding: 9px 16px;
-  border-radius: 999px; border: 1px solid currentColor;
+  border-radius: var(--r-xs); border: 1px solid currentColor;
   font-size: 0.85rem; font-weight: 600; opacity: 0.85;
   transition: opacity 0.2s var(--transition);
 }
@@ -1649,11 +1830,14 @@ footer > .container { position: relative; z-index: 1; }
    tema (light/dark) ve i18n yapısını bozmaz.
    ============================================================ */
 
-/* Sayfa geneli ince film grain dokusu — lüks/sinematik his */
+/* Sayfa geneli ince film grain dokusu — lüks/sinematik his
+   Redesign: opaklık 0.025 → 0.038. Çok inceydi, neredeyse görünmüyordu;
+   biraz artırınca yüzey "basılı kağıt" hissi veriyor. z-index artık
+   magic number değil, isimli ölçekten geliyor. */
 body::after {
   content: "";
-  position: fixed; inset: 0; z-index: 2000; pointer-events: none;
-  opacity: 0.025; mix-blend-mode: overlay;
+  position: fixed; inset: 0; z-index: var(--z-grain); pointer-events: none;
+  opacity: 0.038; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 

@@ -75,8 +75,15 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <LocaleProvider>
           <AuthProvider>
+            {/* Klavye kullanıcısı navbar'ı Tab ile geçmek zorunda kalmasın.
+                Sadece odaklanınca görünür (globals.css .skip-link). */}
+            <a href="#main-content" className="skip-link">
+              İçeriğe geç
+            </a>
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
             <SiteFooter />
           </AuthProvider>
         </LocaleProvider>
