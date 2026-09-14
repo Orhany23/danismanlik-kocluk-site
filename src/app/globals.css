@@ -1524,6 +1524,17 @@ footer > .container { position: relative; z-index: 1; }
 .share-icon-btn svg { width: 16px; height: 16px; }
 .share-icon-btn:hover { border-color: var(--clr-primary); color: var(--clr-primary); transform: translateY(-2px); }
 
+.quick-share-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: 999px;
+  border: 1px solid var(--clr-border); background: var(--clr-card);
+  color: var(--clr-text2); font-family: var(--font-display); font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: border-color 0.25s var(--transition), color 0.25s var(--transition), transform 0.25s var(--transition);
+}
+.quick-share-btn svg { width: 16px; height: 16px; }
+.quick-share-btn:hover { border-color: var(--clr-primary); color: var(--clr-primary); transform: translateY(-2px); }
+.spark-share { margin-top: 16px; }
+
 .mak-pager {
   display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
   margin: 46px 0 30px; padding-top: 30px; border-top: 1px solid var(--clr-border);

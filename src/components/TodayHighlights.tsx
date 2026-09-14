@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { getDailyStudy, poolSize, slugify } from "@/lib/dailyResearch";
 import { getDailySpark, sparkPoolSize, type SparkKind } from "@/lib/dailyKivilcim";
+import ShareButtons from "@/components/ShareButtons";
+
+const SITE_URL = "https://psdorhanyasli.com.tr";
 
 // Sunucuda false, istemcide (hydration sonrası) true. Her iki günlük içerik
 // de tarihe bağlı hesaplandığından SSR/istemci uyuşmazlığını böyle önleriz.
@@ -94,6 +97,7 @@ function DailyArticleCard() {
           <ArrowUpRight strokeWidth={2} aria-hidden="true" />
         </a>
       </div>
+      <ShareButtons url={`${SITE_URL}/makaleler/${slugify(daily.t)}`} title={daily.t} />
     </div>
   );
 }
@@ -139,6 +143,11 @@ function DailySparkCard() {
         <span className="spark-dot" aria-hidden="true" />
         {t.rotateNote}
       </div>
+      <ShareButtons
+        url={`${SITE_URL}/#spark`}
+        title={t.kinds[spark.k]}
+        text={spark.k === "motivasyon" ? spark.t : `${spark.t}${spark.c ? " — " + spark.c : ""}`}
+      />
     </div>
   );
 }

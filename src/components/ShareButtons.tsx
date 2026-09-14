@@ -28,27 +28,41 @@ function FacebookIcon() {
   );
 }
 
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.3" />
+      <circle cx="17.35" cy="6.65" r="1.05" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export default function ShareButtons({
   url,
   title,
+  text,
 }: {
   url: string;
   title: string;
+  text?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [igCopied, setIgCopied] = useState(false);
 
+  const shareText = text ?? title;
   const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title);
+  const encodedText = encodeURIComponent(shareText);
 
   const links = [
     {
       label: "WhatsApp",
-      href: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
+      href: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
       icon: <WhatsAppIcon />,
     },
     {
       label: "X",
-      href: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+      href: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
       icon: <XIcon />,
     },
     {
@@ -68,11 +82,42 @@ export default function ShareButtons({
     }
   };
 
+  // Instagram, web'den doğrudan hazır metinle paylaşım linkini desteklemiyor:
+  // metni panoya kopyalayıp Instagram'ı açıyoruz, kullanıcı DM/hikayeye yapıştırıyor.
+  const handleInstagram = async () => {
+    try {
+      await navigator.clipboard.writeText(`${shareText} ${url}`);
+      setIgCopied(true);
+      setTimeout(() => setIgCopied(false), 2500);
+    } catch {
+      // sessiz geç
+    }
+    window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="share-buttons" aria-label="Paylaş">
       <span className="share-label">Paylaş</span>
       <div className="share-icons">
-        {links.map((l) => (
+        <a
+          href={links[0].href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="WhatsApp'ta paylaş"
+          className="share-icon-btn"
+        >
+          {links[0].icon}
+        </a>
+        <button
+          type="button"
+          onClick={handleInstagram}
+          aria-label={igCopied ? "Bağlantı kopyalandı, Instagram'da yapıştır" : "Instagram'da paylaş"}
+          title={igCopied ? "Bağlantı kopyalandı — Instagram'da yapıştır" : undefined}
+          className="share-icon-btn"
+        >
+          {igCopied ? <Check strokeWidth={2} /> : <InstagramIcon />}
+        </button>
+        {links.slice(1).map((l) => (
           <a
             key={l.label}
             href={l.href}
