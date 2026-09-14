@@ -10,6 +10,7 @@ import {
 import { getDailyStudy, poolSize, slugify } from "@/lib/dailyResearch";
 import { getDailySpark, sparkPoolSize, type SparkKind } from "@/lib/dailyKivilcim";
 import ShareButtons from "@/components/ShareButtons";
+import ShareAsImageButton from "@/components/ShareAsImageButton";
 
 const SITE_URL = "https://psdorhanyasli.com.tr";
 
@@ -97,6 +98,13 @@ function DailyArticleCard() {
           <ArrowUpRight strokeWidth={2} aria-hidden="true" />
         </a>
       </div>
+      <ShareAsImageButton
+        kicker={t.daily.badge}
+        quote={daily.t}
+        attribution={`${daily.r} · ${daily.y}`}
+        siteUrl={SITE_URL}
+        fileName="gunun-makalesi.png"
+      />
       <ShareButtons url={`${SITE_URL}/makaleler/${slugify(daily.t)}`} title={daily.t} />
     </div>
   );
@@ -143,6 +151,12 @@ function DailySparkCard() {
         <span className="spark-dot" aria-hidden="true" />
         {t.rotateNote}
       </div>
+      <ShareAsImageButton
+        kicker={t.kinds[spark.k]}
+        quote={spark.k === "motivasyon" ? spark.t : `${spark.t}${spark.c ? " — " + spark.c : ""}`}
+        siteUrl={SITE_URL}
+        fileName="gunun-motivasyonu.png"
+      />
       <ShareButtons
         url={`${SITE_URL}/#spark`}
         title={t.kinds[spark.k]}
