@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLocale } from "@/components/LocaleProvider";
 import { GraduationCap, MapPin, MessageCircleHeart } from "lucide-react";
 import PsiMark from "@/components/PsiMark";
@@ -62,14 +63,16 @@ export default function HeroSection() {
 
             <div className="hero-portrait">
               <div className="hero-portrait-frame">
-                {/* Görsel yüklenmezse gizlenir; çerçevedeki "OY" yer tutucu görünür kalır. */}
-                <img
+                {/* next/image: otomatik WebP/AVIF + boyutlandırma; priority
+                    ile bu görsel (LCP elemanı) tarayıcı tarafından hemen
+                    önceliklendirilir, lazy-load edilmez. */}
+                <Image
                   src="/orhan.jpg"
                   alt="Orhan Yaşlı"
-                  loading="eager"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
+                  fill
+                  priority
+                  sizes="(max-width: 900px) 380px, 400px"
+                  style={{ objectFit: "cover" }}
                 />
               </div>
               <div className="hero-portrait-tag">
