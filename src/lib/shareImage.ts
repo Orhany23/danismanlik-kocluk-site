@@ -48,7 +48,7 @@ async function loadFonts() {
 }
 
 export async function generateQuoteImage(opts: {
-  kicker: string; // örn. "GÜNÜN MOTİVASYONU"
+  kicker?: string; // artık görselde çizilmiyor, geriye dönük uyumluluk için opsiyonel
   quote: string; // ana söz / metin
   attribution?: string; // örn. isim, sınıf vb.
   siteUrl?: string; // adres, üstte gösterilir
@@ -104,17 +104,10 @@ export async function generateQuoteImage(opts: {
   ctx.lineTo(WIDTH - padX, 208);
   ctx.stroke();
 
-  // Kicker rozet (ör. GÜNÜN MOTİVASYONU)
-  ctx.fillStyle = SAGE;
-  ctx.font = "600 26px Figtree, system-ui, sans-serif";
-  ctx.textAlign = "center";
-  const kickerY = 292;
-  ctx.fillText(opts.kicker.toUpperCase(), WIDTH / 2, kickerY);
-
-  // Alıntı için sabit dikey alan: kicker'ın altından başlar, alt bilgi/adres
+  // Alıntı için sabit dikey alan: üst çizginin altından başlar, alt bilgi/adres
   // şeridinin üstünde biter — metin ne kadar uzun olursa olsun bu alanın
-  // dışına taşmaz (üstteki etiketle asla çakışmaz).
-  const contentTop = kickerY + 56;
+  // dışına taşmaz.
+  const contentTop = 208 + 64;
   const bottomStripTop = HEIGHT - 170;
   const attributionReserve = opts.attribution ? 70 : 0;
   const contentBottom = bottomStripTop - attributionReserve - 20;
