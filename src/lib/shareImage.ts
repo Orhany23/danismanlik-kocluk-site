@@ -108,18 +108,49 @@ export async function generateQuoteImage(opts: {
   ctx.fillStyle = SAGE;
   ctx.font = "600 26px Figtree, system-ui, sans-serif";
   ctx.textAlign = "center";
-  const kickerY = 300;
+  const kickerY = 292;
   ctx.fillText(opts.kicker.toUpperCase(), WIDTH / 2, kickerY);
 
-  // Ana söz — ortalanmış, italik serif
-  ctx.fillStyle = CREAM;
-  ctx.font = "italic 500 62px Petrona, Georgia, serif";
-  ctx.textAlign = "center";
+  // Alıntı için sabit dikey alan: kicker'ın altından başlar, alt bilgi/adres
+  // şeridinin üstünde biter — metin ne kadar uzun olursa olsun bu alanın
+  // dışına taşmaz (üstteki etiketle asla çakışmaz).
+  const contentTop = kickerY + 56;
+  const bottomStripTop = HEIGHT - 170;
+  const attributionReserve = opts.attribution ? 70 : 0;
+  const contentBottom = bottomStripTop - attributionReserve - 20;
+  const availableHeight = contentBottom - contentTop;
+
   const maxTextWidth = WIDTH - padX * 2;
-  const lines = wrapText(ctx, `"${opts.quote}"`, maxTextWidth);
-  const lineHeight = 82;
-  const blockHeight = lines.length * lineHeight;
-  let y = HEIGHT / 2 - blockHeight / 2 + lineHeight / 2;
+  const quoteText = `"${opts.quote}"`;
+
+  // Metin uzunsa fontu kademeli küçültüp alana sığdır.
+  let fontSize = 62;
+  let lineHeight = 82;
+  let lines: string[] = [];
+  ctx.textAlign = "center";
+  while (fontSize >= 30) {
+    ctx.font = `italic 500 ${fontSize}px Petrona, Georgia, serif`;
+    lines = wrapText(ctx, quoteText, maxTextWidth);
+    lineHeight = Math.round(fontSize * 1.32);
+    if (lines.length * lineHeight <= availableHeight) break;
+    fontSize -= 4;
+  }
+  fontSize = Math.max(fontSize, 30);
+  ctx.font = `italic 500 ${fontSize}px Petrona, Georgia, serif`;
+
+  // Minimum fontta bile sığmıyorsa (aşırı uzun metin): fazla satırları kes.
+  const maxLines = Math.max(1, Math.floor(availableHeight / lineHeight));
+  if (lines.length > maxLines) {
+    const kept = lines.slice(0, maxLines);
+    const last = kept[kept.length - 1].replace(/["\s]+$/, "");
+    kept[kept.length - 1] = `${last}…"`;
+    lines = kept;
+  }
+
+  // Ana söz — ayrılan alanın içinde dikeyde ortalanmış
+  ctx.fillStyle = CREAM;
+  const blockHeight = Math.min(lines.length * lineHeight, availableHeight);
+  let y = contentTop + Math.max(0, (availableHeight - blockHeight) / 2) + lineHeight / 2 + fontSize * 0.16;
   for (const line of lines) {
     ctx.fillText(line, WIDTH / 2, y);
     y += lineHeight;
@@ -129,7 +160,7 @@ export async function generateQuoteImage(opts: {
   if (opts.attribution) {
     ctx.fillStyle = CREAM_DIM;
     ctx.font = "600 28px Figtree, system-ui, sans-serif";
-    ctx.fillText(opts.attribution, WIDTH / 2, y + 30);
+    ctx.fillText(opts.attribution, WIDTH / 2, Math.max(y + 12, bottomStripTop - 44));
   }
 
   // Alt şerit: adres tekrar (görsel tek başına dolaşırsa da adres kalsın)
