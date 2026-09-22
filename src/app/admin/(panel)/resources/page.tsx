@@ -128,6 +128,25 @@ export default function AdminResourcesPage() {
 
   const [assignPick, setAssignPick] = useState<Record<string, string>>({});
   const [assigning, setAssigning] = useState<string | null>(null);
+  const [seeding, setSeeding] = useState(false);
+
+  const seedTemplates = async () => {
+    setSeeding(true);
+    setError("");
+    try {
+      const res = await fetch("/api/admin/resources/seed-templates", { method: "POST" });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(json.error || "Şablonlar yüklenemedi.");
+      } else {
+        setSuccess(json.created > 0 ? `${json.created} hazır şablon eklendi.` : "Hazır şablonlar zaten yüklü.");
+        await load();
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   // Bir şablonun bağımsız kopyasını seçilen öğrenciye atar (metni yeniden
   // yazmadan) — kopya o öğrencinin panelinde "Sana Özel" olarak belirir.
@@ -267,7 +286,16 @@ export default function AdminResourcesPage() {
 
       {/* Şablon Kütüphanesi */}
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-1">📚 Şablon kütüphanem ({templates.length})</h3>
+        <div className="flex items-center justify-between gap-3 flex-wrap mb-1">
+          <h3 className="text-base font-semibold text-gray-800">📚 Şablon kütüphanem ({templates.length})</h3>
+          <button
+            onClick={seedTemplates}
+            disabled={seeding}
+            className="text-xs px-3 py-1.5 rounded-lg border border-[var(--clr-primary)] text-[var(--clr-primary)] hover:bg-[var(--clr-primary)]/5 disabled:opacity-50"
+          >
+            {seeding ? "Yükleniyor…" : "Hazır 4 psikoeğitim şablonunu yükle"}
+          </button>
+        </div>
         <p className="text-sm text-gray-400 mb-3">Kimseye görünmez. Bir danışan seç, &quot;Ata&quot; de — kopyası onun paneline düşer.</p>
         {loading ? (
           <CardListSkeleton rows={2} header={false} />
