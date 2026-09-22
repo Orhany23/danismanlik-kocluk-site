@@ -76,6 +76,15 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Bir kereye mahsus şema düzeltmesi: "isTemplate" sütunu Prisma şemasına
+  // eklendi ama veritabanına `prisma db push` ile henüz yansıtılmamış
+  // olabilir (bu ortamda migrate/push çalıştırma imkânı yok). IF NOT EXISTS
+  // sayesinde güvenle her seferinde çalıştırılabilir; sütun zaten varsa
+  // hiçbir şey yapmaz.
+  await prisma.$executeRawUnsafe(
+    `ALTER TABLE "Resource" ADD COLUMN IF NOT EXISTS "isTemplate" BOOLEAN NOT NULL DEFAULT false;`
+  );
+
   const existing = await prisma.resource.findMany({
     where: { isTemplate: true, title: { in: TEMPLATES.map((t) => t.title) } },
     select: { title: true },
