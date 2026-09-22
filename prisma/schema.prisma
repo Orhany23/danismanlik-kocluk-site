@@ -207,6 +207,11 @@ model Resource {
   gradeLevel  String?                      // boş = tüm seviyeler; örn. "LGS", "YKS-Sayısal"
   studentId   String?                      // boş = herkese açık kütüphane; dolu = o öğrenciye özel
   student     Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  // Psikoeğitim şablon kütüphanesi: true ise kimseye otomatik gösterilmez
+  // (herkese açık kütüphanede de çıkmaz); admin panelinden tek tıkla bir
+  // danışana "atandığında" bu şablonun bağımsız bir KOPYASI oluşturulur
+  // (studentId dolu, isTemplate false) — şablonun kendisi değişmeden kalır.
+  isTemplate  Boolean  @default(false)
   published   Boolean  @default(true)
   pinned      Boolean  @default(false)
   createdAt   DateTime @default(now())

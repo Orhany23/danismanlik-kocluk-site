@@ -18,6 +18,7 @@ type Resource = {
   student: Student | null;
   published: boolean;
   pinned: boolean;
+  isTemplate: boolean;
   createdAt: string;
 };
 
@@ -38,6 +39,7 @@ const empty = {
   gradeLevel: "",
   studentId: "",
   pinned: false,
+  isTemplate: false,
 };
 
 export default function AdminResourcesPage() {
@@ -124,7 +126,40 @@ export default function AdminResourcesPage() {
     load();
   };
 
+  const [assignPick, setAssignPick] = useState<Record<string, string>>({});
+  const [assigning, setAssigning] = useState<string | null>(null);
+
+  // Bir şablonun bağımsız kopyasını seçilen öğrenciye atar (metni yeniden
+  // yazmadan) — kopya o öğrencinin panelinde "Sana Özel" olarak belirir.
+  const assignToStudent = async (resourceId: string) => {
+    const studentId = assignPick[resourceId];
+    if (!studentId) return;
+    setAssigning(resourceId);
+    setError("");
+    try {
+      const res = await fetch(`/api/admin/resources/${resourceId}/assign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(json.error || "Atama başarısız.");
+      } else {
+        const name = students.find((s) => s.id === studentId)?.name || "danışan";
+        setSuccess(`"${resources.find((r) => r.id === resourceId)?.title}" ${name} panelinde yayınlandı.`);
+        setAssignPick((p) => ({ ...p, [resourceId]: "" }));
+        await load();
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    } finally {
+      setAssigning(null);
+    }
+  };
+
   const isNote = form.type === "NOTE";
+  const templates = resources.filter((r) => r.isTemplate);
+  const published = resources.filter((r) => !r.isTemplate);
 
   return (
     <div className="max-w-5xl space-y-8">
@@ -132,7 +167,9 @@ export default function AdminResourcesPage() {
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <h3 className="text-base font-semibold text-gray-800 mb-1">Yeni kaynak ekle</h3>
         <p className="text-sm text-gray-400 mb-5">
-          Bir öğrenci seçmezsen kaynak <strong>herkese açık kütüphanede</strong> görünür. Öğrenci seçersen yalnızca o öğrenciye özel olur.
+          <strong>Şablon</strong> olarak işaretlersen kimseye görünmez, kütüphanende kalır — dilediğin zaman
+          tek tıkla bir danışana atarsın (metni yeniden yazmadan). İşaretlemezsen: öğrenci seçmediğinde{" "}
+          <strong>herkese açık kütüphanede</strong>, seçtiğinde yalnızca o öğrenciye özel görünür.
         </p>
 
         <div className="grid grid-cols-2 gap-4">
@@ -176,14 +213,25 @@ export default function AdminResourcesPage() {
               onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Kısa açıklama (opsiyonel)" />
           </label>
 
-          <label className="text-sm font-medium text-gray-700">
-            Kime?
-            <select className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" value={form.studentId}
-              onChange={(e) => setForm({ ...form, studentId: e.target.value })}>
-              <option value="">Herkese açık (kütüphane)</option>
-              {students.map((s) => <option key={s.id} value={s.id}>{s.name} — {s.email}</option>)}
-            </select>
+          <label className="col-span-2 flex items-center gap-2 text-sm text-gray-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+            <input
+              type="checkbox"
+              checked={form.isTemplate}
+              onChange={(e) => setForm({ ...form, isTemplate: e.target.checked, studentId: "" })}
+            />
+            <span><strong>Şablon</strong> — kütüphanemde kalsın, kimseye otomatik gösterme</span>
           </label>
+
+          {!form.isTemplate && (
+            <label className="text-sm font-medium text-gray-700">
+              Kime?
+              <select className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" value={form.studentId}
+                onChange={(e) => setForm({ ...form, studentId: e.target.value })}>
+                <option value="">Herkese açık (kütüphane)</option>
+                {students.map((s) => <option key={s.id} value={s.id}>{s.name} — {s.email}</option>)}
+              </select>
+            </label>
+          )}
 
           <label className="text-sm font-medium text-gray-700">
             Seviye (opsiyonel)
@@ -217,16 +265,66 @@ export default function AdminResourcesPage() {
         </button>
       </div>
 
+      {/* Şablon Kütüphanesi */}
+      <div>
+        <h3 className="text-base font-semibold text-gray-800 mb-1">📚 Şablon kütüphanem ({templates.length})</h3>
+        <p className="text-sm text-gray-400 mb-3">Kimseye görünmez. Bir danışan seç, &quot;Ata&quot; de — kopyası onun paneline düşer.</p>
+        {loading ? (
+          <CardListSkeleton rows={2} header={false} />
+        ) : templates.length === 0 ? (
+          <p className="text-sm text-gray-400">Henüz şablon eklenmedi.</p>
+        ) : (
+          <div className="space-y-2">
+            {templates.map((r) => (
+              <div key={r.id} className="bg-amber-50/50 rounded-xl border border-amber-100 p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs text-gray-400">{TYPE_LABELS[r.type] || r.type}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Şablon</span>
+                    </div>
+                    <p className="font-medium text-gray-800 mt-1">{r.title}</p>
+                    {r.category && <p className="text-xs text-gray-400">{r.category}</p>}
+                  </div>
+                  <button onClick={() => remove(r.id)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 flex-shrink-0">
+                    Sil
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-amber-100">
+                  <select
+                    className="px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white flex-1 min-w-[160px]"
+                    value={assignPick[r.id] || ""}
+                    onChange={(e) => setAssignPick((p) => ({ ...p, [r.id]: e.target.value }))}
+                  >
+                    <option value="">Danışan seç…</option>
+                    {students.map((s) => <option key={s.id} value={s.id}>{s.name} — {s.email}</option>)}
+                  </select>
+                  <button
+                    onClick={() => assignToStudent(r.id)}
+                    disabled={!assignPick[r.id] || assigning === r.id}
+                    style={{ backgroundColor: "var(--clr-primary)" }}
+                    className="text-xs px-3 py-1.5 rounded-lg font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                  >
+                    {assigning === r.id ? "Atanıyor…" : "Ata"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* List */}
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3">Mevcut kaynaklar ({resources.length})</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-3">Yayındaki kaynaklar ({published.length})</h3>
         {loading ? (
           <CardListSkeleton rows={3} header={false} />
-        ) : resources.length === 0 ? (
+        ) : published.length === 0 ? (
           <p className="text-sm text-gray-400">Henüz kaynak eklenmedi.</p>
         ) : (
           <div className="space-y-2">
-            {resources.map((r) => (
+            {published.map((r) => (
               <div key={r.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">

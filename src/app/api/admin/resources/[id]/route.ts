@@ -12,9 +12,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const allowed: Record<string, unknown> = {};
   if (typeof data.published === "boolean") allowed.published = data.published;
   if (typeof data.pinned === "boolean") allowed.pinned = data.pinned;
+  if (typeof data.isTemplate === "boolean") allowed.isTemplate = data.isTemplate;
   if (typeof data.title === "string" && data.title.trim()) allowed.title = data.title.trim();
   if (typeof data.description === "string") allowed.description = data.description.trim() || null;
   if (typeof data.category === "string") allowed.category = data.category.trim() || null;
+  if (typeof data.body === "string") allowed.body = data.body.trim() || null;
 
   // Görünürlük değişikliği: null => herkese açık, id => yalnızca o öğrenci
   if ("studentId" in data) {

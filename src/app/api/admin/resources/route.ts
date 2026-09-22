@@ -45,6 +45,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not metni zorunludur." }, { status: 400 });
   }
 
+  const isTemplate = data.isTemplate === true;
+
   const resource = await prisma.resource.create({
     data: {
       title,
@@ -54,9 +56,11 @@ export async function POST(req: Request) {
       body: type === "NOTE" && typeof data.body === "string" ? data.body.trim().slice(0, 20000) : null,
       category: typeof data.category === "string" ? data.category.trim().slice(0, 80) || null : null,
       gradeLevel: typeof data.gradeLevel === "string" ? data.gradeLevel.trim().slice(0, 40) || null : null,
-      studentId: typeof data.studentId === "string" && data.studentId ? data.studentId : null,
+      // Şablonlar hiçbir zaman doğrudan bir öğrenciye bağlanmaz; kütüphanede kalır.
+      studentId: !isTemplate && typeof data.studentId === "string" && data.studentId ? data.studentId : null,
       published: data.published !== false,
       pinned: data.pinned === true,
+      isTemplate,
     },
   });
 
