@@ -77,8 +77,21 @@ export default function StudentWorkForm() {
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+  let cancelled = false;
+
+  void fetch("/api/student/work", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((data: { works?: Work[] }) => {
+      if (!cancelled) setWorks(data.works ?? []);
+    })
+    .catch(() => {
+      if (!cancelled) setWorks([]);
+    });
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
   const reset = () => {
     setTitle("");

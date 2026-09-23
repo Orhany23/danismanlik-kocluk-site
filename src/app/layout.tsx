@@ -4,8 +4,10 @@ import { LocaleProvider } from "@/components/LocaleProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import ConsentAnalytics from "@/components/ConsentAnalytics";
+import AmbientPointer from "@/components/AmbientPointer";
 import "./globals.css";
 import "./performance.css";
+import "./premium-v2.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://psdorhanyasli.com.tr"),
@@ -74,6 +76,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <a href="#main" className="skip-link">İçeriğe atla</a>
+        <AmbientPointer />
         <LocaleProvider>
           <AuthProvider>
             <SiteHeader />
