@@ -4,21 +4,18 @@ import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Inbox, Mail, Star, GraduationCap, Users, CalendarDays, ClipboardList } from "lucide-react";
+import {
+  Inbox, Mail, Star, GraduationCap, Users, CalendarDays, ClipboardList,
+  ArrowUpRight, Clock3, CircleAlert, Sparkles, CheckCircle2
+} from "lucide-react";
 
-// Bekleyen yorum sayısı — tablo üretimde henüz oluşmamışsa dashboard çökmesin
-// diye güvenli şekilde alınır (hata halinde 0 döner).
 async function getPendingTestimonials(): Promise<number> {
   try {
     await ensureTestimonialTable();
     return await prisma.testimonial.count({ where: { status: "PENDING" } });
-  } catch {
-    return 0;
-  }
+  } catch { return 0; }
 }
 
-// Öğrenci tarafı sayıları — tablolar üretimde runtime DDL ile oluştuğu için
-// dashboard'un çökmemesi adına ayrı ve güvenli şekilde alınır.
 async function getStudentStats(): Promise<{ students: number; pendingWork: number }> {
   try {
     await ensureStudentWorkTable();
@@ -27,151 +24,138 @@ async function getStudentStats(): Promise<{ students: number; pendingWork: numbe
       prisma.studentWork.count({ where: { seen: false } }),
     ]);
     return { students, pendingWork };
-  } catch {
-    return { students: 0, pendingWork: 0 };
-  }
+  } catch { return { students: 0, pendingWork: 0 }; }
 }
 
-async function getStats() {
+async function getStats(now: Date) {
   const [clientCount, messageCount, appointmentCount, sessionCount] = await Promise.all([
     prisma.client.count(),
     prisma.message.count({ where: { read: false } }),
-    prisma.appointment.count({ where: { date: { gte: new Date() } } }),
-    prisma.session.count({ where: { status: "PLANNED" } }),
+    prisma.appointment.count({ where: { date: { gte: now }, status: { notIn: ["CANCELLED", "IPTAL"] } } }),
+    prisma.session.count({ where: { date: { gte: now }, status: "PLANNED" } }),
   ]);
   return { clientCount, messageCount, appointmentCount, sessionCount };
 }
 
-async function getRecentAppointments() {
-  return prisma.appointment.findMany({
-    take: 5,
-    orderBy: { date: "desc" },
-    include: { client: { select: { name: true } } },
-  });
+async function getUpcoming(now: Date) {
+  const [appointments, sessions] = await Promise.all([
+    prisma.appointment.findMany({
+      take: 6,
+      where: { date: { gte: now }, status: { notIn: ["CANCELLED", "IPTAL"] } },
+      orderBy: { date: "asc" },
+      include: { client: { select: { name: true } } },
+    }),
+    prisma.session.findMany({
+      take: 6,
+      where: { date: { gte: now }, status: "PLANNED" },
+      orderBy: { date: "asc" },
+      include: { client: { select: { name: true } } },
+    }),
+  ]);
+  return [
+    ...appointments.map((x) => ({ id: `a-${x.id}`, date: x.date, title: x.title, name: x.client?.name ?? "—", kind: "Randevu", href: "/admin/appointments" })),
+    ...sessions.map((x) => ({ id: `s-${x.id}`, date: x.date, title: x.title, name: x.client?.name ?? "—", kind: "Seans", href: "/admin/sessions" })),
+  ].sort((a,b) => a.date.getTime() - b.date.getTime()).slice(0, 7);
 }
 
 async function getRecentMessages() {
-  return prisma.message.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-  });
+  return prisma.message.findMany({ take: 5, orderBy: { createdAt: "desc" } });
 }
+
+const DATE = new Intl.DateTimeFormat("tr-TR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default async function AdminDashboardPage() {
   if (!(await requireAdmin())) redirect("/admin/login");
+  const now = new Date();
 
-  const stats = await getStats();
-  const appointments = await getRecentAppointments();
-  const messages = await getRecentMessages();
-  const pendingTestimonials = await getPendingTestimonials();
-  const studentStats = await getStudentStats();
+  const [stats, upcoming, messages, pendingTestimonials, studentStats] = await Promise.all([
+    getStats(now), getUpcoming(now), getRecentMessages(), getPendingTestimonials(), getStudentStats()
+  ]);
 
-  // Önce günlük bakılan işler (bekleyen çalışma/mesaj), sonra genel sayılar.
+  const actionCount = studentStats.pendingWork + stats.messageCount + pendingTestimonials;
   const statCards = [
-    { label: "Bekleyen Çalışma", value: studentStats.pendingWork, color: "bg-teal-500", Icon: Inbox, href: "/admin/work" },
-    { label: "Bekleyen Mesaj", value: stats.messageCount, color: "bg-amber-500", Icon: Mail, href: "/admin/messages" },
-    { label: "Bekleyen Yorum", value: pendingTestimonials, color: "bg-rose-500", Icon: Star, href: "/admin/testimonials" },
-    { label: "Aktif Öğrenci", value: studentStats.students, color: "bg-indigo-500", Icon: GraduationCap, href: "/admin/students" },
-    { label: "Toplam Danışan", value: stats.clientCount, color: "bg-blue-500", Icon: Users, href: "/admin/clients" },
-    { label: "Gelecek Randevu", value: stats.appointmentCount, color: "bg-emerald-500", Icon: CalendarDays, href: "/admin/appointments" },
-    { label: "Planlanan Seans", value: stats.sessionCount, color: "bg-purple-500", Icon: ClipboardList, href: "/admin/sessions" },
+    { label: "Bekleyen Çalışma", value: studentStats.pendingWork, Icon: Inbox, href: "/admin/work", tone: "teal" },
+    { label: "Bekleyen Mesaj", value: stats.messageCount, Icon: Mail, href: "/admin/messages", tone: "amber" },
+    { label: "Bekleyen Yorum", value: pendingTestimonials, Icon: Star, href: "/admin/testimonials", tone: "rose" },
+    { label: "Aktif Öğrenci", value: studentStats.students, Icon: GraduationCap, href: "/admin/students", tone: "indigo" },
+    { label: "Toplam Danışan", value: stats.clientCount, Icon: Users, href: "/admin/clients", tone: "blue" },
+    { label: "Gelecek Randevu", value: stats.appointmentCount, Icon: CalendarDays, href: "/admin/appointments", tone: "emerald" },
+    { label: "Planlanan Seans", value: stats.sessionCount, Icon: ClipboardList, href: "/admin/sessions", tone: "violet" },
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        <p className="text-sm text-gray-500 mt-1">Yönetim paneline hoş geldiniz.</p>
-      </div>
+    <div className="advisor-os space-y-7">
+      <section className="advisor-hero">
+        <div>
+          <span className="advisor-kicker"><Sparkles size={14} /> DANIŞMAN MASASI</span>
+          <h2>Bugünün kontrol merkezi</h2>
+          <p>Öğrenci, danışan ve görüşme akışını tek ekrandan yönet.</p>
+        </div>
+        <div className={`advisor-focus ${actionCount === 0 ? "is-clear" : ""}`}>
+          {actionCount === 0 ? <CheckCircle2 /> : <CircleAlert />}
+          <div>
+            <strong>{actionCount === 0 ? "Her şey güncel" : `${actionCount} işlem seni bekliyor`}</strong>
+            <span>{actionCount === 0 ? "Bekleyen çalışma, mesaj veya yorum yok." : "Önce geri bildirim ve iletişim işlerini tamamla."}</span>
+          </div>
+        </div>
+      </section>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="advisor-stats">
         {statCards.map((card) => (
-          <Link
-            key={card.label}
-            href={card.href}
-            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="w-10 h-10 rounded-xl bg-gray-50 text-gray-600 flex items-center justify-center" aria-hidden="true">
-                <card.Icon size={20} strokeWidth={1.8} />
-              </span>
-              <span className={`w-2 h-2 rounded-full ${card.color}`} aria-hidden="true" />
-            </div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">{card.value}</div>
-            <div className="text-sm text-gray-500">{card.label}</div>
+          <Link key={card.label} href={card.href} className={`advisor-stat tone-${card.tone}`}>
+            <span className="advisor-stat-icon"><card.Icon size={19} strokeWidth={1.8} /></span>
+            <span className="advisor-stat-value">{card.value}</span>
+            <span className="advisor-stat-label">{card.label}</span>
+            <ArrowUpRight className="advisor-stat-arrow" size={16} />
           </Link>
         ))}
       </div>
 
-      {/* Recent Appointments */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800">Son Randevular</h3>
-          <Link href="/admin/appointments" className="text-sm text-[var(--clr-primary)] hover:underline">
-            Tümünü Gör
-          </Link>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-sm text-gray-500 border-b border-gray-50">
-                <th className="px-6 py-3 font-medium">Danışan</th>
-                <th className="px-6 py-3 font-medium">Tarih</th>
-                <th className="px-6 py-3 font-medium">Durum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((apt) => (
-                <tr key={apt.id} className="border-b border-gray-50 last:border-0">
-                  <td className="px-6 py-3 text-sm text-gray-700">{apt.client?.name || "—"}</td>
-                  <td className="px-6 py-3 text-sm text-gray-700">{new Date(apt.date).toLocaleDateString("tr-TR")}</td>
-                  <td className="px-6 py-3">
-                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      apt.status === "CONFIRMED" ? "bg-emerald-100 text-emerald-700" :
-                      apt.status === "PENDING" ? "bg-amber-100 text-amber-700" :
-                      apt.status === "COMPLETED" ? "bg-blue-100 text-blue-700" :
-                      "bg-red-100 text-red-700"
-                    }`}>
-                      {apt.status === "CONFIRMED" ? "Onaylandı" : apt.status === "PENDING" ? "Bekliyor" : apt.status === "COMPLETED" ? "Tamamlandı" : "İptal"}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {appointments.length === 0 && (
-                <tr><td colSpan={3} className="px-6 py-8 text-center text-sm text-gray-400">Henüz randevu bulunmuyor.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="advisor-grid">
+        <section className="advisor-panel advisor-agenda">
+          <div className="advisor-panel-head">
+            <div><span className="advisor-overline">SIRADAKİLER</span><h3>Görüşme akışı</h3></div>
+            <Link href="/admin/appointments">Takvime git <ArrowUpRight size={14}/></Link>
+          </div>
+          <div className="advisor-agenda-list">
+            {upcoming.map((item, i) => (
+              <Link href={item.href} key={item.id} className="advisor-agenda-item">
+                <div className="advisor-time"><Clock3 size={14}/><time>{DATE.format(item.date)}</time></div>
+                <div className="advisor-agenda-main"><strong>{item.name}</strong><span>{item.title}</span></div>
+                <span className="advisor-kind">{item.kind}</span>
+                {i === 0 && <span className="advisor-next">Sıradaki</span>}
+              </Link>
+            ))}
+            {upcoming.length === 0 && <div className="advisor-empty">Planlanmış gelecek görüşme bulunmuyor.</div>}
+          </div>
+        </section>
+
+        <section className="advisor-panel">
+          <div className="advisor-panel-head">
+            <div><span className="advisor-overline">İLETİŞİM</span><h3>Son mesajlar</h3></div>
+            <Link href="/admin/messages">Tümü <ArrowUpRight size={14}/></Link>
+          </div>
+          <div className="advisor-message-list">
+            {messages.map((msg) => (
+              <Link href="/admin/messages" key={msg.id} className={`advisor-message ${!msg.read ? "is-unread" : ""}`}>
+                <span className="advisor-message-dot" />
+                <div><strong>{msg.name}</strong><p>{msg.message}</p></div>
+                <time>{new Date(msg.createdAt).toLocaleDateString("tr-TR", {day:"2-digit",month:"short"})}</time>
+              </Link>
+            ))}
+            {messages.length === 0 && <div className="advisor-empty">Henüz mesaj bulunmuyor.</div>}
+          </div>
+        </section>
       </div>
 
-      {/* Recent Messages */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800">Son Mesajlar</h3>
-          <Link href="/admin/messages" className="text-sm text-[var(--clr-primary)] hover:underline">
-            Tümünü Gör
-          </Link>
-        </div>
-        <div className="divide-y divide-gray-50">
-          {messages.map((msg) => (
-            <div key={msg.id} className={`px-6 py-3.5 flex items-center gap-4 ${!msg.read ? "bg-blue-50/50" : ""}`}>
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${!msg.read ? "bg-blue-500" : "bg-transparent"}`} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700">{msg.name}</span>
-                  <span className="text-xs text-gray-400">{new Date(msg.createdAt).toLocaleDateString("tr-TR")}</span>
-                </div>
-                <p className="text-sm text-gray-500 truncate">{msg.message}</p>
-              </div>
-            </div>
-          ))}
-          {messages.length === 0 && (
-            <div className="px-6 py-8 text-center text-sm text-gray-400">Henüz mesaj bulunmuyor.</div>
-          )}
-        </div>
-      </div>
+      <section className="advisor-shortcuts">
+        <span>Hızlı işlemler</span>
+        <Link href="/admin/students">Öğrenci aç</Link>
+        <Link href="/admin/work">Çalışma değerlendir</Link>
+        <Link href="/admin/mufredat">Konu takibi</Link>
+        <Link href="/admin/testler">Test sonuçları</Link>
+        <Link href="/admin/resources">Kaynak ata</Link>
+      </section>
     </div>
   );
 }
