@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   CalendarClock, ClipboardList, FileText, Link2, MapPin, MessageSquareQuote,
-  NotebookPen, PlayCircle, Video, ArrowRight, ListChecks, Sparkles, Target,
+  NotebookPen, PlayCircle, Video, ArrowRight, Sparkles, Target,
   BookOpen, Send, CheckCircle2, Clock3
 } from "lucide-react";
 import { requireStudent, signOut } from "@/lib/auth";

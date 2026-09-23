@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminDialog } from "@/components/admin/DialogProvider";
 import { CardListSkeleton } from "@/components/admin/Skeleton";
-import { AlertCircle, ArrowRight, CalendarClock, CheckCircle2, Search, Target, UserRound, Zap } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle2, Search, Target, UserRound, Zap } from "lucide-react";
 
 type Student = {
  id:string;name:string;email:string;gradeLevel:string|null;active:boolean;createdAt:string;
@@ -13,7 +13,6 @@ type Student = {
  nextMeeting?:{date:string;title:string;kind:string}|null;workCount:number;testCount:number;checkedTopics:number;
  daysSinceWork:number|null;needsAttention:boolean;
 };
-const fmt=(v:string)=>new Date(v).toLocaleDateString("tr-TR",{day:"2-digit",month:"short"});
 const meetingFmt=(v:string)=>new Date(v).toLocaleString("tr-TR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
 
 export default function AdminStudentsPage(){
