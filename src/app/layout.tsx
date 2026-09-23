@@ -5,6 +5,7 @@ import AuthProvider from "@/components/AuthProvider";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import ConsentAnalytics from "@/components/ConsentAnalytics";
 import "./globals.css";
+import "./performance.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://psdorhanyasli.com.tr"),
@@ -41,7 +42,6 @@ export default function RootLayout({
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Hydration öncesi tema + js sınıfı — FOUC ve tema yanıp sönmesini önler */}
         <script
           id="theme-init"
           dangerouslySetInnerHTML={{
@@ -73,8 +73,6 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
-        {/* Klavye kullanıcısı menüdeki onlarca bağlantıyı tek tek geçmek
-            zorunda kalmasın: Tab'a ilk basışta görünür hale gelir. */}
         <a href="#main" className="skip-link">İçeriğe atla</a>
         <LocaleProvider>
           <AuthProvider>

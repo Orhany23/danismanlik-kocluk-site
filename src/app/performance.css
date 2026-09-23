@@ -1,0 +1,73 @@
+/*
+ * Premium UX + performance katmanı.
+ * Mevcut tasarımı bozmadan rendering, erişilebilirlik ve motion davranışını iyileştirir.
+ */
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--clr-sage) 72%, white);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Hero dışındaki uzun bölümlerin paint/layout maliyetini viewport'a yaklaşana kadar ertele. */
+main > section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 760px;
+}
+
+:where(.package-card, .domain-card, .discover-card, .testimonial-card) {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+:where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+:where(.section-sub, .hero-sub, .domain-card-desc) {
+  text-wrap: pretty;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.package-card, .domain-card, .discover-card) {
+    transition:
+      transform 240ms var(--transition),
+      border-color 240ms var(--transition),
+      box-shadow 240ms var(--transition);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html.js :where(.reveal, .reveal-left, .reveal-right, .reveal-scale) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-inline: 18px;
+  }
+
+  .hero-cta > .btn {
+    min-height: 48px;
+  }
+}
