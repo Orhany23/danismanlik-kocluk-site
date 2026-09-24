@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   Inbox, Mail, Star, GraduationCap, Users, CalendarDays, ClipboardList,
-  ArrowUpRight, Clock3, CircleAlert, Sparkles, CheckCircle2, Zap,
+  ArrowUpRight, Clock3, Sparkles, CheckCircle2, Zap,
   MessageSquareReply, UserRoundSearch, CalendarCheck2, ChevronRight
 } from "lucide-react";
 
@@ -123,7 +123,7 @@ async function getActionCenter(now: Date): Promise<ActionItem[]> {
       detail:`Yayın onayı bekliyor · ${relative(t.createdAt, now)}`, href:"/admin/testimonials", action:"İncele", kind:"review"
     });
 
-    return items.sort((a,b)=>a.priority-b.priority).slice(0,12);
+    return items.sort((a,b) => a.priority - b.priority || a.title.localeCompare(b.title, "tr")).slice(0,12);
   } catch (err) {
     console.error("Action Center failed:", err);
     return [];
