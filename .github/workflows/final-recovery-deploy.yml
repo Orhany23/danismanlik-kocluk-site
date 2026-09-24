@@ -1,0 +1,160 @@
+name: FINAL Recovery & Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: final-recovery-deploy
+  cancel-in-progress: false
+
+jobs:
+  repair-verify-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply production DB compatibility repair
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > src/lib/ensureResourceSchema.ts <<'TS'
+          import prisma from "@/lib/db";
+
+          let ensurePromise: Promise<void> | null = null;
+
+          export function ensureResourceSchema(): Promise<void> {
+            if (!ensurePromise) {
+              ensurePromise = prisma
+                .$executeRawUnsafe(
+                  'ALTER TABLE "Resource" ADD COLUMN IF NOT EXISTS "isTemplate" BOOLEAN NOT NULL DEFAULT false'
+                )
+                .then(() => undefined)
+                .catch((error) => {
+                  ensurePromise = null;
+                  throw error;
+                });
+            }
+
+            return ensurePromise;
+          }
+          TS
+
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("src/app/ogrenci/page.tsx")
+          text = path.read_text()
+
+          import_line = 'import { ensureResourceSchema } from "@/lib/ensureResourceSchema";'
+
+          if import_line not in text:
+              anchor = 'import prisma from "@/lib/db";'
+              if anchor not in text:
+                  raise SystemExit("Prisma import anchor bulunamadi")
+              text = text.replace(
+                  anchor,
+                  anchor + "\n" + import_line,
+                  1
+              )
+
+          old = '''export default async function StudentDashboard(){
+           const student=await requireStudent();'''
+
+          new = '''export default async function StudentDashboard(){
+           await ensureResourceSchema();
+           const student=await requireStudent();'''
+
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif 'await ensureResourceSchema();' not in text:
+              raise SystemExit("StudentDashboard anchor bulunamadi")
+
+          path.write_text(text)
+          PY
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Commit verified repair
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "No source changes needed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add src/lib/ensureResourceSchema.ts src/app/ogrenci/page.tsx
+          git commit -m "fix: recover student portal from Resource schema drift"
+          git push origin HEAD:master
+
+      - name: Wait for Vercel deployment
+        run: sleep 45
+
+      - name: Production smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE="https://psdorhanyasli.com.tr"
+
+          check() {
+            local url="$1"
+            local code
+
+            code="$(curl -L -sS \
+              -o /tmp/body.html \
+              -w '%{http_code}' \
+              --retry 5 \
+              --retry-delay 8 \
+              --retry-all-errors \
+              --max-time 30 \
+              "$url")"
+
+            echo "$url -> HTTP $code"
+
+            if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
+              echo "Smoke test failed: $url"
+              head -c 1200 /tmp/body.html || true
+              exit 1
+            fi
+          }
+
+          check "$BASE/"
+          check "$BASE/ogrenci/giris"
+
+          echo "Production smoke tests passed."
