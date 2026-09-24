@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { ensureResourceSchema } from "@/lib/ensureResourceSchema";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
 import StudentTestimonial from "@/components/StudentTestimonial";
 import StudentWorkForm from "@/components/StudentWorkForm";
@@ -33,6 +34,7 @@ async function getProgress(studentId:string){try{const[total,checked,works,pendi
 const DATE_FMT=new Intl.DateTimeFormat("tr-TR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
 
 export default async function StudentDashboard(){
+ await ensureResourceSchema();
  const student=await requireStudent();if(!student)redirect("/ogrenci/giris");
  const[nextMeeting,latestFeedback,progress,personal,library]=await Promise.all([
   getNextMeeting(student.clientId),getLatestFeedback(student.id),getProgress(student.id),
