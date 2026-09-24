@@ -8,7 +8,9 @@ import {
 import { requireStudent, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { ensureResourceSchema } from "@/lib/ensureResourceSchema";
+import { getGradeById, guessGradeId } from "@/lib/curriculum";
 import StudentPasswordChange from "@/components/StudentPasswordChange";
+import StudentProfileSettings from "@/components/StudentProfileSettings";
 import StudentTestimonial from "@/components/StudentTestimonial";
 import StudentWorkForm from "@/components/StudentWorkForm";
 
@@ -30,14 +32,15 @@ function ResourceItem({r}:{r:Resource}){const note=r.type==="NOTE"&&r.body?split
 type NextMeeting={title:string;date:Date;type:string;kind:"appointment"|"session"};
 async function getNextMeeting(clientId:string|null):Promise<NextMeeting|null>{if(!clientId)return null;const now=new Date();try{const[a,s]=await Promise.all([prisma.appointment.findFirst({where:{clientId,date:{gte:now},status:{notIn:["CANCELLED","IPTAL"]}},orderBy:{date:"asc"},select:{title:true,date:true,type:true}}),prisma.session.findFirst({where:{clientId,date:{gte:now},status:"PLANNED"},orderBy:{date:"asc"},select:{title:true,date:true,type:true}})]);const c:NextMeeting[]=[];if(a)c.push({...a,kind:"appointment"});if(s)c.push({...s,kind:"session"});return c.sort((x,y)=>x.date.getTime()-y.date.getTime())[0]??null}catch{return null}}
 async function getLatestFeedback(studentId:string){try{return await prisma.studentWork.findFirst({where:{studentId,feedback:{not:null}},orderBy:[{feedbackAt:"desc"},{createdAt:"desc"}],select:{title:true,feedback:true,feedbackAt:true,createdAt:true}})}catch{return null}}
-async function getProgress(studentId:string){try{const[total,checked,works,pending]=await Promise.all([prisma.topicProgress.count({where:{studentId}}),prisma.topicProgress.count({where:{studentId,checkedAt:{not:null}}}),prisma.studentWork.count({where:{studentId}}),prisma.studentWork.count({where:{studentId,seen:false}})]);return{total,checked,works,pending}}catch{return{total:0,checked:0,works:0,pending:0}}}
+async function getProgress(studentId:string,gradeId:string){try{const grade=getGradeById(gradeId);const topicIds=grade?.subjects.flatMap(s=>s.topics.map(t=>t.id))??[];const[checked,works,pending]=await Promise.all([topicIds.length?prisma.topicProgress.count({where:{studentId,topicId:{in:topicIds},checkedAt:{not:null}}}):Promise.resolve(0),prisma.studentWork.count({where:{studentId}}),prisma.studentWork.count({where:{studentId,seen:false}})]);return{total:topicIds.length,checked,works,pending}}catch{return{total:0,checked:0,works:0,pending:0}}}
 const DATE_FMT=new Intl.DateTimeFormat("tr-TR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
 
 export default async function StudentDashboard(){
  await ensureResourceSchema();
  const student=await requireStudent();if(!student)redirect("/ogrenci/giris");
+ const gradeId=guessGradeId(student.gradeLevel);
  const[nextMeeting,latestFeedback,progress,personal,library]=await Promise.all([
-  getNextMeeting(student.clientId),getLatestFeedback(student.id),getProgress(student.id),
+  getNextMeeting(student.clientId),getLatestFeedback(student.id),getProgress(student.id,gradeId),
   prisma.resource.findMany({where:{studentId:student.id,published:true},orderBy:[{pinned:"desc"},{createdAt:"desc"}]}),
   prisma.resource.findMany({where:{studentId:null,published:true,isTemplate:false},orderBy:[{pinned:"desc"},{createdAt:"desc"}]})
  ]);
@@ -68,7 +71,7 @@ export default async function StudentDashboard(){
 
    <section className="student-section student-os-resources" id="kaynaklar"><div className="student-section-head"><h2>Sana Özel İçerikler</h2><span className="student-section-count">{personal.length}</span></div>{personal.length===0?<div className="student-empty">Henüz sana özel bir içerik yok.</div>:<div className="resource-list">{personal.map(r=><ResourceItem key={r.id} r={r as Resource}/>)}</div>}</section>
    <section className="student-section student-os-resources"><div className="student-section-head"><h2>Kaynak Kütüphanesi</h2><span className="student-section-count">{library.length}</span></div>{library.length===0?<div className="student-empty">Yeni kaynaklar eklendiğinde burada görünecek.</div>:<div className="resource-list">{library.map(r=><ResourceItem key={r.id} r={r as Resource}/>)}</div>}</section>
-   <div className="student-os-secondary"><StudentTestimonial/><StudentPasswordChange/></div>
+   <div className="student-os-secondary"><StudentTestimonial/><StudentProfileSettings name={student.name} email={student.email} gradeLevel={student.gradeLevel}/><StudentPasswordChange/></div>
   </main>
  </div>
 }

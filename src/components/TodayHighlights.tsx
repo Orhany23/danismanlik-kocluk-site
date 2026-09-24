@@ -100,8 +100,10 @@ function DailyArticleCard() {
       </div>
       <ShareAsImageButton
         kicker={t.daily.badge}
-        quote={daily.t}
+        title={daily.t}
+        body={daily.s}
         attribution={`${daily.r} · ${daily.y}`}
+        cta="Araştırmanın tamamı →"
         siteUrl={SITE_URL}
         fileName="gunun-makalesi.png"
       />
@@ -153,7 +155,10 @@ function DailySparkCard() {
       </div>
       <ShareAsImageButton
         kicker={t.kinds[spark.k]}
-        quote={spark.k === "motivasyon" ? spark.t : `${spark.t}${spark.c ? " — " + spark.c : ""}`}
+        title={spark.k === "motivasyon" ? undefined : spark.t}
+        quote={spark.k === "motivasyon" ? spark.t : undefined}
+        body={spark.k === "motivasyon" ? undefined : spark.c}
+        cta="Her gün yeni içerik →"
         siteUrl={SITE_URL}
         fileName="gunun-motivasyonu.png"
       />
