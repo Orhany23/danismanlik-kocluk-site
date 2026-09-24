@@ -1,0 +1,185 @@
+name: Advisor OS Grade Lock and Message Replies
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Apply grade lock
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('src/app/ogrenci/mufredat/page.tsx')
+          s=p.read_text()
+          if 'import { guessGradeId } from "@/lib/curriculum";' not in s:
+              s=s.replace('import MufredatClient from "@/components/MufredatClient";', 'import MufredatClient from "@/components/MufredatClient";\nimport { guessGradeId } from "@/lib/curriculum";')
+          s=s.replace('<MufredatClient defaultGradeId={guessGradeId(student.gradeLevel)} />','<MufredatClient gradeId={guessGradeId(student.gradeLevel)} />')
+          s=re.sub(r'\n// Öğrencinin serbest metin.*?function guessGradeId\(gradeLevel: string \| null\): string \{.*?\n\}', '', s, flags=re.S)
+          p.write_text(s)
+
+          p=Path('src/components/MufredatClient.tsx')
+          s=p.read_text()
+          s=s.replace('import { CURRICULUM, CURRICULUM_VERSION, getGradeById } from "@/lib/curriculum";','import { CURRICULUM_VERSION, getGradeById } from "@/lib/curriculum";')
+          s=s.replace('export default function MufredatClient({defaultGradeId}:{defaultGradeId:string}){\n const[gradeId,setGradeId]=useState(defaultGradeId);','export default function MufredatClient({gradeId}:{gradeId:string}){')
+          s=s.replace(' const grade=getGradeById(gradeId)??CURRICULUM[0];',' const grade=getGradeById(gradeId);')
+          s,n=re.subn(r'\n <div className="mufredat-grade-tabs".*?</div>\n','\n',s,count=1,flags=re.S)
+          if n != 1: raise SystemExit('Student grade tabs not found')
+          s=s.replace(' return <div><header className="mak-head">',' if(!grade)return <div className="student-summary-empty">Sınıf bilgisi bulunamadı. Hesap Ayarları bölümünden sınıfını güncelle.</div>;\n return <div><header className="mak-head">')
+          s=s.replace('Genel yüzde, seçtiğin sınıftaki tüm ders ve konuların toplamından hesaplanır. Birkaç işaretleme artık yapay biçimde %100 göstermez.','Yalnızca kendi sınıfının müfredatını görüyorsun. Genel ilerleme bu sınıftaki tüm ders ve konuların toplamından hesaplanır.')
+          p.write_text(s)
+
+          p=Path('src/app/admin/(panel)/mufredat/page.tsx')
+          s=p.read_text()
+          s=s.replace('import { CURRICULUM, getGradeById } from "@/lib/curriculum";','import { CURRICULUM, getGradeById, guessGradeId } from "@/lib/curriculum";')
+          old='          setStudentId(id);\n          if (id) {\n            setLoadingProgress(true);\n          } else {'
+          new='          setStudentId(id);\n          if (id) {\n            const selectedStudent = students.find((student) => student.id === id);\n            setGradeId(guessGradeId(selectedStudent?.gradeLevel));\n            setLoadingProgress(true);\n          } else {'
+          if old not in s: raise SystemExit('Admin selector not found')
+          s=s.replace(old,new,1)
+          s,n=re.subn(r'\n\s*<div className="flex flex-wrap gap-2">\s*\{CURRICULUM\.map\(\(g\) => \(.*?\)\)\}\s*</div>\s*','\n          <div className="rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm text-gray-600"><b>{grade.label}</b> müfredatı · Öğrencinin kayıtlı sınıfına göre otomatik gösteriliyor.</div>\n',s,count=1,flags=re.S)
+          if n != 1: raise SystemExit('Admin grade tabs not found')
+          p.write_text(s)
+          PY
+
+      - name: Add message reply model
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('prisma/schema.prisma'); s=p.read_text()
+          old='  message   String\n  read      Boolean  @default(false)\n  createdAt DateTime @default(now())'
+          new='  message   String\n  read      Boolean  @default(false)\n  reply     String?\n  repliedAt DateTime?\n  createdAt DateTime @default(now())'
+          if old not in s: raise SystemExit('Message schema anchor not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          cat > src/lib/ensureMessageReplySchema.ts <<'TS'
+          import prisma from "@/lib/db";
+          let ensurePromise: Promise<void> | null = null;
+          export function ensureMessageReplySchema(): Promise<void> {
+            if (!ensurePromise) {
+              ensurePromise = (async () => {
+                await prisma.$executeRawUnsafe('ALTER TABLE "Message" ADD COLUMN IF NOT EXISTS "reply" TEXT');
+                await prisma.$executeRawUnsafe('ALTER TABLE "Message" ADD COLUMN IF NOT EXISTS "repliedAt" TIMESTAMP(3)');
+              })().catch((error) => { ensurePromise = null; throw error; });
+            }
+            return ensurePromise;
+          }
+          TS
+
+      - name: Add email reply helper
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('src/lib/email.ts'); s=p.read_text(); marker='\nfunction escapeHtml(str: string): string {'
+          if marker not in s: raise SystemExit('email anchor not found')
+          helper='''\nexport async function sendContactReplyEmail(to: string, recipientName: string, originalMessage: string, reply: string) {\n  if (!resend) throw new Error("E-posta servisi yapılandırılmamış.");\n  const { error } = await resend.emails.send({\n    from: FROM, to, subject: "Mesajınıza yanıt — Orhan Yaşlı",\n    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;line-height:1.65"><p>Merhaba ${escapeHtml(recipientName)},</p><div style="padding:18px 20px;background:#f3f8f6;border-radius:14px">${escapeHtml(reply).replace(/\\n/g,"<br>")}</div><p style="margin-top:24px;color:#6b7b7b;font-size:13px">Gönderdiğiniz mesaj:</p><blockquote>${escapeHtml(originalMessage).replace(/\\n/g,"<br>")}</blockquote><p><strong>Orhan Yaşlı</strong><br>Psikolojik Danışman &amp; Rehber Öğretmen</p></div>`,\n  });\n  if (error) throw new Error(`E-posta gönderilemedi: ${error.message}`);\n}\n'''
+          p.write_text(s.replace(marker,helper+marker,1))
+          PY
+
+      - name: Replace message API
+        shell: bash
+        run: |
+          cat > src/app/api/messages/route.ts <<'TS'
+          import { NextRequest, NextResponse } from "next/server";
+          import { requireAdmin } from "@/lib/auth";
+          import prisma from "@/lib/db";
+          import { clientIp, rateLimited } from "@/lib/rateLimit";
+          import { sendContactReplyEmail } from "@/lib/email";
+          import { ensureMessageReplySchema } from "@/lib/ensureMessageReplySchema";
+
+          export async function GET() {
+            if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            await ensureMessageReplySchema();
+            return NextResponse.json(await prisma.message.findMany({ orderBy: { createdAt: "desc" } }), { headers: { "Cache-Control": "no-store" } });
+          }
+          export async function PATCH(req: NextRequest) {
+            if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            await ensureMessageReplySchema();
+            const { id } = await req.json();
+            return NextResponse.json(await prisma.message.update({ where: { id: String(id) }, data: { read: true } }));
+          }
+          export async function POST(req: NextRequest) {
+            if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            if (rateLimited("message-reply", clientIp(req), 30, 15 * 60 * 1000)) return NextResponse.json({ error: "Çok fazla istek." }, { status: 429 });
+            try {
+              await ensureMessageReplySchema();
+              const body = await req.json(); const id = String(body.id ?? ""); const reply = String(body.reply ?? "").trim();
+              if (!id || reply.length < 2 || reply.length > 5000) return NextResponse.json({ error: "Yanıt 2–5000 karakter olmalı." }, { status: 400 });
+              const message = await prisma.message.findUnique({ where: { id } });
+              if (!message) return NextResponse.json({ error: "Mesaj bulunamadı." }, { status: 404 });
+              if (!message.email) return NextResponse.json({ error: "Bu mesajda e-posta adresi yok." }, { status: 400 });
+              await sendContactReplyEmail(message.email, message.name, message.message, reply);
+              const updated = await prisma.message.update({ where: { id }, data: { read: true, reply, repliedAt: new Date() } });
+              return NextResponse.json({ ok: true, message: updated });
+            } catch (error) {
+              return NextResponse.json({ error: error instanceof Error ? error.message : "Yanıt gönderilemedi." }, { status: 500 });
+            }
+          }
+          TS
+
+      - name: Add reply UI to admin messages
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('src/app/admin/(panel)/messages/page.tsx'); s=p.read_text()
+          s=s.replace('import { CalendarDays, Mail, Phone } from "lucide-react";','import { CalendarDays, CheckCircle2, Mail, Phone, Send } from "lucide-react";')
+          s=s.replace('  read: boolean;\n  createdAt: string;','  read: boolean;\n  reply: string | null;\n  repliedAt: string | null;\n  createdAt: string;')
+          s=s.replace('  const [selected, setSelected] = useState<Message | null>(null);','  const [selected, setSelected] = useState<Message | null>(null);\n  const [reply, setReply] = useState("");\n  const [sending, setSending] = useState(false);\n  const [replyNotice, setReplyNotice] = useState("");')
+          old='  const openMessage = (msg: Message) => {\n    setSelected(msg);\n    if (!msg.read) markAsRead(msg.id);\n  };'
+          new='''  const openMessage = (msg: Message) => { setSelected(msg); setReply(msg.reply ?? ""); setReplyNotice(""); if (!msg.read) markAsRead(msg.id); };
+
+            const sendReply = async () => {
+              if (!selected || sending) return;
+              setSending(true); setReplyNotice("");
+              try {
+                const res = await fetch("/api/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: selected.id, reply }) });
+                const data = await res.json(); if (!res.ok) throw new Error(data.error || "Yanıt gönderilemedi.");
+                const updated = data.message as Message; setMessages((prev) => prev.map((m) => m.id === updated.id ? updated : m)); setSelected(updated); setReply(updated.reply ?? ""); setReplyNotice("Yanıt gönderildi ve kaydedildi.");
+              } catch (e) { setReplyNotice(e instanceof Error ? e.message : "Yanıt gönderilemedi."); } finally { setSending(false); }
+            };'''
+          if old not in s: raise SystemExit('openMessage anchor not found')
+          s=s.replace(old,new,1)
+          s=s.replace('<span className="text-xs text-gray-400 shrink-0 ml-2">{new Date(msg.createdAt).toLocaleDateString("tr-TR")}</span>','<span className="flex items-center gap-2 text-xs text-gray-400 shrink-0 ml-2">{msg.repliedAt && <CheckCircle2 size={14} className="text-emerald-600" />}{new Date(msg.createdAt).toLocaleDateString("tr-TR")}</span>')
+          anchor='''              <div className="pt-3 border-t border-gray-100">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+              </div>'''
+          box=anchor+'''\n              <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4 space-y-3"><div className="flex justify-between"><h4 className="text-sm font-semibold">Dönüt / Yanıt</h4>{selected.repliedAt && <span className="text-xs text-emerald-600">Cevaplandı</span>}</div><textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={6} maxLength={5000} disabled={!selected.email || sending} placeholder={selected.email ? "Mesaja vereceğin yanıtı yaz…" : "Bu mesajda e-posta adresi yok."} className="w-full rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm" />{replyNotice && <p className="text-xs text-gray-600">{replyNotice}</p>}<button onClick={sendReply} disabled={!selected.email || sending || reply.trim().length < 2} className="inline-flex items-center gap-2 rounded-xl bg-[var(--clr-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"><Send size={15}/>{sending ? "Gönderiliyor…" : selected.repliedAt ? "Yanıtı Güncelle ve Tekrar Gönder" : "Yanıtı Gönder"}</button></div>'''
+          if anchor not in s: raise SystemExit('message detail anchor not found')
+          p.write_text(s.replace(anchor,box,1))
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+
+      - name: Commit verified changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prisma/schema.prisma src/app/ogrenci/mufredat/page.tsx src/components/MufredatClient.tsx "src/app/admin/(panel)/mufredat/page.tsx" "src/app/admin/(panel)/messages/page.tsx" src/app/api/messages/route.ts src/lib/email.ts src/lib/ensureMessageReplySchema.ts
+          if git diff --cached --quiet; then echo "No source changes."; exit 0; fi
+          git commit -m "feat: lock curriculum by grade and add message replies"
+          git push origin HEAD:master
