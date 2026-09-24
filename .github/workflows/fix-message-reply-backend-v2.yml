@@ -1,0 +1,66 @@
+name: Fix Message Reply Backend
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Apply backend fix
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import base64
+
+          p=Path("prisma/schema.prisma")
+          s=p.read_text(encoding="utf-8")
+          if "  reply     String?" not in s:
+              anchor="  read      Boolean  @default(false)\n"
+              if anchor not in s: raise SystemExit("Message schema anchor not found")
+              s=s.replace(anchor,anchor+base64.b64decode("ICByZXBseSAgICAgU3RyaW5nPwogIHJlcGxpZWRBdCBEYXRlVGltZT8K").decode(),1)
+              p.write_text(s,encoding="utf-8")
+
+          Path("src/lib/ensureMessageReplySchema.ts").write_text(base64.b64decode("aW1wb3J0IHByaXNtYSBmcm9tICJAL2xpYi9kYiI7CgpsZXQgZW5zdXJlUHJvbWlzZTogUHJvbWlzZTx2b2lkPiB8IG51bGwgPSBudWxsOwoKZXhwb3J0IGZ1bmN0aW9uIGVuc3VyZU1lc3NhZ2VSZXBseVNjaGVtYSgpOiBQcm9taXNlPHZvaWQ+IHsKICBpZiAoIWVuc3VyZVByb21pc2UpIHsKICAgIGVuc3VyZVByb21pc2UgPSAoYXN5bmMgKCkgPT4gewogICAgICBhd2FpdCBwcmlzbWEuJGV4ZWN1dGVSYXdVbnNhZmUoJ0FMVEVSIFRBQkxFICJNZXNzYWdlIiBBREQgQ09MVU1OIElGIE5PVCBFWElTVFMgInJlcGx5IiBURVhUJyk7CiAgICAgIGF3YWl0IHByaXNtYS4kZXhlY3V0ZVJhd1Vuc2FmZSgnQUxURVIgVEFCTEUgIk1lc3NhZ2UiIEFERCBDT0xVTU4gSUYgTk9UIEVYSVNUUyAicmVwbGllZEF0IiBUSU1FU1RBTVAoMyknKTsKICAgIH0pKCkuY2F0Y2goKGVycm9yKSA9PiB7CiAgICAgIGVuc3VyZVByb21pc2UgPSBudWxsOwogICAgICB0aHJvdyBlcnJvcjsKICAgIH0pOwogIH0KICByZXR1cm4gZW5zdXJlUHJvbWlzZTsKfQo=").decode(),encoding="utf-8")
+
+          p=Path("src/lib/email.ts")
+          s=p.read_text(encoding="utf-8")
+          if "sendContactReplyEmail" not in s:
+              marker="function escapeHtml(str: string): string {"
+              if marker not in s: raise SystemExit("email anchor not found")
+              s=s.replace(marker,base64.b64decode("ZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHNlbmRDb250YWN0UmVwbHlFbWFpbCgKICB0bzogc3RyaW5nLAogIHJlY2lwaWVudE5hbWU6IHN0cmluZywKICBvcmlnaW5hbE1lc3NhZ2U6IHN0cmluZywKICByZXBseTogc3RyaW5nCikgewogIGlmICghcmVzZW5kKSB0aHJvdyBuZXcgRXJyb3IoIkUtcG9zdGEgc2VydmlzaSB5YXDEsWxhbmTEsXLEsWxtYW3EscWfLiIpOwogIGNvbnN0IHsgZXJyb3IgfSA9IGF3YWl0IHJlc2VuZC5lbWFpbHMuc2VuZCh7CiAgICBmcm9tOiBGUk9NLAogICAgdG8sCiAgICBzdWJqZWN0OiAiTWVzYWrEsW7EsXphIHlhbsSxdCDigJQgT3JoYW4gWWHFn2zEsSIsCiAgICBodG1sOiBgPGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6c2Fucy1zZXJpZjttYXgtd2lkdGg6NTYwcHg7bWFyZ2luOjAgYXV0bztsaW5lLWhlaWdodDoxLjY1O2NvbG9yOiMyNDMyMzQiPgogICAgICA8cD5NZXJoYWJhICR7ZXNjYXBlSHRtbChyZWNpcGllbnROYW1lKX0sPC9wPgogICAgICA8ZGl2IHN0eWxlPSJwYWRkaW5nOjE4cHg7Ym9yZGVyLXJhZGl1czoxMnB4O2JhY2tncm91bmQ6I2YzZjhmNiI+JHtlc2NhcGVIdG1sKHJlcGx5KS5yZXBsYWNlKC9cXG4vZywiPGJyPiIpfTwvZGl2PgogICAgICA8cCBzdHlsZT0ibWFyZ2luLXRvcDoyMnB4O2NvbG9yOiM2NDc0OGI7Zm9udC1zaXplOjEzcHgiPkfDtm5kZXJkacSfaW5peiBtZXNhajo8L3A+CiAgICAgIDxibG9ja3F1b3RlIHN0eWxlPSJib3JkZXItbGVmdDozcHggc29saWQgI2I3YzljNTtwYWRkaW5nLWxlZnQ6MTRweDtjb2xvcjojNjQ3NDhiIj4ke2VzY2FwZUh0bWwob3JpZ2luYWxNZXNzYWdlKS5yZXBsYWNlKC9cXG4vZywiPGJyPiIpfTwvYmxvY2txdW90ZT4KICAgICAgPHA+PHN0cm9uZz5PcmhhbiBZYcWfbMSxPC9zdHJvbmc+PGJyPlBzaWtvbG9qaWsgRGFuxLHFn21hbiAmYW1wOyBSZWhiZXIgw5bEn3JldG1lbjwvcD4KICAgIDwvZGl2PmAsCiAgfSk7CiAgaWYgKGVycm9yKSB0aHJvdyBuZXcgRXJyb3IoYEUtcG9zdGEgZ8O2bmRlcmlsZW1lZGk6ICR7ZXJyb3IubWVzc2FnZX1gKTsKfQoK").decode()+marker,1)
+              p.write_text(s,encoding="utf-8")
+
+          Path("src/app/api/messages/route.ts").write_text(base64.b64decode("aW1wb3J0IHsgTmV4dFJlcXVlc3QsIE5leHRSZXNwb25zZSB9IGZyb20gIm5leHQvc2VydmVyIjsKaW1wb3J0IHsgcmVxdWlyZUFkbWluIH0gZnJvbSAiQC9saWIvYXV0aCI7CmltcG9ydCBwcmlzbWEgZnJvbSAiQC9saWIvZGIiOwppbXBvcnQgeyBjbGllbnRJcCwgcmF0ZUxpbWl0ZWQgfSBmcm9tICJAL2xpYi9yYXRlTGltaXQiOwppbXBvcnQgeyBzZW5kQ29udGFjdFJlcGx5RW1haWwgfSBmcm9tICJAL2xpYi9lbWFpbCI7CmltcG9ydCB7IGVuc3VyZU1lc3NhZ2VSZXBseVNjaGVtYSB9IGZyb20gIkAvbGliL2Vuc3VyZU1lc3NhZ2VSZXBseVNjaGVtYSI7CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gR0VUKCkgewogIGNvbnN0IHNlc3Npb24gPSBhd2FpdCByZXF1aXJlQWRtaW4oKTsKICBpZiAoIXNlc3Npb24pIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiVW5hdXRob3JpemVkIiB9LCB7IHN0YXR1czogNDAxIH0pOwogIHRyeSB7CiAgICBhd2FpdCBlbnN1cmVNZXNzYWdlUmVwbHlTY2hlbWEoKTsKICAgIGNvbnN0IG1lc3NhZ2VzID0gYXdhaXQgcHJpc21hLm1lc3NhZ2UuZmluZE1hbnkoeyBvcmRlckJ5OiB7IGNyZWF0ZWRBdDogImRlc2MiIH0gfSk7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24obWVzc2FnZXMsIHsgaGVhZGVyczogeyAiQ2FjaGUtQ29udHJvbCI6ICJuby1zdG9yZSIgfSB9KTsKICB9IGNhdGNoIChlcnJvcikgewogICAgY29uc29sZS5lcnJvcigiTWVzc2FnZXMgR0VUIGVycm9yOiIsIGVycm9yKTsKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiTWVzYWpsYXIgYWzEsW5hbWFkxLEuIiB9LCB7IHN0YXR1czogNTAwIH0pOwogIH0KfQoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIFBBVENIKHJlcTogTmV4dFJlcXVlc3QpIHsKICBjb25zdCBzZXNzaW9uID0gYXdhaXQgcmVxdWlyZUFkbWluKCk7CiAgaWYgKCFzZXNzaW9uKSByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIlVuYXV0aG9yaXplZCIgfSwgeyBzdGF0dXM6IDQwMSB9KTsKICB0cnkgewogICAgYXdhaXQgZW5zdXJlTWVzc2FnZVJlcGx5U2NoZW1hKCk7CiAgICBjb25zdCB7IGlkIH0gPSBhd2FpdCByZXEuanNvbigpOwogICAgaWYgKCFpZCkgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJNZXNhaiBraW1sacSfaSBnZXJla2xpLiIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbihhd2FpdCBwcmlzbWEubWVzc2FnZS51cGRhdGUoeyB3aGVyZTogeyBpZCB9LCBkYXRhOiB7IHJlYWQ6IHRydWUgfSB9KSk7CiAgfSBjYXRjaCAoZXJyb3IpIHsKICAgIGNvbnNvbGUuZXJyb3IoIk1lc3NhZ2UgUEFUQ0ggZXJyb3I6IiwgZXJyb3IpOwogICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJNZXNhaiBnw7xuY2VsbGVuZW1lZGkuIiB9LCB7IHN0YXR1czogNTAwIH0pOwogIH0KfQoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIFBPU1QocmVxOiBOZXh0UmVxdWVzdCkgewogIGNvbnN0IHNlc3Npb24gPSBhd2FpdCByZXF1aXJlQWRtaW4oKTsKICBpZiAoIXNlc3Npb24pIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiVW5hdXRob3JpemVkIiB9LCB7IHN0YXR1czogNDAxIH0pOwogIGlmIChyYXRlTGltaXRlZCgibWVzc2FnZS1yZXBseSIsIGNsaWVudElwKHJlcSksIDMwLCAxNSAqIDYwICogMTAwMCkpCiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIsOHb2sgZmF6bGEgeWFuxLF0IGlzdGXEn2kuIiB9LCB7IHN0YXR1czogNDI5IH0pOwoKICB0cnkgewogICAgYXdhaXQgZW5zdXJlTWVzc2FnZVJlcGx5U2NoZW1hKCk7CiAgICBjb25zdCBib2R5ID0gYXdhaXQgcmVxLmpzb24oKTsKICAgIGNvbnN0IGlkID0gU3RyaW5nKGJvZHkuaWQgPz8gIiIpOwogICAgY29uc3QgcmVwbHkgPSBTdHJpbmcoYm9keS5yZXBseSA/PyAiIikudHJpbSgpOwogICAgaWYgKCFpZCB8fCByZXBseS5sZW5ndGggPCAyIHx8IHJlcGx5Lmxlbmd0aCA+IDUwMDApCiAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiWWFuxLF0IDLigJM1MDAwIGthcmFrdGVyIG9sbWFsxLEuIiB9LCB7IHN0YXR1czogNDAwIH0pOwoKICAgIGNvbnN0IG1lc3NhZ2UgPSBhd2FpdCBwcmlzbWEubWVzc2FnZS5maW5kVW5pcXVlKHsgd2hlcmU6IHsgaWQgfSB9KTsKICAgIGlmICghbWVzc2FnZSkgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJNZXNhaiBidWx1bmFtYWTEsS4iIH0sIHsgc3RhdHVzOiA0MDQgfSk7CiAgICBpZiAoIW1lc3NhZ2UuZW1haWwpIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiQnUgbWVzYWpkYSBlLXBvc3RhIGFkcmVzaSB5b2suIiB9LCB7IHN0YXR1czogNDAwIH0pOwoKICAgIGF3YWl0IHNlbmRDb250YWN0UmVwbHlFbWFpbChtZXNzYWdlLmVtYWlsLCBtZXNzYWdlLm5hbWUsIG1lc3NhZ2UubWVzc2FnZSwgcmVwbHkpOwogICAgY29uc3QgdXBkYXRlZCA9IGF3YWl0IHByaXNtYS5tZXNzYWdlLnVwZGF0ZSh7CiAgICAgIHdoZXJlOiB7IGlkIH0sCiAgICAgIGRhdGE6IHsgcmVhZDogdHJ1ZSwgcmVwbHksIHJlcGxpZWRBdDogbmV3IERhdGUoKSB9LAogICAgfSk7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBvazogdHJ1ZSwgbWVzc2FnZTogdXBkYXRlZCB9KTsKICB9IGNhdGNoIChlcnJvcikgewogICAgY29uc29sZS5lcnJvcigiTWVzc2FnZSByZXBseSBlcnJvcjoiLCBlcnJvcik7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oCiAgICAgIHsgZXJyb3I6IGVycm9yIGluc3RhbmNlb2YgRXJyb3IgPyBlcnJvci5tZXNzYWdlIDogIllhbsSxdCBnw7ZuZGVyaWxlbWVkaS4iIH0sCiAgICAgIHsgc3RhdHVzOiA1MDAgfQogICAgKTsKICB9Cn0K").decode(),encoding="utf-8")
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+
+      - name: Commit verified fix
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prisma/schema.prisma src/lib/ensureMessageReplySchema.ts src/lib/email.ts src/app/api/messages/route.ts
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "fix: complete message reply backend"
+          git push origin HEAD:master
