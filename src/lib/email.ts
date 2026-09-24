@@ -92,6 +92,28 @@ export async function sendAppointmentReminderEmail(
   }
 }
 
+export async function sendContactReplyEmail(
+  to: string,
+  recipientName: string,
+  originalMessage: string,
+  reply: string
+) {
+  if (!resend) throw new Error("E-posta servisi yapılandırılmamış.");
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject: "Mesajınıza yanıt — Orhan Yaşlı",
+    html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;line-height:1.65;color:#243234">
+      <p>Merhaba ${escapeHtml(recipientName)},</p>
+      <div style="padding:18px;border-radius:12px;background:#f3f8f6">${escapeHtml(reply).replace(/\\n/g,"<br>")}</div>
+      <p style="margin-top:22px;color:#64748b;font-size:13px">Gönderdiğiniz mesaj:</p>
+      <blockquote style="border-left:3px solid #b7c9c5;padding-left:14px;color:#64748b">${escapeHtml(originalMessage).replace(/\\n/g,"<br>")}</blockquote>
+      <p><strong>Orhan Yaşlı</strong><br>Psikolojik Danışman &amp; Rehber Öğretmen</p>
+    </div>`,
+  });
+  if (error) throw new Error(`E-posta gönderilemedi: ${error.message}`);
+}
+
 function escapeHtml(str: string): string {
   return str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
 }

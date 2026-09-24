@@ -74,6 +74,8 @@ model Message {
   service   String?
   message   String
   read      Boolean  @default(false)
+  reply     String?
+  repliedAt DateTime?
   createdAt DateTime @default(now())
 }
 
