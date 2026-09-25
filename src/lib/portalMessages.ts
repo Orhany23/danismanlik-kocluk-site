@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { ensurePortalMessageTables } from "@/lib/ensurePortalMessageTables";
 import { rateLimited } from "@/lib/rateLimit";
+import { notifyPortalMessage } from "@/lib/portalMessageNotifications";
 
 export type PortalSender = "ADMIN" | "STUDENT";
 const PAGE_SIZE = 50;
@@ -80,7 +81,7 @@ export async function sendPortalMessage(req: Request, studentId: string, sender:
     throw new MessageError("Çok hızlı mesaj gönderiyorsun. Bir dakika sonra tekrar dene.", 429);
   }
   await ensurePortalMessageTables();
-  const message = await prisma.$transaction(async (tx) => {
+  const { message, created } = await prisma.$transaction(async (tx) => {
     await tx.$executeRaw`INSERT INTO "PortalConversation" ("studentId") VALUES (${studentId}) ON CONFLICT ("studentId") DO NOTHING`;
     // Aynı konuşmaya eş zamanlı yazımlarda sıralamayı ve yanıt durumunu koru.
     await tx.$queryRaw`SELECT "studentId" FROM "PortalConversation" WHERE "studentId" = ${studentId} FOR UPDATE`;
@@ -89,7 +90,7 @@ export async function sendPortalMessage(req: Request, studentId: string, sender:
     });
     if (existing) {
       if (existing.body !== body) throw new MessageError("Bu gönderim kimliği zaten kullanılmış.", 409);
-      return existing;
+      return { message: existing, created: false };
     }
     const created = await tx.portalMessage.create({
       data: { studentId, sender, body, clientMessageId, createdAt: new Date() }, select: messageSelect,
@@ -97,8 +98,10 @@ export async function sendPortalMessage(req: Request, studentId: string, sender:
     await tx.portalConversation.update({
       where: { studentId }, data: { needsReply: sender === "STUDENT", updatedAt: created.createdAt },
     });
-    return created;
+    return { message: created, created: true };
   });
+  // Yanıtı bekletmeden, yalnızca yeni kaydın transaction'ı tamamlanınca bildir.
+  if (created) after(() => notifyPortalMessage(message.id));
   return NextResponse.json({ message }, { status: 201, headers: privateHeaders });
 }
 
