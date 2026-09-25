@@ -13,6 +13,7 @@ import StudentPasswordChange from "@/components/StudentPasswordChange";
 import StudentProfileSettings from "@/components/StudentProfileSettings";
 import StudentTestimonial from "@/components/StudentTestimonial";
 import StudentWorkForm from "@/components/StudentWorkForm";
+import StudentMessageLink from "@/components/messages/StudentMessageLink";
 
 export const metadata = { title: "Öğrenci Paneli | Orhan Yaşlı", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -54,6 +55,7 @@ export default async function StudentDashboard(){
    </section>
 
    <nav className="student-os-actions" aria-label="Hızlı işlemler">
+    <StudentMessageLink/>
     <a href="#calisma-gonder"><Send/><span><b>Çalışma gönder</b><small>Bugünkü emeğini kaydet</small></span><ArrowRight/></a>
     <Link href="/ogrenci/mufredat"><Target/><span><b>Konu takibi</b><small>{pct ? `%${pct} ilerleme` : "İlerlemeni başlat"}</small></span><ArrowRight/></Link>
     <Link href="/testler"><ClipboardList/><span><b>Testler</b><small>Kendini değerlendir</small></span><ArrowRight/></Link>

@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { ensurePortalMessageTables } from "@/lib/ensurePortalMessageTables";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
 import { redirect } from "next/navigation";
@@ -32,13 +33,14 @@ async function getStudentStats(): Promise<{ students: number; pendingWork: numbe
 }
 
 async function getStats(now: Date) {
-  const [clientCount, messageCount, appointmentCount, sessionCount] = await Promise.all([
+  const [clientCount, contactCount, appointmentCount, sessionCount, portalCount] = await Promise.all([
     prisma.client.count(),
     prisma.message.count({ where: { read: false } }),
     prisma.appointment.count({ where: { date: { gte: now }, status: { notIn: ["CANCELLED", "IPTAL"] } } }),
     prisma.session.count({ where: { date: { gte: now }, status: "PLANNED" } }),
+    (async () => { try { await ensurePortalMessageTables(); return await prisma.portalConversation.count({ where: { needsReply: true } }); } catch { return 0; } })(),
   ]);
-  return { clientCount, messageCount, appointmentCount, sessionCount };
+  return { clientCount, messageCount: contactCount + portalCount, appointmentCount, sessionCount };
 }
 
 async function getUpcoming(now: Date) {
@@ -60,7 +62,7 @@ async function getActionCenter(now: Date): Promise<ActionItem[]> {
     const staleBefore = new Date(now.getTime() - 7 * 86400000);
     const meetingLimit = new Date(now.getTime() + 48 * 3600000);
 
-    const [pendingWorks, activeStudents, appointments, sessions, unreadMessages, pendingReviews] = await Promise.all([
+    const [pendingWorks, activeStudents, appointments, sessions, unreadMessages, pendingReviews, portalWaiting] = await Promise.all([
       prisma.studentWork.findMany({
         where:{ seen:false }, take:8, orderBy:{createdAt:"asc"},
         select:{ id:true, createdAt:true, title:true, student:{select:{id:true,name:true}} }
@@ -79,6 +81,13 @@ async function getActionCenter(now: Date): Promise<ActionItem[]> {
       }),
       prisma.message.findMany({where:{read:false},orderBy:{createdAt:"asc"},take:5,select:{id:true,name:true,createdAt:true}}),
       (async()=>{ try { await ensureTestimonialTable(); return await prisma.testimonial.findMany({where:{status:"PENDING"},orderBy:{createdAt:"asc"},take:3,select:{id:true,createdAt:true,student:{select:{name:true}}}}); } catch { return []; } })(),
+      (async () => { try {
+        await ensurePortalMessageTables();
+        return await prisma.portalConversation.findMany({
+          where: { needsReply: true }, orderBy: { updatedAt: "asc" }, take: 5,
+          select: { studentId: true, updatedAt: true, student: { select: { name: true } } },
+        });
+      } catch { return []; } })(),
     ]);
 
     const items: ActionItem[] = [];
@@ -114,9 +123,15 @@ async function getActionCenter(now: Date): Promise<ActionItem[]> {
       }
     }
 
+    for (const conversation of portalWaiting) items.push({
+      id: `portal-${conversation.studentId}`, priority: 1, eyebrow: "MESAJ YANITI",
+      title: `${conversation.student.name} yanıt bekliyor`,
+      detail: `Panel mesajı · ${relative(conversation.updatedAt, now)}`,
+      href: `/admin/messages?student=${conversation.studentId}`, action: "Yanıtla", kind: "message"
+    });
     for (const m of unreadMessages) items.push({
       id:`msg-${m.id}`, priority:2, eyebrow:"İLETİŞİM", title:`${m.name} mesaj bıraktı`,
-      detail:`Okunmamış mesaj · ${relative(m.createdAt, now)}`, href:"/admin/messages", action:"Mesajı aç", kind:"message"
+      detail:`Okunmamış mesaj · ${relative(m.createdAt, now)}`, href:"/admin/messages?tab=contact", action:"Mesajı aç", kind:"message"
     });
     for (const t of pendingReviews) items.push({
       id:`review-${t.id}`, priority:3, eyebrow:"ONAY", title:`${t.student.name} yorum gönderdi`,
@@ -174,7 +189,7 @@ export default async function AdminDashboardPage() {
 
     <div className="advisor-grid">
       <section className="advisor-panel advisor-agenda"><div className="advisor-panel-head"><div><span className="advisor-overline">SIRADAKİLER</span><h3>Görüşme akışı</h3></div><Link href="/admin/appointments">Takvime git <ArrowUpRight size={14}/></Link></div><div className="advisor-agenda-list">{upcoming.map((item,i)=><Link href={item.href} key={item.id} className="advisor-agenda-item"><div className="advisor-time"><Clock3 size={14}/><time>{DATE.format(item.date)}</time></div><div className="advisor-agenda-main"><strong>{item.name}</strong><span>{item.title}</span></div><span className="advisor-kind">{item.kind}</span>{i===0&&<span className="advisor-next">Sıradaki</span>}</Link>)}{upcoming.length===0&&<div className="advisor-empty">Planlanmış gelecek görüşme bulunmuyor.</div>}</div></section>
-      <section className="advisor-panel"><div className="advisor-panel-head"><div><span className="advisor-overline">İLETİŞİM</span><h3>Son mesajlar</h3></div><Link href="/admin/messages">Tümü <ArrowUpRight size={14}/></Link></div><div className="advisor-message-list">{messages.map(msg=><Link href="/admin/messages" key={msg.id} className={`advisor-message ${!msg.read?"is-unread":""}`}><span className="advisor-message-dot"/><div><strong>{msg.name}</strong><p>{msg.message}</p></div><time>{new Date(msg.createdAt).toLocaleDateString("tr-TR",{day:"2-digit",month:"short"})}</time></Link>)}{messages.length===0&&<div className="advisor-empty">Henüz mesaj bulunmuyor.</div>}</div></section>
+      <section className="advisor-panel"><div className="advisor-panel-head"><div><span className="advisor-overline">İLETİŞİM</span><h3>İletişim formu mesajları</h3></div><Link href="/admin/messages?tab=contact">Tümü <ArrowUpRight size={14}/></Link></div><div className="advisor-message-list">{messages.map(msg=><Link href="/admin/messages?tab=contact" key={msg.id} className={`advisor-message ${!msg.read?"is-unread":""}`}><span className="advisor-message-dot"/><div><strong>{msg.name}</strong><p>{msg.message}</p></div><time>{new Date(msg.createdAt).toLocaleDateString("tr-TR",{day:"2-digit",month:"short"})}</time></Link>)}{messages.length===0&&<div className="advisor-empty">Henüz mesaj bulunmuyor.</div>}</div></section>
     </div>
     <section className="advisor-shortcuts"><span>Hızlı işlemler</span><Link href="/admin/students">Öğrenci Radarı</Link><Link href="/admin/work">Çalışma değerlendir</Link><Link href="/admin/mufredat">Konu takibi</Link><Link href="/admin/testler">Test sonuçları</Link><Link href="/admin/resources">Kaynak ata</Link></section>
   </div>

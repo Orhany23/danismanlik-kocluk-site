@@ -49,10 +49,29 @@ export default function AdminChrome({ children }: { children: React.ReactNode })
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/counts", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => setCounts({ messages: d.messages ?? 0, work: d.work ?? 0, testimonials: d.testimonials ?? 0 }))
-      .catch(() => {});
+    let mounted = true;
+    let pending = false;
+    const load = async () => {
+      if (document.hidden || pending) return;
+      pending = true;
+      try {
+        const res = await fetch("/api/admin/counts", { cache: "no-store" });
+        if (!res.ok) return;
+        const d = await res.json();
+        if (mounted) setCounts({ messages: d.messages ?? 0, work: d.work ?? 0, testimonials: d.testimonials ?? 0 });
+      } catch { /* Bağlantı dönünce sayaçlar yenilenir. */ }
+      finally { pending = false; }
+    };
+    void load();
+    const timer = window.setInterval(() => void load(), 30000);
+    window.addEventListener("portal-messages-changed", load);
+    document.addEventListener("visibilitychange", load);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+      window.removeEventListener("portal-messages-changed", load);
+      document.removeEventListener("visibilitychange", load);
+    };
   }, [pathname]);
 
   // Escape ile kapat, odağı tetikleyiciye döndür

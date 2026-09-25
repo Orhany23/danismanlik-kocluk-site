@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FileText, LinkIcon, FileUp, Camera, Check, Clock, ExternalLink, MessageCircle } from "lucide-react";
 
@@ -19,7 +20,7 @@ type Work = {
 };
 
 const TABS: { type: WorkType; label: string; icon: React.ReactNode }[] = [
-  { type: "NOTE", label: "Not", icon: <FileText strokeWidth={1.7} aria-hidden="true" /> },
+  { type: "NOTE", label: "Çalışma notu", icon: <FileText strokeWidth={1.7} aria-hidden="true" /> },
   { type: "LINK", label: "Bağlantı", icon: <LinkIcon strokeWidth={1.7} aria-hidden="true" /> },
   { type: "FILE", label: "PDF", icon: <FileUp strokeWidth={1.7} aria-hidden="true" /> },
   { type: "PHOTO", label: "Fotoğraf", icon: <Camera strokeWidth={1.7} aria-hidden="true" /> },
@@ -150,6 +151,8 @@ export default function StudentWorkForm() {
         Bugün yaptığın çalışmayı paylaş — not, bağlantı, PDF ya da fotoğraf. Koçun panelinde görüp takip eder.
       </p>
 
+      <p className="work-lead"><Link href="/ogrenci/mesajlar">Sadece mesaj yazmak istiyorsan → Mesajlarım</Link></p>
+
       <form className="work-form" onSubmit={submit}>
         <div className="work-tabs" role="tablist" aria-label="Çalışma türü">
           {TABS.map((tab) => (
@@ -238,7 +241,7 @@ export default function StudentWorkForm() {
         {msg && <p className={`work-msg ${msg.ok ? "is-ok" : "is-err"}`}>{msg.text}</p>}
 
         <button type="submit" className="auth-btn work-submit" disabled={saving}>
-          {saving ? "Gönderiliyor…" : "Gönder"}
+          {saving ? "Gönderiliyor…" : "Çalışmayı gönder"}
         </button>
       </form>
 

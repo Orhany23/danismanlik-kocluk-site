@@ -123,6 +123,34 @@ model Student {
   works           StudentWork[]
   testSubmissions TestSubmission[]
   topicProgress   TopicProgress[]
+  conversation    PortalConversation?
+}
+
+// Portal sohbetleri çalışma teslimlerinden ve iletişim formundan bağımsızdır.
+model PortalConversation {
+  studentId  String   @id
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  needsReply Boolean  @default(false)
+  updatedAt  DateTime @default(now()) @updatedAt
+  messages   PortalMessage[]
+
+  @@index([needsReply, updatedAt])
+  @@index([updatedAt, studentId])
+}
+
+model PortalMessage {
+  id              String   @id @default(cuid())
+  studentId       String
+  conversation    PortalConversation @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+  sender          String   // STUDENT | ADMIN; yalnızca sunucudaki oturumdan belirlenir
+  body            String
+  clientMessageId String   // Yanıt kaybolduğunda aynı gönderimi güvenle tekrar denemek için
+  readAt          DateTime?
+  createdAt       DateTime @default(now())
+
+  @@unique([studentId, sender, clientMessageId])
+  @@index([studentId, createdAt, id])
+  @@index([sender, readAt, studentId])
 }
 
 model TopicProgress {

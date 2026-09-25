@@ -38,6 +38,7 @@ export default function AdminStudentsPage(){
    </div>
    <div className="radar-reason">{s.needsAttention?<><AlertCircle/><span>{!s.lastWork?"Henüz çalışma göndermedi.":s.lastWork&&!s.lastWork.seen?"Yeni çalışması değerlendirilmeyi bekliyor.":s.daysSinceWork!==null&&s.daysSinceWork>=7?"Çalışma ritmi 7 günü geçti.":s.nextMeeting?"Görüşmesi yaklaşıyor.":"Takip öneriliyor."}</span></>:<><CheckCircle2/><span>Takip akışı güncel görünüyor.</span></>}</div>
    <div className="radar-actions">
+    <Link href={`/admin/messages?student=${s.id}`}>Mesaj yaz <ArrowRight/></Link>
     <Link href={`/admin/work?student=${s.id}`}>Çalışmaları <ArrowRight/></Link>
     <Link href={`/admin/mufredat?student=${s.id}`}><Target/> Konu takibi</Link>
     {s.client?<Link href={`/admin/clients/${s.client.id}`}><UserRound/> Danışan profili</Link>:<button onClick={()=>linkStudent(s)} disabled={linking===s.id}>{linking===s.id?"Bağlanıyor…":"Danışana bağla"}</button>}

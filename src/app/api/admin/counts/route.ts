@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { ensurePortalMessageTables } from "@/lib/ensurePortalMessageTables";
 import { ensureStudentWorkTable } from "@/lib/ensureStudentWorkTable";
 import { ensureTestimonialTable } from "@/lib/ensureTestimonialTable";
 
@@ -18,7 +19,7 @@ export async function GET() {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [messages, work, testimonials] = await Promise.all([
+  const [contactMessages, work, testimonials, portalMessages] = await Promise.all([
     safe(() => prisma.message.count({ where: { read: false } })),
     safe(async () => {
       await ensureStudentWorkTable();
@@ -28,10 +29,14 @@ export async function GET() {
       await ensureTestimonialTable();
       return prisma.testimonial.count({ where: { status: "PENDING" } });
     }),
+    safe(async () => {
+      await ensurePortalMessageTables();
+      return prisma.portalMessage.count({ where: { sender: "STUDENT", readAt: null } });
+    }),
   ]);
 
   return NextResponse.json(
-    { messages, work, testimonials },
+    { messages: contactMessages + portalMessages, contactMessages, portalMessages, work, testimonials },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
