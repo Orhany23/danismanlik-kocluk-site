@@ -94,6 +94,7 @@ function notificationFixture(overrides = {}) {
   };
   const notifications = loadSource('src/lib/portalMessageNotifications.ts', {
     '@/lib/db': prisma,
+    '@/lib/portalNotificationSettings': { savedPortalAdminEmail: async () => state.savedEmail || null },
     '@/lib/portalNotificationEmail': { ...transport, sendPortalNotificationEmail: async (input) => {
       if (state.sendError) throw new transport.PortalEmailError('provider_403');
       sent.push(clone(input));
@@ -138,6 +139,87 @@ test('ambiguous administrator addresses require configuration; status does not r
   assert.equal((await fixture.notifications.getPortalEmailStatus()).adminReady, false);
   fixture.state.env.PORTAL_ADMIN_NOTIFICATION_EMAIL = 'selected@example.invalid';
   assert.equal((await fixture.notifications.getPortalEmailStatus()).adminEmail, 'selected@example.invalid');
+});
+
+test('recipient fix: the saved private address overrides environment and login addresses', async () => {
+  const fixture = notificationFixture({ savedEmail: 'chosen@gmail.com', env: { RESEND_API_KEY: 're_test', PORTAL_ADMIN_NOTIFICATION_EMAIL: 'old@example.invalid' } });
+  fixture.state.message.sender = 'STUDENT';
+  await fixture.notifications.notifyPortalMessage('m1');
+  assert.equal(fixture.sent[0].to, 'chosen@gmail.com');
+  assert.equal((await fixture.notifications.getPortalEmailStatus()).adminEmail, 'chosen@gmail.com');
+  // Kaydedilen tercih bozuksa eski, farklı adrese sessizce yönlenmez.
+  fixture.state.savedEmail = 'invalid';
+  await fixture.notifications.notifyPortalMessage('m1');
+  assert.equal(fixture.sent.length, 1);
+});
+
+test('recipient fix: an incoming message still notifies the administrator while the panel is open', async () => {
+  const fixture = notificationFixture({ savedEmail: 'chosen@gmail.com' });
+  fixture.state.message.sender = 'STUDENT';
+  fixture.state.message.readAt = new Date();
+  await fixture.notifications.notifyPortalMessage('m1');
+  assert.equal(fixture.sent.length, 1);
+  assert.equal(fixture.sent[0].to, 'chosen@gmail.com');
+});
+
+test('recipient fix: saving the address persists a separate setting without changing account addresses', async () => {
+  const records = new Map();
+  let ensured = 0;
+  const settings = loadSource('src/lib/portalNotificationSettings.ts', {
+    '@/lib/db': { setting: {
+      findUnique: async ({ where }) => records.has(where.key) ? { value: records.get(where.key) } : null,
+      upsert: async ({ where, create, update }) => {
+        assert.equal(create.id, create.key);
+        records.set(where.key, records.has(where.key) ? update.value : create.value);
+      },
+    } },
+    '@/lib/ensureSettingTable': { ensureSettingTable: async () => { ensured++; } },
+  });
+  assert.equal(await settings.savedPortalAdminEmail(), null);
+  await settings.savePortalAdminEmail('chosen@gmail.com');
+  assert.equal(await settings.savedPortalAdminEmail(), 'chosen@gmail.com');
+  await settings.savePortalAdminEmail('updated@example.invalid');
+  assert.equal(await settings.savedPortalAdminEmail(), 'updated@example.invalid');
+  assert.equal(records.size, 1);
+  assert.ok(ensured > 0);
+});
+
+test('recipient fix: only an authenticated administrator can save a valid same-origin address', async () => {
+  let admin = false;
+  const writes = [];
+  const responseHelpers = { NextResponse: { json: (data, init) => Response.json(data, init) }, after: () => {} };
+  const helpers = loadSource('src/lib/portalMessages.ts', {
+    'next/server': responseHelpers,
+    '@/lib/db': {},
+    '@/lib/ensurePortalMessageTables': { ensurePortalMessageTables: async () => {} },
+    '@/lib/rateLimit': { rateLimited: () => false },
+    '@/lib/portalMessageNotifications': { notifyPortalMessage: async () => {} },
+  });
+  const transport = loadSource('src/lib/portalNotificationEmail.ts');
+  const route = loadSource('src/app/api/admin/notification-email/route.ts', {
+    'next/server': responseHelpers,
+    '@/lib/auth': { requireAdmin: async () => admin ? { user: { id: 'admin-1' } } : null },
+    '@/lib/portalMessages': helpers,
+    '@/lib/portalNotificationEmail': transport,
+    '@/lib/portalNotificationSettings': { savePortalAdminEmail: async (email) => writes.push(email) },
+    '@/lib/portalMessageNotifications': { getPortalEmailStatus: async () => ({ adminEmail: writes.at(-1), adminReady: true, studentReady: true }) },
+  });
+  const request = (email, origin = 'https://site.example.invalid') => new Request('https://site.example.invalid/api/admin/notification-email', {
+    method: 'PUT', headers: { 'Content-Type': 'application/json', Origin: origin }, body: JSON.stringify({ email }),
+  });
+  assert.equal((await route.PUT(request('chosen@gmail.com'))).status, 401);
+  assert.equal(writes.length, 0);
+  admin = true;
+  assert.equal((await route.PUT(request('chosen@gmail.com', 'https://other.example.invalid'))).status, 403);
+  for (const invalid of ['', 'not-an-address', ['one@example.invalid'], 'one@example.invalid,two@example.invalid', 'x'.repeat(255) + '@example.invalid']) {
+    assert.equal((await route.PUT(request(invalid))).status, 400);
+  }
+  assert.equal(writes.length, 0);
+  const saved = await route.PUT(request(' chosen@gmail.com '));
+  assert.equal(saved.status, 200);
+  assert.match(saved.headers.get('cache-control'), /private, no-store/);
+  assert.equal((await saved.json()).status.adminEmail, 'chosen@gmail.com');
+  assert.deepEqual(writes, ['chosen@gmail.com']);
 });
 
 test('delivery failure is contained and logs neither message content nor recipient addresses', async () => {

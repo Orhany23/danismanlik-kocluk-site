@@ -6,6 +6,19 @@ Dosya veya çalışma teslimlerini değiştirmez. SMS göndermez.
 
 ## Kurulum
 
+### Çalışan e-posta hizmetinde yönetici adresini panelden değiştirme
+
+E-posta hizmeti zaten öğrencilere bildirim gönderiyorsa Vercel veya Resend ayarını değiştirmek gerekmez.
+`fix-admin-notification-recipient.yml` dosyasını `.github/workflows/` klasörüne yükleyip **Fix Admin Notification Recipient** işini çalıştırın.
+Yayın tamamlandıktan sonra **Admin → Mesajlar → Bildirim alacağım e-posta** alanına kullanmak istediğiniz adresi yazıp **Adresi kaydet** düğmesine basın.
+Adres özel `Setting` kaydında saklanır; kaynak koduna veya herkese açık iletişim bilgilerine eklenmez.
+Değişiklik kaydedildiği anda sonraki mesajlarda kullanılır; yeniden yayınlama gerekmez.
+
+Alıcı önceliği: panelde kaydedilen adres → `PORTAL_ADMIN_NOTIFICATION_EMAIL` → sistemdeki tek ADMIN hesabının adresi.
+Birden fazla ADMIN hesabı olduğunda panelde bir adres kaydetmek yeterlidir.
+
+### İlk e-posta kurulumu
+
 1. `apply-message-email-notifications.yml` dosyasını `.github/workflows/` klasörüne yükleyin.
 2. GitHub Actions içindeki **Apply Message Email Notifications** işini **Run workflow** ile başlatın.
 3. İşin ve Vercel yayınının tamamlanmasını bekleyin.
@@ -17,7 +30,7 @@ Dosya veya çalışma teslimlerini değiştirmez. SMS göndermez.
 | --- | --- |
 | `RESEND_API_KEY` | Resend gönderim anahtarı. Mevcut e-posta özelliğinde tanımlıysa aynı anahtar kullanılır. |
 | `RESEND_FROM_EMAIL` | Resend'de doğrulanmış alan adındaki gönderici. Varsayılan: `Orhan Yaşlı <bildirim@psdorhanyasli.com.tr>`. |
-| `PORTAL_ADMIN_NOTIFICATION_EMAIL` | Bildirim almak istediğiniz tek e-posta adresi. Boşsa, sistemde **tek** ADMIN hesabı varsa o hesabın adresi kullanılır. Birden fazla yönetici varsa bu ayar gereklidir. |
+| `PORTAL_ADMIN_NOTIFICATION_EMAIL` | İsteğe bağlı yedek alıcı. Panelde kaydedilmiş bildirim adresi önceliklidir. Panel adresi ve bu ayar boşsa sistemdeki tek ADMIN hesabının adresi kullanılır. |
 | `PORTAL_SITE_URL` | İsteğe bağlı site adresi. Varsayılan: `https://psdorhanyasli.com.tr`. HTTPS olmalıdır. |
 | `PORTAL_EMAIL_NOTIFICATIONS` | İsteğe bağlı kapatma anahtarı. `false` yapılırsa yalnızca portal mesajlarının e-posta bildirimleri kapanır. |
 
@@ -30,7 +43,7 @@ Vercel önizleme ortamlarında bu bildirimler gönderilmez. Yapılandırma kart�
 - E-posta yalnızca yeni mesaj bilgisini ve giriş gerektiren panel bağlantısını taşır. Sohbet metni, test sonucu veya dosya eklenmez.
 - Öğrenci e-postayı yanıtlamak yerine sitedeki Mesajlarım alanından yanıtlar.
 - Admin e-postasındaki bağlantı ilgili konuşmayı açar. Oturum kapalıysa giriş gerekir; mevcut giriş sayfası önce ana panele götürür. Mesajlar alanından konuşmaya ulaşılır.
-- Alıcı mesajı arka plan işlemi başlamadan okumuşsa bildirim gönderilmez.
+- Öğrenci mesajı arka plan işlemi başlamadan okumuşsa öğrenciye e-posta gönderilmez. Yöneticiye gelen yeni mesajlarda panelin açık olması veya mesajın okunması bildirimi iptal etmez.
 - Kurulumdan önceki mesajlar için geriye dönük e-posta gönderilmez.
 - Aynı mesajın bağlantı hatası nedeniyle tekrar gönderilmesi yeni e-posta oluşturmaz. Ayrı yeni mesajlar ayrı bildirimlerdir; bu sürümde günlük özet veya birleştirme yoktur.
 - Öğrenci hesabı pasifse bildirim gönderilmez. Veli telefonu veya e-posta adresi otomatik alıcı olarak seçilmez.
@@ -49,7 +62,7 @@ Bu sürümde kalıcı e-posta kuyruğu veya teslimat webhook'u yoktur. Üç dene
 Önce kendi deneme öğrenci hesabınızı kullanın:
 
 1. Öğrencinin Mesajlarım ekranını kapatın. Admin olarak o hesaba yazın; öğrencinin e-postasını kontrol edin.
-2. Adminin konuşma ekranını kapatın. Öğrenci olarak yazın; yönetici e-postasını kontrol edin.
+2. Öğrenci olarak yazın; yönetici panelinden kaydettiğiniz adresin gelen kutusunu kontrol edin. Yönetici konuşma ekranı açıkken de bu bildirim gönderilir.
 3. Mesajın panelde kaldığını ve e-postadaki bağlantının siteye gittiğini doğrulayın.
 4. E-posta gelmezse admin bildirim kartını, istenmeyen posta klasörünü ve Resend gönderim günlüğünü kontrol edin.
 

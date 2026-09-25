@@ -1,9 +1,13 @@
 import prisma from "@/lib/db";
+import { savedPortalAdminEmail } from "@/lib/portalNotificationSettings";
 import { portalEmailEnabled, portalNotificationOrigin, validNotificationEmail, sendPortalNotificationEmail, PortalEmailError } from "@/lib/portalNotificationEmail";
 
 export type PortalEmailStatus = { studentReady: boolean; adminReady: boolean; adminEmail: string | null; detail: string };
 
 async function adminRecipient(): Promise<string | null> {
+  // Panelde açıkça seçilen özel adres, sunucu ve giriş hesabı adreslerinden önceliklidir.
+  const saved = await savedPortalAdminEmail();
+  if (saved) return validNotificationEmail(saved) ? saved : null;
   const configured = process.env.PORTAL_ADMIN_NOTIFICATION_EMAIL?.trim();
   if (configured) return validNotificationEmail(configured) ? configured : null;
   const admins = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { email: true }, take: 2 });
@@ -22,7 +26,7 @@ export async function getPortalEmailStatus(): Promise<PortalEmailStatus> {
       studentReady: true, adminReady: Boolean(email), adminEmail: email,
       detail: email
         ? "E-posta ayarları mevcut. Öğrencilere hesaplarındaki adrese, size aşağıdaki adrese bildirim gönderilir."
-        : "Öğrencilere bildirim gönderilebilir. Sizin bildirim alacağınız yönetici e-posta adresi henüz belirlenmemiş.",
+        : "Öğrencilere bildirim gönderilebilir. Size gelen bildirimler için aşağıdan e-posta adresinizi kaydedin.",
     };
   } catch {
     return unavailable("E-posta bildirim ayarları kontrol edilemedi. Mesajlaşmayı kullanmaya devam edebilirsiniz.");
@@ -36,8 +40,9 @@ export async function notifyPortalMessage(messageId: string) {
       where: { id: messageId },
       select: { id: true, studentId: true, sender: true, readAt: true, createdAt: true },
     });
-    // Okunmuş veya eski bir mesaj için gecikmiş bildirim gönderme.
-    if (!message || message.readAt || Date.now() - message.createdAt.getTime() > 5 * 60 * 1000) return;
+    if (!message || Date.now() - message.createdAt.getTime() > 5 * 60 * 1000) return;
+    // Yönetici paneli açıkken okunmuş olması, öğrenci mesajının e-posta bildirimini iptal etmez.
+    if (message.sender === "ADMIN" && message.readAt) return;
     if (message.sender !== "ADMIN" && message.sender !== "STUDENT") return;
     const student = await prisma.student.findUnique({ where: { id: message.studentId }, select: { active: true, email: true } });
     if (!student?.active) return;
