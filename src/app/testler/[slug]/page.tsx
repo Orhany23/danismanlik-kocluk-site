@@ -27,10 +27,10 @@ export default async function TestDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const student = await requireStudent();
-  if (!student) redirect("/ogrenci/giris");
-
   const { slug } = await params;
+  const student = await requireStudent();
+  if (!student) redirect(`/ogrenci/giris?callbackUrl=/testler/${slug}`);
+
   const test = getTestBySlug(slug);
   if (!test) notFound();
 

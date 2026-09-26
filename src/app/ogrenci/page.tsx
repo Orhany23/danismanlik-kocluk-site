@@ -36,6 +36,14 @@ async function getLatestFeedback(studentId:string){try{return await prisma.stude
 async function getProgress(studentId:string,gradeId:string){try{const grade=getGradeById(gradeId);const topicIds=grade?.subjects.flatMap(s=>s.topics.map(t=>t.id))??[];const[checked,works,pending]=await Promise.all([topicIds.length?prisma.topicProgress.count({where:{studentId,topicId:{in:topicIds},checkedAt:{not:null}}}):Promise.resolve(0),prisma.studentWork.count({where:{studentId}}),prisma.studentWork.count({where:{studentId,seen:false}})]);return{total:topicIds.length,checked,works,pending}}catch{return{total:0,checked:0,works:0,pending:0}}}
 const DATE_FMT=new Intl.DateTimeFormat("tr-TR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
 
+function getMilestoneText(pct: number): string {
+  if (pct === 0) return "Sıfırdan başlamak en güçlü adımdır. Müfredatını incele ve ilk konunu tamamla.";
+  if (pct < 25) return "İlk temeller atıldı! İstikrarlı küçük adımlar büyük başarılar getirir.";
+  if (pct < 50) return "Yolun çeyreğini geride bıraktın. Ritmini koru, netlerin bu disiplinle yükselecek.";
+  if (pct < 75) return "Yarıyı geçtin! Konuların çoğuna hakimsin, şimdi denemeler ve pekiştirme zamanı.";
+  return "Müfredatta zirveye çok yakınsın! Harika bir disiplin; eksik kalan noktaları kapatmaya odaklan.";
+}
+
 export default async function StudentDashboard(){
  await ensureResourceSchema();
  const student=await requireStudent();if(!student)redirect("/ogrenci/giris");
@@ -50,7 +58,7 @@ export default async function StudentDashboard(){
   <header className="student-top"><div className="student-top-inner"><div className="student-brand"><svg viewBox="0 0 48 48" width="28" height="28"><g fill="none" stroke="var(--clr-primary)" strokeWidth="3.4" strokeLinecap="round"><path d="M24 10v28"/><path d="M12 12v7c0 7 5 11 12 11s12-4 12-11v-7"/></g></svg><span>Öğrenci OS</span></div><div className="student-top-actions"><Link href="/" className="student-back-link">← Siteye dön</Link><form action={async()=>{"use server";await signOut({redirectTo:"/"})}}><button type="submit" className="student-logout">Çıkış Yap</button></form></div></div></header>
   <main className="student-main">
    <section className="student-os-hero">
-    <div><span className="student-os-kicker"><Sparkles size={14}/> KİŞİSEL ÇALIŞMA MERKEZİ</span><h1>Merhaba {first}.<br/><em>Bugün ilerleyelim.</em></h1><p>Ne yapacağını aramak yerine, sıradaki doğru adıma odaklan.</p></div>
+    <div><span className="student-os-kicker"><Sparkles size={14}/> KİŞİSEL ÇALIŞMA MERKEZİ</span><h1>Merhaba {first}.<br/><em>Bugün ilerleyelim.</em></h1><p>{getMilestoneText(pct)}</p></div>
     <div className="student-os-score"><span>Genel konu ilerlemen</span><strong>{pct}%</strong><div><i style={{width:`${pct}%`}}/></div><small>{progress.checked} tamamlanan konu · {progress.works} çalışma gönderildi</small></div>
    </section>
 

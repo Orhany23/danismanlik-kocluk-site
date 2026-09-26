@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, ClipboardList, Activity, HeartHandshake, GraduationCap } from "lucide-react";
+import { ArrowUpRight, ClipboardList, Activity, HeartHandshake, GraduationCap, Lock, LogIn } from "lucide-react";
 import { requireStudent } from "@/lib/auth";
 import { getTestBySlug } from "@/lib/psychTests";
 
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Panik atak, agorafobi, duygudurum, anksiyete ve sınav koçluğuna yönelik yapılandırılmış öz-değerlendirme testleri. Sonuçlar danışmanınız Orhan Yaşlı'nın paneline güvenle aktarılır.",
   alternates: { canonical: "/testler" },
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
 };
 
 export const dynamic = "force-dynamic";
@@ -67,7 +66,6 @@ const SECTIONS: TestSection[] = [
 
 export default async function TestlerPage() {
   const student = await requireStudent();
-  if (!student) redirect("/ogrenci/giris");
 
   return (
     <main className="section">
@@ -79,9 +77,51 @@ export default async function TestlerPage() {
           </h1>
           <p className="section-sub">
             Bu testler tanı aracı değildir; farkındalık sağlamak ve danışmanlık sürecindeki yol haritanızı netleştirmek amacıyla uygulanır.
-            Testleri tamamladığınızda sonuçlar ve değerlendirmeler doğrudan danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline iletilir.
+            Testleri tamamladığınızda sonuçlar doğrudan danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline iletilir.
           </p>
         </header>
+
+        {!student && (
+          <div
+            style={{
+              marginBottom: 36,
+              padding: "20px 24px",
+              borderRadius: 16,
+              background: "var(--clr-surface)",
+              border: "1px solid var(--clr-border)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--clr-primary)" }}>
+              <Lock size={18} strokeWidth={2} aria-hidden="true" />
+              <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>Öğrenci & Danışan Girişi Gerekir</span>
+            </div>
+            <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--clr-text2)", lineHeight: 1.6 }}>
+              Aşağıdaki testler; seans öncesi durum tespiti ve danışan takip süreçlerimizi yapılandırmak için kullanılır.
+              Etik standartlar gereği test puanları öğrencilere gösterilmez; doğrudan danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline aktarılır ve görüşmelerinizde birlikte değerlendirilir.
+              Testleri uygulamak için öğrenci hesabınızla giriş yapabilirsiniz.
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
+              <Link
+                href="/ogrenci/giris?callbackUrl=/testler"
+                className="btn btn-primary"
+                style={{ fontSize: "0.88rem", padding: "8px 18px" }}
+              >
+                <LogIn size={15} strokeWidth={2} aria-hidden="true" style={{ marginRight: 6 }} />
+                Öğrenci Girişi Yap
+              </Link>
+              <Link
+                href="/#contact"
+                className="btn btn-secondary"
+                style={{ fontSize: "0.88rem", padding: "8px 18px" }}
+              >
+                Danışmanlık Almak İçin İletişime Geç
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="test-sections" style={{ display: "flex", flexDirection: "column", gap: 48 }}>
           {SECTIONS.map((sec) => {
@@ -119,23 +159,26 @@ export default async function TestlerPage() {
                 </div>
 
                 <ol className="test-grid" aria-label={sec.title}>
-                  {tests.map((t) => (
-                    <li key={t.slug}>
-                      <Link href={`/testler/${t.slug}`} className="mak-card">
-                        <span className="mak-card-badge">
-                          <ClipboardList strokeWidth={1.6} aria-hidden="true" />
-                          {t.category}
-                        </span>
-                        <h3 className="mak-card-title">{t.title}</h3>
-                        <p className="mak-card-meta">Yaklaşık {t.estimatedMinutes} dakika</p>
-                        <p className="mak-card-excerpt">{t.shortDesc}</p>
-                        <span className="mak-card-more">
-                          Teste başla
-                          <ArrowUpRight strokeWidth={2} aria-hidden="true" />
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                  {tests.map((t) => {
+                    const cardHref = student ? `/testler/${t.slug}` : `/ogrenci/giris?callbackUrl=/testler/${t.slug}`;
+                    return (
+                      <li key={t.slug}>
+                        <Link href={cardHref} className="mak-card">
+                          <span className="mak-card-badge">
+                            <ClipboardList strokeWidth={1.6} aria-hidden="true" />
+                            {t.category}
+                          </span>
+                          <h3 className="mak-card-title">{t.title}</h3>
+                          <p className="mak-card-meta">Yaklaşık {t.estimatedMinutes} dakika</p>
+                          <p className="mak-card-excerpt">{t.shortDesc}</p>
+                          <span className="mak-card-more">
+                            {student ? "Teste başla" : "Giriş yap ve başla"}
+                            <ArrowUpRight strokeWidth={2} aria-hidden="true" />
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ol>
               </section>
             );

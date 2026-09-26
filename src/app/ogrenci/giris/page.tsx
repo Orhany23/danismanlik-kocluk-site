@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
-export default function StudentLoginPage() {
+function StudentLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -25,7 +27,11 @@ export default function StudentLoginPage() {
       setError("E-posta veya şifre hatalı.");
       setBusy(false);
     } else {
-      router.push("/ogrenci");
+      const target =
+        callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+          ? callbackUrl
+          : "/ogrenci";
+      router.push(target);
     }
   };
 
@@ -73,5 +79,21 @@ export default function StudentLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function StudentLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="auth-wrap">
+          <div className="auth-card" style={{ textAlign: "center", padding: 40, color: "var(--clr-text3)" }}>
+            Yükleniyor...
+          </div>
+        </div>
+      }
+    >
+      <StudentLoginForm />
+    </Suspense>
   );
 }

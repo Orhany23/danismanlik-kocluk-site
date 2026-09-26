@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, ArrowLeft, ArrowRight, FlaskConical } from "lucide-react";
+import { ArrowUpRight, ArrowLeft, ArrowRight, FlaskConical, Sparkles } from "lucide-react";
 import { getAllStudies, getStudyBySlug } from "@/lib/dailyResearch";
 import ShareButtons from "@/components/ShareButtons";
 
@@ -101,12 +101,51 @@ export default async function StudyPage({
 
           <p className="mak-article-lead">{study.s}</p>
 
-          {sections.map((sec) => (
-            <section key={sec.heading} className="mak-article-block">
-              <h2 className="mak-article-h2">{sec.heading}</h2>
-              <p className="mak-article-body">{sec.body}</p>
-            </section>
-          ))}
+          {sections.map((sec, idx) => {
+            const isTakeaway = idx === 3;
+            if (isTakeaway) {
+              return (
+                <section
+                  key={sec.heading}
+                  className="mak-article-block"
+                  style={{
+                    padding: "24px 28px",
+                    borderRadius: 16,
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border)",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+                    marginTop: 32,
+                    marginBottom: 32,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, color: "var(--clr-primary)" }}>
+                    <Sparkles size={20} strokeWidth={2} aria-hidden="true" />
+                    <h2
+                      className="mak-article-h2"
+                      style={{
+                        margin: 0,
+                        fontSize: "1.15rem",
+                        color: "var(--clr-text)",
+                        fontFamily: "var(--font-display)",
+                      }}
+                    >
+                      Öğrencinin ve Sınavın Hayatına Yansıması
+                    </h2>
+                  </div>
+                  <p className="mak-article-body" style={{ margin: 0, color: "var(--clr-text2)", lineHeight: 1.75 }}>
+                    {sec.body}
+                  </p>
+                </section>
+              );
+            }
+
+            return (
+              <section key={sec.heading} className="mak-article-block">
+                <h2 className="mak-article-h2">{sec.heading}</h2>
+                <p className="mak-article-body">{sec.body}</p>
+              </section>
+            );
+          })}
 
           <a
             className="mak-source"
