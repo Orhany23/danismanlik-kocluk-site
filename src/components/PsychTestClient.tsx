@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ClipboardList, RotateCcw, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
-import type { PsychTest, LikertTest, CategoryTest, CategoryResult } from "@/lib/psychTests";
+import type { PsychTest, LikertTest, CategoryTest } from "@/lib/psychTests";
 
 type LikertApiResult = { kind: "likert"; crisisFlag: boolean };
-type CategoryApiResult = { kind: "category"; result: CategoryResult };
+type CategoryApiResult = { kind: "category" };
 
 function CrisisBanner() {
   return (
@@ -98,6 +98,65 @@ function ResultActions({ onReset, testTitle }: { onReset: () => void; testTitle?
   );
 }
 
+function TestCompletionView({
+  test,
+  crisisFlag,
+  onReset,
+}: {
+  test: PsychTest;
+  crisisFlag?: boolean;
+  onReset: () => void;
+}) {
+  return (
+    <div>
+      <TestHead test={test} />
+      {crisisFlag && <CrisisBanner />}
+      <div className="test-result" style={{ textAlign: "center", padding: "36px 24px" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 58,
+            height: 58,
+            borderRadius: "50%",
+            background: "var(--clr-accent-tint, rgba(122,39,64,0.08))",
+            color: "var(--clr-primary)",
+            marginBottom: 16,
+          }}
+        >
+          <CheckCircle2 strokeWidth={2.2} size={34} aria-hidden="true" />
+        </div>
+        <h2 className="test-result-label" style={{ fontSize: "1.45rem", marginBottom: 10 }}>
+          Testiniz Başarıyla Tamamlandı
+        </h2>
+        <p className="test-result-desc" style={{ maxWidth: 540, margin: "0 auto 18px", fontSize: "0.98rem", lineHeight: 1.7 }}>
+          Cevaplarınız ve test değerlendirmeniz danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline güvenle iletilmiştir.
+        </p>
+        <div
+          style={{
+            background: "var(--clr-bg2, #fbf8f5)",
+            border: "1px solid var(--clr-border, #e5ded6)",
+            borderRadius: "var(--radius, 12px)",
+            padding: "16px 20px",
+            maxWidth: 560,
+            margin: "0 auto",
+            fontSize: "0.92rem",
+            lineHeight: 1.65,
+            color: "var(--clr-text2)",
+          }}
+        >
+          Klinik ilkemiz gereğince test puanları ve sonuç analizleri ekranda doğrudan gösterilmemektedir.
+          Testinizin sonucunu, bilimsel değerlendirmesini ve size özel yol haritasını öğrenmek için
+          lütfen <strong>Orhan Yaşlı</strong> ile iletişime geçiniz.
+        </div>
+      </div>
+      <p className="support-disclaimer" style={{ marginTop: 20 }}>{test.disclaimer}</p>
+      <ResultActions onReset={onReset} testTitle={test.title} />
+    </div>
+  );
+}
+
 function LikertTestForm({ test }: { test: LikertTest }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<LikertApiResult | null>(null);
@@ -130,54 +189,7 @@ function LikertTestForm({ test }: { test: LikertTest }) {
   };
 
   if (result) {
-    return (
-      <div>
-        <TestHead test={test} />
-        {result.crisisFlag && <CrisisBanner />}
-        <div className="test-result" style={{ textAlign: "center", padding: "36px 24px" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 58,
-              height: 58,
-              borderRadius: "50%",
-              background: "var(--clr-accent-tint, rgba(122,39,64,0.08))",
-              color: "var(--clr-primary)",
-              marginBottom: 16,
-            }}
-          >
-            <CheckCircle2 strokeWidth={2.2} size={34} aria-hidden="true" />
-          </div>
-          <h2 className="test-result-label" style={{ fontSize: "1.45rem", marginBottom: 10 }}>
-            Testiniz Başarıyla Tamamlandı
-          </h2>
-          <p className="test-result-desc" style={{ maxWidth: 540, margin: "0 auto 18px", fontSize: "0.98rem", lineHeight: 1.7 }}>
-            Cevaplarınız ve test değerlendirmeniz danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline güvenle iletilmiştir.
-          </p>
-          <div
-            style={{
-              background: "var(--clr-bg2, #fbf8f5)",
-              border: "1px solid var(--clr-border, #e5ded6)",
-              borderRadius: "var(--radius, 12px)",
-              padding: "16px 20px",
-              maxWidth: 560,
-              margin: "0 auto",
-              fontSize: "0.92rem",
-              lineHeight: 1.65,
-              color: "var(--clr-text2)",
-            }}
-          >
-            Klinik ilkemiz gereğince test puanları ve sonuç analizleri ekranda doğrudan gösterilmemektedir.
-            Testinizin sonucunu, bilimsel değerlendirmesini ve size özel yol haritasını öğrenmek için
-            lütfen <strong>Orhan Yaşlı</strong> ile iletişime geçiniz.
-          </div>
-        </div>
-        <p className="support-disclaimer" style={{ marginTop: 20 }}>{test.disclaimer}</p>
-        <ResultActions onReset={handleReset} testTitle={test.title} />
-      </div>
-    );
+    return <TestCompletionView test={test} crisisFlag={result.crisisFlag} onReset={handleReset} />;
   }
 
   return (
@@ -235,7 +247,7 @@ function LikertTestForm({ test }: { test: LikertTest }) {
 
 function CategoryTestForm({ test }: { test: CategoryTest }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [result, setResult] = useState<CategoryResult | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -245,7 +257,7 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
 
   const handleReset = () => {
     setAnswers({});
-    setResult(null);
+    setSubmitted(false);
     setError(null);
   };
 
@@ -255,8 +267,8 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
     setSubmitting(true);
     setError(null);
     try {
-      const data = await submitTest(test.slug, answers);
-      if (data.kind === "category") setResult(data.result);
+      await submitTest(test.slug, answers);
+      setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gönderim sırasında bir hata oluştu.");
     } finally {
@@ -264,23 +276,8 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
     }
   };
 
-  if (result) {
-    return (
-      <div>
-        <TestHead test={test} />
-        <div className="test-result test-result--low">
-          <h2 className="test-result-label">{result.label}</h2>
-          <p className="test-result-desc">{result.description}</p>
-          <ul className="test-result-tips">
-            {result.tips.map((tip, i) => (
-              <li key={i}>{tip}</li>
-            ))}
-          </ul>
-        </div>
-        <p className="support-disclaimer">{test.disclaimer}</p>
-        <ResultActions onReset={handleReset} testTitle={test.title} />
-      </div>
-    );
+  if (submitted) {
+    return <TestCompletionView test={test} onReset={handleReset} />;
   }
 
   return (
@@ -324,7 +321,7 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
             ) : (
               <CheckCircle2 strokeWidth={1.8} aria-hidden="true" />
             )}
-            {submitting ? "Gönderiliyor…" : "Testi Tamamla"}
+            {submitting ? "Gönderiliyor…" : "Testi Tamamla ve Gönder"}
           </button>
         </div>
       </form>

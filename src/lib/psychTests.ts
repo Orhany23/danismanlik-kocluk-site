@@ -254,7 +254,7 @@ export const learningStyleTest: CategoryTest = {
   shortDesc: "Görsel, işitsel ya da kinestetik hangi öğrenme tarzına daha yatkın olduğunu keşfet.",
   category: "Sınav Koçluğu",
   estimatedMinutes: 3,
-  intro: "Her soruda seni en iyi anlatan seçeneği işaretle. Sonunda baskın çalışma tarzını ve sana özel çalışma önerilerini göreceksin.",
+  intro: `Her soruda seni en iyi anlatan seçeneği işaretle. ${HAND_OFF_NOTE}`,
   questions: [
     {
       id: "q1",

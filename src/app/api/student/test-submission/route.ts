@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ ok: true, kind: "category", result });
+    return NextResponse.json({ ok: true, kind: "category" });
   } catch (err) {
     console.error("Test submission POST error:", err);
     return NextResponse.json({ error: "Gönderim sırasında bir hata oluştu." }, { status: 500 });
