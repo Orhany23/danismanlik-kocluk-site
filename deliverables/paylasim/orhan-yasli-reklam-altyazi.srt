@@ -1,24 +1,24 @@
 1
-00:00:00,000 --> 00:00:06,200
-Başarı sadece çok çalışmakla değil, doğru yöntemle ilerlemekle gelir.
+00:00:00,000 --> 00:00:07,200
+Öğrenciysen, sınava hazırlanırken sadece daha çok çalışmaya değil, doğru sisteme ihtiyacın var.
 
 2
-00:00:06,200 --> 00:00:12,500
-Orhan Yaşlı'nın sitesi; sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık hizmetlerini tek bir yerde buluşturuyor.
+00:00:07,200 --> 00:00:14,500
+Orhan Yaşlı'nın sitesi; sınav koçluğu, öğrenci koçluğu ve psikolojik danışmanlık hizmetlerini net biçimde tanıtır.
 
 3
-00:00:12,500 --> 00:00:19,500
-YKS ve LGS hazırlığında kişiye özel programlar, deneme analizi, zaman yönetimi ve motivasyon takibi sunuluyor.
+00:00:14,500 --> 00:00:21,500
+Koçluk tarafında kişiye özel plan, deneme analizi, zaman yönetimi ve motivasyon takibi öne çıkar.
 
 4
-00:00:19,500 --> 00:00:27,300
-Danışmanlık tarafında ise kaygı, stres, özgüven, aile içi iletişim ve sınav kaygısı için bilimsel, etik ve gizli bir süreç yürütülüyor.
+00:00:21,500 --> 00:00:28,500
+Danışmanlık tarafında kaygı, stres, özgüven ve sınav kaygısı için etik, bilimsel ve gizli bir süreç sunulur.
 
 5
-00:00:27,300 --> 00:00:35,500
-Sitede ayrıca paket detayları, 2026 sınav takvimi, günlük makale ve çalışma notları, öğrenciye özel test ve değerlendirme alanları da yer alıyor.
+00:00:28,500 --> 00:00:35,500
+Sitede paketler, 2026 sınav takvimi, günlük içerikler ve değerlendirme alanları da yer alır.
 
 6
-00:00:35,500 --> 00:00:45,890
-Çanakkale'de yüz yüze, Türkiye genelinde online destek almak için şimdi ücretsiz tanışma görüşmesini planlayın.
+00:00:35,500 --> 00:00:43,780
+Çanakkale'de yüz yüze, Türkiye genelinde online destek için ücretsiz tanışma görüşmesini şimdi planlayın.
 

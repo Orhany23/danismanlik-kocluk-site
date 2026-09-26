@@ -1,1 +1,1 @@
-Bu klasör paylaşım için hazırlanmış son teslim dosyalarını içerir.
+Bu klasör testten geçmiş son teslim dosyalarını içerir.
