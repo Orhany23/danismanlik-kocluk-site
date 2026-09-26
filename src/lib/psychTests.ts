@@ -23,16 +23,16 @@
 //   (1998); BUÖ → Seber (1991), ters puanlanan maddeler (1,3,5,6,8,10,13,
 //   15,19) ve kesme puanları (0-3/4-8/9-14/15-20) doğrulanmıştır.
 // - Agorafobik Bilişler Ölçeği: Kart & Türkçapar'ın Türkçe uyarlama
-//   çalışmasından (JCBPR, 2018) aktarılmıştır. Kaynak PDF'te 13 madde yer
-//   alıyor (orijinali 14 maddedir); yayınlanmış bir kesme puanı/norm
-//   bulunamadı — bu yüzden yorumlama tamamen klinik değerlendirmeye
-//   bırakılmıştır (bkz. test tanımındaki not).
-// - Rosenberg Benlik Saygısı Ölçeği ve PHQ-9, madde metni/puanlama yöntemi
-//   bu ortamda birebir doğrulanamadığı için BİLEREK EKLENMEDİ.
+//   çalışmasından (JCBPR, 2018) aktarılmıştır (13 madde).
+// - Panik Bozukluğu Şiddet Ölçeği (PDSS): Shear ve ark. (1997), Türkçe
+//   uyarlama Monkul ve ark. (2004, Türk Psikiyatri Dergisi). Kesme puanı 8.
+// - Beden Duyumları Ölçeği (BSQ): Chambless ve ark. (1984), Türkçe
+//   uyarlama Kart & Türkçapar (2018, JCBPR). 17 madde, ortalama puan (1-5).
+// - DSM-5 Panik Bozukluk Şiddet Ölçeği (Yetişkin): APA DSM-5 ölçütleri (10 madde).
 //
-// Öğrenciye SADECE ham puan gösterilir (bkz. PsychTestClient.tsx),
-// yorum/bant/klinik değerlendirme gösterilmez — bu, danışmanlık sürecinde
-// Orhan Yaşlı tarafından yapılır (admin panelinde tam bant + açıklama görünür).
+// Öğrenciye puan veya sonuç GÖSTERİLMEZ (bkz. PsychTestClient.tsx). Sonuçlar
+// doğrudan danışman Orhan Yaşlı'nın admin paneline iletilir; danışan
+// değerlendirme için Orhan Yaşlı ile iletişime geçer (admin panelinde tam bant + açıklama görünür).
 // Kendine zarar verme ile doğrudan ilgili bir maddeye (ör. BDE madde 8)
 // olumlu cevap verilirse ya da BUÖ yüksek bantta sonuçlanırsa, öğrenciye
 // anlık destek mesajı gösterilir VE Telegram üzerinden Orhan Yaşlı'ya
@@ -95,7 +95,8 @@ export type PsychTest = LikertTest | CategoryTest;
 const CRISIS_NOTE =
   "Bu test bir tanı aracı değildir, sadece farkındalık amaçlıdır. Kendine ya da başkasına zarar verme düşüncen varsa hemen 112'yi ara ya da bir yakınından yardım iste.";
 
-const HAND_OFF_NOTE = "Sonunda sadece puanını göreceksin; ne anlama geldiğini bir sonraki görüşmede Orhan Yaşlı ile birlikte değerlendireceksiniz.";
+const HAND_OFF_NOTE =
+  "Test tamamlandığında cevaplarınız ve değerlendirme sonucu doğrudan danışmanınız Orhan Yaşlı'nın paneline iletilir; klinik analiz ve sonuç değerlendirmesi için Orhan Yaşlı ile iletişime geçebilirsiniz.";
 
 const examAnxietyOptions: LikertOption[] = [
   { label: "Hiçbir zaman", value: 0 },
@@ -633,9 +634,9 @@ export const agorafobikBilislerTest: LikertTest = {
   kind: "likert",
   title: "Agorafobik Bilişler Ölçeği",
   shortDesc: "Kaygılı ya da korktuğun anlarda aklından geçen felaket senaryolarının sıklığını değerlendirir.",
-  category: "Psikolojik Destek",
+  category: "Panik Atak",
   estimatedMinutes: 3,
-  intro: `Aşağıda, endişeli ya da korkmuş olduğunda aklından geçebilecek bazı düşünceler var. Her birinin senin için ne sıklıkla ortaya çıktığını işaretle. Bu test için yayınlanmış bir kesme puanı bulunmuyor; yorumlama tamamen görüşmede yapılacak klinik değerlendirmeye bağlıdır.`,
+  intro: `Aşağıda, endişeli ya da korkmuş olduğunda aklından geçebilecek bazı düşünceler var. Her birinin senin için ne sıklıkla ortaya çıktığını işaretle. Bu test için yayınlanmış bir kesme puanı bulunmuyor; yorumlama tamamen görüşmede yapılacak klinik değerlendirmeye bağlıdır. ${HAND_OFF_NOTE}`,
   source:
     "Agorafobik Bilişler Ölçeği'nin (Agoraphobic Cognitions Questionnaire) Türkçe uyarlaması: Kart & Türkçapar, \"Validity and Reliability of Agoraphobic Cognitions Questionnaire-Turkish Version\", Journal of Cognitive Behavioral Psychotherapy and Research, 2(3), 167-172. NOT: Kaynak formda 13 madde yer alıyor; orijinali 14 maddedir. Yayınlanmış bir kesme puanı/norm bulunamadı — puan, ortalama olarak hesaplanır (1-5 arası).",
   options: [
@@ -673,14 +674,222 @@ export const agorafobikBilislerTest: LikertTest = {
   averageScore: true,
 };
 
+export const panikBozuklukSiddetTest: LikertTest = {
+  slug: "panik-bozuklugu-siddet-olcegi",
+  kind: "likert",
+  title: "Panik Bozukluğu Şiddet Ölçeği (PBŞÖ / PDSS)",
+  shortDesc: "Son bir haftadaki panik atak sıklığını, atak anındaki sıkıntıyı, beklenti kaygısını ve günlük yaşama etkisini değerlendiren standart klinik ölçek.",
+  category: "Panik Atak",
+  estimatedMinutes: 4,
+  intro: `Aşağıdaki 7 soru, son bir (1) hafta içinde yaşadığınız panik ataklar, beklenti kaygısı ve kaçınma durumlarıyla ilgilidir. Her soru için durumunuzu en iyi tanımlayan seçeneği işaretleyiniz. ${HAND_OFF_NOTE}`,
+  source:
+    "Panik Bozukluğu Şiddet Ölçeği (Panic Disorder Severity Scale - PDSS), Shear MK ve ark. (1997) tarafından geliştirilmiş; Türkçe geçerlik ve güvenirlik çalışması Monkul ES, Tural Ü, Onur E, Fidaner H, Alkin T ve Malhi GS (2004) tarafından Türk Psikiyatri Dergisi'nde yayınlanmıştır (0-28 arası).",
+  options: [],
+  questions: [
+    {
+      id: "q1",
+      text: "Son bir haftada kaç kez tam panik atak ya da sınırlı belirtili panik nöbeti geçirdiniz?",
+      options: [
+        { label: "0 - Hiç: Son bir haftada hiç panik atak ya da sınırlı belirtili atak olmadı.", value: 0 },
+        { label: "1 - Hafif: Son bir haftada 1 kez tam panik atak ya da en fazla 3 kez sınırlı belirtili atak oldu.", value: 1 },
+        { label: "2 - Orta: Son bir haftada 2-3 kez tam panik atak ya da 4-6 kez sınırlı belirtili atak oldu.", value: 2 },
+        { label: "3 - Şiddetli: Son bir haftada 4-6 kez tam panik atak ya da 7 veya daha fazla sınırlı belirtili atak oldu.", value: 3 },
+        { label: "4 - Çok Şiddetli: Son bir haftada 7'den fazla tam panik atak oldu (neredeyse her gün veya günde birden fazla).", value: 4 },
+      ],
+    },
+    {
+      id: "q2",
+      text: "Son bir haftada geçirdiğiniz panik ataklar sırasında ne kadar sıkıntı, dehşet ya da rahatsızlık hissettiniz?",
+      options: [
+        { label: "0 - Hiç: Son bir haftada hiç atak geçirmedim ya da ataklar sırasında hiç sıkıntı hissetmedim.", value: 0 },
+        { label: "1 - Hafif: Ataklar sırasında hafif düzeyde sıkıntı hissettim (pek rahatsız edici değildi).", value: 1 },
+        { label: "2 - Orta: Ataklar sırasında orta derecede sıkıntı hissettim (yoğun bir rahatsızlık verdi fakat katlanılabildi).", value: 2 },
+        { label: "3 - Şiddetli: Ataklar sırasında şiddetli düzeyde sıkıntı ve dehşet hissettim (aşırı derecede rahatsız ediciydi).", value: 3 },
+        { label: "4 - Çok Şiddetli: Ataklar sırasında neredeyse dayanılmaz, aşırı yoğun bir dehşet ve çaresizlik hissettim.", value: 4 },
+      ],
+    },
+    {
+      id: "q3",
+      text: "Gelecekte yeni bir panik atak geçireceğiniz ya da atağın olası sonuçları (ör. bayılma, kalp krizi, kontrolü kaybetme) hakkında ne kadar endişelendiniz?",
+      options: [
+        { label: "0 - Hiç: Gelecekte yeni bir panik atak geçirme konusunda hiç endişelenmedim.", value: 0 },
+        { label: "1 - Hafif: Bazen endişelendim ancak günlük hayatımı ve düşüncelerimi etkilemedi.", value: 1 },
+        { label: "2 - Orta: Sık sık endişelendim; günün belirli bir bölümünde aklımı meşgul etti fakat işlerimi aksatmadı.", value: 2 },
+        { label: "3 - Şiddetli: Çoğu zaman endişelendim; dikkatimi toplamakta ve günlük işlerimi yapmakta belirgin güçlük çektim.", value: 3 },
+        { label: "4 - Çok Şiddetli: Neredeyse sürekli endişelendim; bu kaygıdan zihnimi hiç kurtaramadım ve günlük yaşamımı tamamen kilitledi.", value: 4 },
+      ],
+    },
+    {
+      id: "q4",
+      text: "Panik atak geçirmekten veya benzer belirtiler yaşamaktan korktuğunuz için belirli yerlerden ya da durumlardan (ör. kalabalıklar, toplu taşıma, kapalı alanlar, yalnız kalma) ne derece kaçındınız?",
+      options: [
+        { label: "0 - Hiç: Hiçbir yer veya durumdan kaçınmadım, korku duymadım.", value: 0 },
+        { label: "1 - Hafif: Nadiren bir durumdan kaçındım veya hafif bir huzursuzluk hissederek duruma katlandım.", value: 1 },
+        { label: "2 - Orta: Belirgin bir kaçınma oldu; bazı yerlere yalnız gidemedim veya zorlanarak katlandım.", value: 2 },
+        { label: "3 - Şiddetli: Birçok durumdan belirgin şekilde kaçındım; yanımda güvendiğim biri olmadan bu ortamlara giremez hale geldim.", value: 3 },
+        { label: "4 - Çok Şiddetli: Yaygın kaçınma oldu; neredeyse evden tek başıma çıkamayacak derecede kısıtlandım.", value: 4 },
+      ],
+    },
+    {
+      id: "q5",
+      text: "Panik atağa benzer bedensel belirtiler yaratabilecek durumlardan ya da aktivitelerden (ör. egzersiz yapma, merdiven çıkma, kahve içme, sıcak ortamlar, heyecanlanma) ne kadar kaçındınız?",
+      options: [
+        { label: "0 - Hiç: Bedensel duyumlar nedeniyle hiçbir fiziksel aktiviteden veya durumdan kaçınmadım.", value: 0 },
+        { label: "1 - Hafif: Nadiren bir aktiviteden kaçındım ya da hafif bir çekingenlikle yaptım.", value: 1 },
+        { label: "2 - Orta: Bazı aktivitelerden (ör. hızlı yürüme, yoğun hareket) belirgin şekilde kaçındım veya sınırladım.", value: 2 },
+        { label: "3 - Şiddetli: Bedensel belirtileri tetikleyebilecek birçok aktiviteden kesin olarak kaçındım.", value: 3 },
+        { label: "4 - Çok Şiddetli: Bedenimde en ufak bir duyum yaratabilecek hemen her türlü aktiviteden tamamen kaçındım.", value: 4 },
+      ],
+    },
+    {
+      id: "q6",
+      text: "Panik ataklar, beklenti kaygısı veya kaçınmalar işinizi, okulunuzu ya da evdeki temel sorumluluklarınızı ne derece olumsuz etkiledi?",
+      options: [
+        { label: "0 - Hiç: İş, okul veya ev hayatımda hiçbir aksama ya da bozulma olmadı.", value: 0 },
+        { label: "1 - Hafif: Hafif bir aksama oldu ancak sorumluluklarımı genel olarak eksiksiz yerine getirebildim.", value: 1 },
+        { label: "2 - Orta: Belirgin bir aksama oldu; verimim düştü fakat yine de zorlanarak işlerimi sürdürdüm.", value: 2 },
+        { label: "3 - Şiddetli: İş, okul ya da ev sorumluluklarımı yerine getirmekte ciddi aksamalar ve yetersizlikler oldu.", value: 3 },
+        { label: "4 - Çok Şiddetli: Panik belirtileri nedeniyle iş/okul hayatım tamamen durdu; sorumluluklarımı yerine getiremez hale geldim.", value: 4 },
+      ],
+    },
+    {
+      id: "q7",
+      text: "Panik belirtileri sosyal yaşamınızı, arkadaşlık veya aile ilişkilerinizi, boş zaman aktivitelerinizi ne derece olumsuz etkiledi?",
+      options: [
+        { label: "0 - Hiç: Sosyal hayatımda ve ilişkilerimde hiçbir bozulma veya kısıtlanma olmadı.", value: 0 },
+        { label: "1 - Hafif: Sosyal etkinliklerde hafif bir çekingenlik ya da isteksizlik oldu ancak ilişkilerim bozulmadı.", value: 1 },
+        { label: "2 - Orta: Bazı sosyal planlara katılamadım ya da ilişkilerimde orta düzeyde aksama ve kopukluklar oldu.", value: 2 },
+        { label: "3 - Şiddetli: Sosyal hayatım belirgin derecede kısıtlandı; insanlarla görüşmekten ve ortamlara girmekten kaçındım.", value: 3 },
+        { label: "4 - Çok Şiddetli: Sosyal ilişkilerim neredeyse tamamen kesildi; kimseyle görüşemez ve dışarı çıkamaz hale geldim.", value: 4 },
+      ],
+    },
+  ],
+  bands: [
+    { min: 0, max: 7, tone: "low", label: "Normal / Minimal düzey (0-7)", description: "Türkçe PDSS uyarlamasının (Monkul ve ark., 2004) klinik kesme puanının (8) altında; panik belirtileri minimal düzeydedir." },
+    { min: 8, max: 10, tone: "mid", label: "Hafif düzey panik bozukluk (8-10)", description: "Türkçe PDSS uyarlamasında klinik olarak anlamlı kabul edilen kesme puanına (8) ulaşmış. Hafif şiddette panik bozukluk ve kaçınma eğilimi mevcuttur." },
+    { min: 11, max: 15, tone: "high", label: "Orta düzey panik bozukluk (11-15)", description: "Klinik kesme puanının üzerinde; orta şiddette panik bozukluk, belirgin beklenti kaygısı ve işlevsellik kaybı." },
+    { min: 16, max: 28, tone: "high", label: "Şiddetli düzey panik bozukluk (16-28)", description: "Şiddetli panik bozukluk ve yaygın agorafobik/interoseptif kaçınma; seanslarda öncelikli yapılandırılmış müdahale önerilir." },
+  ],
+  disclaimer: CRISIS_NOTE,
+};
+
+export const bedenDuyumlariTest: LikertTest = {
+  slug: "beden-duyumlari-olcegi",
+  kind: "likert",
+  title: "Beden Duyumları Ölçeği (BDÖ / BSQ)",
+  shortDesc: "Panik anında ortaya çıkan bedensel duyumlardan (çarpıntı, nefes darlığı, uyuşma, baş dönmesi vb.) ne derece korkulduğunu değerlendiren 17 maddelik ölçek.",
+  category: "Panik Atak",
+  estimatedMinutes: 3,
+  intro: `Aşağıda, kaygılı ya da korkmuş hissettiğinizde yaşayabileceğiniz bedensel duyumlar sıralanmıştır. Bu duyumları hissettiğinizde, bunlardan ne derecede korktuğunuzu veya endişelendiğinizi işaretleyiniz. ${HAND_OFF_NOTE}`,
+  source:
+    "Beden Duyumları Ölçeği (Body Sensations Questionnaire - BSQ), Chambless DL ve ark. (1984) tarafından geliştirilmiş; Türkçe geçerlik ve güvenirlik çalışması Kart A ve Türkçapar MH (2018) tarafından Agorafobik Bilişler Ölçeği ile birlikte Bilişsel Davranışçı Psikoterapi ve Araştırmalar Dergisi'nde (JCBPR) yayınlanmıştır. Puanlama ortalama (1.0 - 5.0) olarak hesaplanır.",
+  options: [
+    { label: "1 - Hiç korkmam", value: 1 },
+    { label: "2 - Çok az korkarım", value: 2 },
+    { label: "3 - Orta derecede korkarım", value: 3 },
+    { label: "4 - Oldukça çok korkarım", value: 4 },
+    { label: "5 - Aşırı derecede korkarım", value: 5 },
+  ],
+  questions: [
+    { id: "q1", text: "Kalp çarpıntısı veya kalbin hızlı/düzensiz atması" },
+    { id: "q2", text: "Göğüste baskı, ağırlık veya sıkışma hissi" },
+    { id: "q3", text: "Kollarda veya bacaklarda uyuşma" },
+    { id: "q4", text: "Parmak uçlarında karıncalanma veya iğnelenme" },
+    { id: "q5", text: "Vücudun herhangi bir yerinde hissizlik veya uyuşma" },
+    { id: "q6", text: "Nefes darlığı, boğulma veya yeterli nefes alamama hissi" },
+    { id: "q7", text: "Baş dönmesi, sersemlik veya dengesizlik hissi" },
+    { id: "q8", text: "Bulanık veya bozuk görme" },
+    { id: "q9", text: "Mide bulantısı veya midede rahatsızlık hissi" },
+    { id: "q10", text: "Karında kelebeklenme veya çekilme hissi" },
+    { id: "q11", text: "Karında veya midede kramp/düğümlenme hissi" },
+    { id: "q12", text: "Boğazda yumruk (düğümlenme) veya yutkunma güçlüğü" },
+    { id: "q13", text: "Bacaklarda titreme, dermansızlık veya pelteleşme" },
+    { id: "q14", text: "Terleme veya sıcak basması" },
+    { id: "q15", text: "Boğaz veya ağız kuruluğu" },
+    { id: "q16", text: "Yönünü şaşırma, kafası karışma veya zihnin bulanıklaşması" },
+    { id: "q17", text: "Bedeninden kopma veya çevreye yabancılaşma hissi (derealizasyon / depersonalizasyon)" },
+  ],
+  bands: [
+    {
+      min: 1.0,
+      max: 2.0,
+      tone: "low",
+      label: "Düşük duyum korkusu (1.0 - 2.0)",
+      description: "Bedensel duyumlara karşı korku ve felaketleştirme minimal düzeydedir.",
+    },
+    {
+      min: 2.1,
+      max: 3.4,
+      tone: "mid",
+      label: "Orta düzey duyum korkusu (2.1 - 3.4)",
+      description: "Belirli bedensel duyumlara karşı orta şiddette kaygı ve kaçınma eğilimi mevcuttur.",
+    },
+    {
+      min: 3.5,
+      max: 5.0,
+      tone: "high",
+      label: "Yüksek düzey duyum korkusu (3.5 - 5.0)",
+      description: "Bedensel duyumlara karşı yoğun korku, felaketleştirme ve panik tetikleyicisi olma eğilimi belirgindir; interoseptif maruz bırakma (exposure) protokolü önerilir.",
+    },
+  ],
+  disclaimer: CRISIS_NOTE,
+  averageScore: true,
+};
+
+export const dsm5PanikTest: LikertTest = {
+  slug: "dsm5-panik-bozukluk-olcegi",
+  kind: "likert",
+  title: "DSM-5 Panik Bozukluk Şiddet Ölçeği (Yetişkin)",
+  shortDesc: "Amerikan Psikiyatri Birliği'nin (APA) DSM-5 tanı kriterlerine dayalı, son bir haftadaki panik belirtilerini sorgulayan 10 maddelik standart tarama ölçeği.",
+  category: "Panik Atak",
+  estimatedMinutes: 3,
+  intro: `Aşağıdaki sorular, son 7 gün içinde yaşadığınız panik ataklar ve bunlara bağlı belirtilerle ilgilidir. Her cümlenin son bir hafta içinde sizi ne sıklıkla rahatsız ettiğini en iyi tanımlayan seçeneği işaretleyiniz. ${HAND_OFF_NOTE}`,
+  source:
+    "Severity Measure for Panic Disorder—Adult, Amerikan Psikiyatri Birliği (APA) DSM-5 klinik değerlendirme ölçütlerinden uyarlanmıştır (0-40 arası toplam puan).",
+  options: [
+    { label: "0 - Hiçbir zaman", value: 0 },
+    { label: "1 - Bazen / Ara sıra (Birkaç gün)", value: 1 },
+    { label: "2 - Zamanın yaklaşık yarısında", value: 2 },
+    { label: "3 - Çoğu zaman", value: 3 },
+    { label: "4 - Her zaman (Neredeyse sürekli)", value: 4 },
+  ],
+  questions: [
+    { id: "q1", text: "Ani bir dehşet, korku veya ürperti anları hissettim, bazen durup dururken (yani panik atak geçirdim)." },
+    { id: "q2", text: "Daha fazla panik atak geçirme konusunda endişeli, kaygılı veya gergin hissettim." },
+    { id: "q3", text: "Panik ataklar nedeniyle kontrolü kaybedeceğim, öleceğim veya çıldıracağım konusunda düşüncelerim ya da korkularım oldu." },
+    { id: "q4", text: "Panik ataklar sırasında kalbimin küt küt atması, nefes darlığı, terleme, titreme veya baş dönmesi gibi yoğun bedensel belirtiler yaşadım." },
+    { id: "q5", text: "Bir panik atak geliyormuş gibi hissettiğim için vücudumdaki bedensel belirtileri (kalp atışı, nefes alıp verme gibi) sürekli dinledim veya kontrol ettim." },
+    { id: "q6", text: "Panik atağı tetikleyebilecek veya atağa benzer hisler yaratabilecek durumlardan (örneğin egzersiz, heyecan veya kafein) kaçındım." },
+    { id: "q7", text: "Panik atak geçirdiğimde kaçmanın zor olabileceği veya yardım alamayacağım yerlerden (örneğin kalabalıklar, toplu taşıma, kapalı alanlar) kaçındım veya korkuyla katlandım." },
+    { id: "q8", text: "Bir panik atakla başa çıkabilmek için yanımda birini, bir nesneyi (örneğin su, ilaç vb.) veya güvence sağlayıcı bir şeyi bulundurma ihtiyacı duydum." },
+    { id: "q9", text: "Panik ataklar veya atak geçirme endişesi nedeniyle işime, okuluma veya evdeki sorumluluklarıma odaklanmakta zorlandım." },
+    { id: "q10", text: "Panik ataklar veya atak korkusu sosyal yaşamımı, ailemle veya arkadaşlarımla olan ilişkilerimi olumsuz etkiledi." },
+  ],
+  bands: [
+    { min: 0, max: 9, tone: "low", label: "Minimal / Eşik altı (0-9)", description: "DSM-5 panik semptom şiddeti eşik altındadır; klinik düzeyde panik belirtisi gözlenmiyor." },
+    { min: 10, max: 19, tone: "mid", label: "Hafif düzey (10-19)", description: "Hafif şiddette panik semptomları ve hafif düzeyde kaçınma/kaygı eğilimi." },
+    { min: 20, max: 29, tone: "high", label: "Orta düzey (20-29)", description: "Orta şiddette panik bozukluk belirtileri; günlük yaşamda ve işlevsellikte belirgin aksamalar." },
+    { min: 30, max: 40, tone: "high", label: "Şiddetli düzey (30-40)", description: "Şiddetli panik bozukluk belirtileri ve yaygın kaçınma davranışı; seanslarda öncelikli müdahale gerektirir." },
+  ],
+  disclaimer: CRISIS_NOTE,
+};
+
 export const PSYCH_TESTS: PsychTest[] = [
-  examAnxietyTest,
-  anxietyScreeningTest,
-  who5Test,
+  // Panik Atak ve Agorafobi Değerlendirmeleri
+  panikBozuklukSiddetTest,
+  bedenDuyumlariTest,
+  dsm5PanikTest,
+  agorafobikBilislerTest,
+
+  // Duygudurum ve Psikolojik Destek
   beckDepresyonTest,
   beckAnksiyeteTest,
   beckUmutsuzlukTest,
-  agorafobikBilislerTest,
+  anxietyScreeningTest,
+  who5Test,
+
+  // Sınav ve Öğrenci Koçluğu
+  examAnxietyTest,
   learningStyleTest,
 ];
 

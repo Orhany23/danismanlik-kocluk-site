@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ClipboardList, RotateCcw, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
 import type { PsychTest, LikertTest, CategoryTest, CategoryResult } from "@/lib/psychTests";
 
-type LikertApiResult = { kind: "likert"; score: number; maxScore: number; crisisFlag: boolean };
+type LikertApiResult = { kind: "likert"; crisisFlag: boolean };
 type CategoryApiResult = { kind: "category"; result: CategoryResult };
 
 function CrisisBanner() {
@@ -72,21 +73,27 @@ function ProgressBar({ answered, total }: { answered: number; total: number }) {
   );
 }
 
-function ResultActions({ onReset }: { onReset: () => void }) {
+function ResultActions({ onReset, testTitle }: { onReset: () => void; testTitle?: string }) {
+  const waMsg = testTitle
+    ? `Merhaba Orhan Bey, sitenizdeki "${testTitle}" testini tamamladım. Sonucumu ve klinik değerlendirmesini birlikte görüşmek istiyorum.`
+    : "Merhaba Orhan Bey, bir testin sonucuyla ilgili görüşmek istiyorum.";
   return (
-    <div className="test-actions">
+    <div className="test-actions" style={{ marginTop: 24, flexWrap: "wrap" }}>
       <button type="button" className="btn btn-ghost" onClick={onReset}>
         <RotateCcw strokeWidth={1.8} aria-hidden="true" />
-        Tekrar çöz
+        Testi tekrar çöz
       </button>
       <a
-        href="https://wa.me/905432500417?text=Merhaba,%20bir%20testin%20sonucuyla%20ilgili%20konu%C5%9Fmak%20istiyorum."
+        href={`https://wa.me/905432500417?text=${encodeURIComponent(waMsg)}`}
         target="_blank"
         rel="noopener noreferrer"
         className="btn btn-primary"
       >
-        WhatsApp&apos;tan konuş
+        WhatsApp&apos;tan Orhan Yaşlı&apos;ya Yaz
       </a>
+      <Link href="/testler" className="btn btn-ghost">
+        Tüm testlere dön
+      </Link>
     </div>
   );
 }
@@ -127,18 +134,48 @@ function LikertTestForm({ test }: { test: LikertTest }) {
       <div>
         <TestHead test={test} />
         {result.crisisFlag && <CrisisBanner />}
-        <div className="test-result">
-          <span className="test-result-score">
-            {result.score} / {result.maxScore}
-          </span>
-          <h2 className="test-result-label">Puanın kaydedildi</h2>
-          <p className="test-result-desc">
-            Bu puanın ne anlama geldiğini yorumlamıyoruz; bir sonraki görüşmede Orhan Yaşlı
-            ile birlikte değerlendireceksiniz.
+        <div className="test-result" style={{ textAlign: "center", padding: "36px 24px" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 58,
+              height: 58,
+              borderRadius: "50%",
+              background: "var(--clr-accent-tint, rgba(122,39,64,0.08))",
+              color: "var(--clr-primary)",
+              marginBottom: 16,
+            }}
+          >
+            <CheckCircle2 strokeWidth={2.2} size={34} aria-hidden="true" />
+          </div>
+          <h2 className="test-result-label" style={{ fontSize: "1.45rem", marginBottom: 10 }}>
+            Testiniz Başarıyla Tamamlandı
+          </h2>
+          <p className="test-result-desc" style={{ maxWidth: 540, margin: "0 auto 18px", fontSize: "0.98rem", lineHeight: 1.7 }}>
+            Cevaplarınız ve test değerlendirmeniz danışmanınız <strong>Orhan Yaşlı</strong>&apos;nın paneline güvenle iletilmiştir.
           </p>
+          <div
+            style={{
+              background: "var(--clr-bg2, #fbf8f5)",
+              border: "1px solid var(--clr-border, #e5ded6)",
+              borderRadius: "var(--radius, 12px)",
+              padding: "16px 20px",
+              maxWidth: 560,
+              margin: "0 auto",
+              fontSize: "0.92rem",
+              lineHeight: 1.65,
+              color: "var(--clr-text2)",
+            }}
+          >
+            Klinik ilkemiz gereğince test puanları ve sonuç analizleri ekranda doğrudan gösterilmemektedir.
+            Testinizin sonucunu, bilimsel değerlendirmesini ve size özel yol haritasını öğrenmek için
+            lütfen <strong>Orhan Yaşlı</strong> ile iletişime geçiniz.
+          </div>
         </div>
-        <p className="support-disclaimer">{test.disclaimer}</p>
-        <ResultActions onReset={handleReset} />
+        <p className="support-disclaimer" style={{ marginTop: 20 }}>{test.disclaimer}</p>
+        <ResultActions onReset={handleReset} testTitle={test.title} />
       </div>
     );
   }
@@ -188,7 +225,7 @@ function LikertTestForm({ test }: { test: LikertTest }) {
             ) : (
               <CheckCircle2 strokeWidth={1.8} aria-hidden="true" />
             )}
-            {submitting ? "Gönderiliyor…" : "Sonucu gör"}
+            {submitting ? "Gönderiliyor…" : "Testi Tamamla ve Gönder"}
           </button>
         </div>
       </form>
@@ -241,7 +278,7 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
           </ul>
         </div>
         <p className="support-disclaimer">{test.disclaimer}</p>
-        <ResultActions onReset={handleReset} />
+        <ResultActions onReset={handleReset} testTitle={test.title} />
       </div>
     );
   }
@@ -287,7 +324,7 @@ function CategoryTestForm({ test }: { test: CategoryTest }) {
             ) : (
               <CheckCircle2 strokeWidth={1.8} aria-hidden="true" />
             )}
-            {submitting ? "Gönderiliyor…" : "Sonucu gör"}
+            {submitting ? "Gönderiliyor…" : "Testi Tamamla"}
           </button>
         </div>
       </form>

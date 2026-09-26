@@ -96,11 +96,10 @@ export async function POST(req: NextRequest) {
         await notifyCrisisFlag(student.name, test.title);
       }
 
-      // ÖNEMLİ: band (yorum/etiket/açıklama) bilinçli olarak istemciye
-      // gönderilmiyor. Öğrenci sadece ham puanını görür; yorumu danışmanlık
-      // görüşmesinde Orhan Yaşlı yapar (bkz. admin panelindeki tam bant
-      // bilgisi). Bu, kullanıcının kendi kendine "tanı koymasını" önler.
-      return NextResponse.json({ ok: true, kind: "likert", score: total, maxScore, crisisFlag });
+      // ÖNEMLİ: Puan ve sonuç öğrenciye gösterilmez (gizlilik ve klinik ilke gereği).
+      // Puan, bant ve tüm cevaplar veritabanında saklanır ve doğrudan Orhan Yaşlı'nın
+      // admin paneline düşer. Öğrenci değerlendirmeyi danışmanıyla iletişime geçerek alır.
+      return NextResponse.json({ ok: true, kind: "likert", crisisFlag });
     }
 
     // kategori testi (ör. öğrenme stili) — klinik değil, koçluk amaçlı;
